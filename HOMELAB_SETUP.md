@@ -50,15 +50,15 @@ Managing Proxmox resources via code using Terraform.
     *   `PROXMOX_API_TOKEN_ID`
     *   `PROXMOX_API_TOKEN_SECRET`
 3.  **Terraform Configuration:**
-    *   `terraform/provider.tf`: Configured the `telmate/proxmox` provider.
+    *   `terraform/provider.tf`: Configured the `telmate/proxmox` provider (version 3.0.2-rcX).
 4.  **Automation Workflows:**
     *   `.github/workflows/terraform-plan.yml`: Preview changes on every push/PR.
     *   `.github/workflows/terraform-apply.yml`: Automatically deploy changes when merging to `main`.
 5.  **First Managed Resource:**
     *   **File:** `terraform/main.tf`.
-    *   **Resource:** `test-nixos-vm` (Cloned from Template 119).
+    *   **Resource:** `test-nixos-vm` (Cloned from VMID 119).
     *   **Node:** `phil`.
-    *   **Configuration:** `2 vCPU`, `4GB RAM`, `vm_state = "running"`, `agent = 0`.
+    *   **Configuration:** `2 vCPU`, `4GB RAM`, `full_clone = true`, `vm_state = "running"`.
     *   **Status:** Defined and ready for first apply.
 
 ---
