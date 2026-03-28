@@ -40,10 +40,11 @@ Managing Proxmox resources via code using Terraform.
 
 #### Implementation Details:
 1.  **Proxmox API Token:**
-    *   User: `terraform` with realm `Proxmox VE authentication`.
+    *   User: `terraform` (Proxmox VE authentication realm).
     *   Token ID: `terraform-prov`.
     *   Full Token ID: `terraform@pve!terraform-prov`.
-    *   Permissions: `Administrator` at the `/` (root) path.
+    *   **Crucial Step:** Go to **Datacenter** -> **Permissions** -> **Add** -> **API Token Permission**.
+    *   Set **Path:** `/`, **Token:** `terraform@pve!terraform-prov`, **Role:** `Administrator`.
 2.  **GitHub Secrets:** Stored these secrets in the repository settings.
     *   `PROXMOX_URL`
     *   `PROXMOX_API_TOKEN_ID`

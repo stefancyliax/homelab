@@ -4,11 +4,13 @@ resource "proxmox_vm_qemu" "test_nixos" {
   clone       = "119" # The ID of your NixOS template
 
   # Basic Resources
-  cores    = 2
+  cpu {
+    cores = 2
+  }
   memory   = 4096
   vm_state = "running"
   onboot   = true
-  agent    = 0 # Set to 1 only if QEMU Guest Agent is installed in the template
+  agent    = 0
 
   # Disk Configuration
   disks {
