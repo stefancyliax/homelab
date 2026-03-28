@@ -24,7 +24,7 @@ The GitHub Actions runner executes the IaC code against the local infrastructure
 
 #### Implementation Details:
 1.  **LXC Container Creation:** Created via Proxmox Web UI using `ubuntu-25.04-standard` template.
-2.  **Base Dependencies:** Installed `curl` and `unzip` on the runner.
+2.  **Base Dependencies:** Installed `curl`, `unzip`, and `nodejs` (v20+) on the runner.
 3.  **Runner Registration:**
     *   Created a dedicated `runner` user on the LXC.
     *   Registered with labels: `self-hosted`, `infra`.
@@ -40,15 +40,35 @@ Managing Proxmox resources via code using Terraform.
 
 #### Implementation Details:
 1.  **Proxmox API Token:**
-    *   User: `terraform` with realm `Proxmox VE authentication`.
+    *   User: `terraform` (Proxmox VE authentication realm).
     *   Token ID: `terraform-prov`.
     *   Full Token ID: `terraform@pve!terraform-prov`.
-    *   Permissions: `Administrator` at the `/` (root) path.
+    *   **Crucial Step:** Go to **Datacenter** -> **Permissions** -> **Add** -> **API Token Permission**.
+    *   Set **Path:** `/`, **Token:** `terraform@pve!terraform-prov`, **Role:** `Administrator`.
 2.  **GitHub Secrets:** Stored these secrets in the repository settings.
     *   `PROXMOX_URL`
     *   `PROXMOX_API_TOKEN_ID`
     *   `PROXMOX_API_TOKEN_SECRET`
 3.  **Terraform Configuration:**
     *   `terraform/provider.tf`: Configured the `telmate/proxmox` provider.
-4.  **Automation Workflow:**
-    *   `.github/workflows/terraform-plan.yml`: Configured to run `terraform plan` on every push and pull request to preview changes.
+4.  **Automation Workflows:**
+    *   `.github/workflows/terraform-plan.yml`: Preview changes on every push/PR.
+    *   `.github/workflows/terraform-apply.yml`: Automatically deploy changes when merging to `main`.
+5.  **First Managed Resource:**
+    *   **File:** `terraform/main.tf`.
+    *   **Resource:** `test-nixos-vm` (Cloned from Template 119).
+    *   **Node:** `phil`.
+    *   **Configuration:** `2 vCPU`, `4GB RAM`, `vm_state = "running"`, `agent = 0`.
+    *   **Status:** Defined and ready for first apply.
+
+---
+
+## Development Workflow (IaC)
+
+To make changes to your infrastructure, follow these steps:
+
+1.  **Create a Feature Branch:** `git checkout -b my-new-change`
+2.  **Make Changes:** Edit `.tf` files or workflows.
+3.  **Push and Open PR:** `git push origin my-new-change` and open a Pull Request to `main`.
+4.  **Verify the Plan:** Check the GitHub Actions tab on the PR to ensure the `Terraform Plan` output is what you expect.
+5.  **Merge to Main:** Once reviewed, merge the PR. This will trigger the `Terraform Apply` workflow, which deploys the changes to your Proxmox host.
