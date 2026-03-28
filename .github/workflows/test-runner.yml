@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    runs-on: [ self-hosted, homelab ]
+    runs-on: [ self-hosted, infra ]
     steps:
       - name: Who am I?
         run: |
