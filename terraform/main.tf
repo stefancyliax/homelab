@@ -1,7 +1,8 @@
 resource "proxmox_vm_qemu" "test_nixos" {
   name        = "test-nixos-vm"
   target_node = "phil"
-  clone       = "119" # The ID of your NixOS template
+  clone_id    = 119
+  full_clone  = true
 
   # Basic Resources
   cpu {
