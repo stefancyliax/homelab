@@ -4,10 +4,25 @@ This documentation tracks the progress of setting up a homelab managed by GitHub
 
 ## Goals
 - [x] Set up a GitHub Actions self-hosted runner on Proxmox.
-- [ ] Manage Proxmox infrastructure via Terraform/OpenTofu.
-- [ ] Automate deployments via GitHub Actions.
+### 2. Infrastructure as Code (IaC) with Terraform/OpenTofu
+Managing Proxmox resources via code.
+- **Status:** In Progress
 
-## Current Setup
+#### Steps taken:
+1. **Created Proxmox API Token:**
+   - **User:** `terraform@pve` (Proxmox VE authentication realm).
+   - **Token ID:** `terraform-prov`.
+   - **Full Token ID:** `terraform@pve!terraform-prov`.
+   - **Permissions:** `Administrator` role at the `/` (root) path.
+3. **Automation Workflow (Plan):**
+   - **File:** `.github/workflows/terraform-plan.yml`.
+   - **Purpose:** Runs `terraform plan` on every push/PR to preview changes.
+   - **Secrets Used:** `PROXMOX_URL`, `PROXMOX_API_TOKEN_ID`, `PROXMOX_API_TOKEN_SECRET`.
+   - **Status:** Initialized (Running on `infra` label).
+4. **Terraform Provider:**
+   - **File:** `terraform/provider.tf`.
+   - **Provider:** `telmate/proxmox`.
+   - **Status:** Configured with sensitive variable inputs.
 - **Proxmox Host:** 10.1.23.4
 - **Repository:** Managed on GitHub
 
@@ -31,5 +46,5 @@ The GitHub Actions runner will execute the IaC code against the local infrastruc
    - **Labels:** Added `homelab` label.
 5. **Verification:**
    - **Action:** Created `.github/workflows/test-runner.yml` to test the connection.
-   - **Labels used:** `self-hosted`, `homelab`.
-   - **Result:** Successfully executed commands within the Proxmox LXC container.
+   - **Labels used:** `self-hosted`, `infra`.
+   - **Result:** Successfully executed commands within the Proxmox LXC container (Confirmed).
