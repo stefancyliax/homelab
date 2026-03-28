@@ -4,8 +4,8 @@ This documentation tracks the progress of setting up a homelab managed by GitHub
 
 ## Goals
 - [x] Set up a GitHub Actions self-hosted runner on Proxmox.
-- [ ] Manage Proxmox infrastructure via Terraform/OpenTofu.
-- [ ] Automate deployments via GitHub Actions.
+- [x] Manage Proxmox infrastructure via Terraform/OpenTofu.
+- [x] Automate deployments via GitHub Actions.
 
 ## Current Setup
 - **Proxmox Host:** 10.1.23.4

@@ -1,5 +1,6 @@
 resource "proxmox_vm_qemu" "test_nixos" {
   name        = "test-nixos-vm"
+  vmid        = 801 # Fixed ID ensures Terraform won't create duplicates
   target_node = "phil"
   clone_id    = 119
   full_clone  = true
