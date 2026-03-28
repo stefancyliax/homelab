@@ -9,7 +9,7 @@ resource "proxmox_vm_qemu" "test_nixos" {
   }
   memory   = 4096
   vm_state = "running"
-  onboot   = true
+  start_at_node_boot = true
   agent    = 0
 
   # Disk Configuration
