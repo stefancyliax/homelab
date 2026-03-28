@@ -57,6 +57,7 @@ Managing Proxmox resources via code using Terraform.
     *   **File:** `terraform/main.tf`.
     *   **Resource:** `test-nixos-vm` (Cloned from Template 119).
     *   **Node:** `phil`.
+    *   **Configuration:** `2 vCPU`, `4GB RAM`, `vm_state = "running"`, `agent = 0`.
     *   **Status:** Defined and ready for first apply.
 
 ---
