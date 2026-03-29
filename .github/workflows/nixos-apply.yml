@@ -21,6 +21,7 @@ jobs:
         run: |
           whoami
           ls -la
+          ls -la NixOS
 
           eval $(ssh-agent -s)
           echo "${{ secrets.SSH_PRIVATE_DEPLOY_KEY }}" | ssh-add -
