@@ -15,9 +15,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Install Colmena
-        run: nix-shell -p colmena
-
       - name: test something
         # This step is crucial for Colmena to be able to push to the VM.
         # You'll need to add your SSH private key to GitHub Secrets.
@@ -25,7 +22,10 @@ jobs:
           whoami
           ls -la .ssh/
 
-      # - name: Colmena Apply
-      #   run: |
-      #     cd NixOS
-      #     colmena apply --hive hive.nix
+
+      - name: Deploy with Colmena
+        run: |
+          eval $(ssh-agent -s)
+          echo "${{ secrets.SSH_PRIVATE_DEPLOY_KEY }}" | ssh-add -
+          
+          colmena eval --hive hive.nix
