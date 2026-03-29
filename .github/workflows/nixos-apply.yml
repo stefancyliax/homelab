@@ -22,6 +22,7 @@ jobs:
           whoami
           ls -la
           ls -la NixOS
+          cat NixOS/hive.nix
 
           eval $(ssh-agent -s)
           echo "${{ secrets.SSH_PRIVATE_DEPLOY_KEY }}" | ssh-add -
