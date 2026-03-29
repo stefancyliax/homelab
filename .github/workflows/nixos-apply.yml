@@ -3,8 +3,8 @@ name: NixOS Apply
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'NixOS/**'
+    # paths:
+    #   - 'NixOS/**'
   workflow_dispatch: # Allows manual triggering
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Install Colmena
-        run: nix-env -iA colmena
+        run: nix-shell -p colmena
 
       - name: test something
         # This step is crucial for Colmena to be able to push to the VM.
