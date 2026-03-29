@@ -26,4 +26,4 @@ jobs:
           eval $(ssh-agent -s)
           echo "${{ secrets.SSH_PRIVATE_DEPLOY_KEY }}" | ssh-add -
           
-          colmena eval --hive hive.nix
+          colmena eval hive.nix
