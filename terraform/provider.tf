@@ -1,6 +1,7 @@
 terraform {
   backend "local" {
-    path = "terraform.tfstate"
+    # Store the state in a persistent directory on the self-hosted runner
+    path = "/home/runner/terraform-state/terraform.tfstate"
   }
 
   required_providers {

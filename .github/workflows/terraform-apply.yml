@@ -20,8 +20,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
-        with:
-          clean: false
+        # with:
+        #   clean: false
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
