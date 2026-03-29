@@ -9,19 +9,16 @@ on:
 
 jobs:
   nixos:
-    runs-on: [ self-hosted, infra ]
+    runs-on: [ self-hosted, nixos ]
     
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v21
+        uses: actions/checkout@v6
 
       - name: Install Colmena
         run: nix-env -iA nixpkgs.colmena
 
-      - name: Setup SSH
+      - name: test something
         # This step is crucial for Colmena to be able to push to the VM.
         # You'll need to add your SSH private key to GitHub Secrets.
         run: |
