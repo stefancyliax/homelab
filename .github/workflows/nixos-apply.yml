@@ -20,8 +20,6 @@ jobs:
         # You'll need to add your SSH private key to GitHub Secrets.
         run: |
           whoami
-          ls -la .ssh/
-
 
       - name: Deploy with Colmena
         run: |
