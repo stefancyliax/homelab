@@ -1,0 +1,34 @@
+name: NixOS Apply
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'NixOS/**'
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  nixos:
+    runs-on: [ self-hosted, infra ]
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: determinate-systems/nix-installer-action@v16
+
+      - name: Install Colmena
+        run: nix-env -iA nixpkgs.colmena
+
+      - name: Setup SSH
+        # This step is crucial for Colmena to be able to push to the VM.
+        # You'll need to add your SSH private key to GitHub Secrets.
+        run: |
+          whoami
+          ls -la .ssh/
+
+      # - name: Colmena Apply
+      #   run: |
+      #     cd NixOS
+      #     colmena apply --hive hive.nix

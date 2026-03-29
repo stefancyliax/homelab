@@ -8,7 +8,7 @@ The homelab utilizes a GitOps approach, separating the base operating system con
 
 * **Hypervisor:** Proxmox VE
 * **Source of Truth:** GitHub (This repository)
-* **OS Configuration Management:** NixOS & Colmena (Push Model)
+* **OS Configuration Management:** NixOS & Colmena (Push Model) - See `/NixOS`
 * **Application Deployment:** Docker Compose & Komodo (Pull Model)
 
 ## 🖥️ Node Provisioning
