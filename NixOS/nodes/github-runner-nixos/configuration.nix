@@ -86,12 +86,16 @@
       docker
       nodejs
       nix
+      colmena
+      openssh
     ];
 
     # Optional: Labels to help GitHub identify this runner
     extraLabels = [ "nixos" "infra" ];
   };
 
+
+  nix.settings.trusted-users = [ "root" "runner" ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
