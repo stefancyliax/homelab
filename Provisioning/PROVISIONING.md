@@ -1,5 +1,8 @@
 # Homelab Infrastructure as Code (IaC) Setup
 
+> [NOTE]
+> This does not work. The solution is able to create a VM and save the state file but the VM cannot be started. The harddrive config is not correct and has to be debugged. 
+
 This documentation tracks the progress of setting up a homelab managed by GitHub Actions.
 
 ## Goals
@@ -18,7 +21,7 @@ This documentation tracks the progress of setting up a homelab managed by GitHub
 ### 1. GitHub Actions Self-Hosted Runner
 The GitHub Actions runner executes the IaC code against the local infrastructure.
 
-- **Location:** Proxmox LXC (Ubuntu 24.04).
+- **Location:** Proxmox LXC (Ubuntu 25.04).
 - **Resources:** 6 vCPU, 4GB RAM, 10GB+ Disk.
 - **Status:** Completed
 
