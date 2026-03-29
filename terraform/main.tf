@@ -27,7 +27,7 @@ resource "proxmox_vm_qemu" "test_nixos" {
 
   # Network Configuration
   network {
-    id = 0
+    id     = 0
     model  = "virtio"
     bridge = "vmbr0"
   }
