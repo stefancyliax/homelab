@@ -10,6 +10,8 @@ on:
 jobs:
   nixos:
     runs-on: [ self-hosted, nixos ]
+    container:
+        image: nixos/nixos:latest
     
     steps:
       - name: Checkout Code
