@@ -6,5 +6,5 @@
     ./hardware-configuration.nix
   ];
 
-  networking.hostName = "services-stack";
+  networking.hostName = "another-test";
 }

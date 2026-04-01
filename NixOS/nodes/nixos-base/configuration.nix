@@ -27,6 +27,9 @@
   # Internationalisation
   i18n.defaultLocale = "en_US.UTF-8";
 
+  # Allow the deployment user to push unsigned closures
+  nix.settings.trusted-users = [ "root" "stefan" ];
+
   # Enable Docker daemon
   virtualisation.docker = {
     enable = true;
