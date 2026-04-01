@@ -2,7 +2,7 @@
   description = "Homelab NixOS Hive";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     colmena.url = "github:zhaofengli/colmena";
   };
 
@@ -37,13 +37,9 @@
       };
     };
 
-  devShells.default = pkgs.mkShell {
-    packages = with pkgs; [
-      colmena
-      ];
-    };
-  # Optional: nix develop to get colmena in your shell
-  devShells.aarch64-darwin.default = nixpkgs.legacyPackages.aarch64-darwin.mkShell {
-    packages = [ colmena.packages.aarch64-darwin.colmena ];    
+    # # Optional: nix develop to get colmena in your shell
+    # devShells.aarch64-darwin.default = nixpkgs.legacyPackages.aarch64-darwin.mkShell {
+    #   packages = [ colmena.packages.aarch64-darwin.colmena ];    
+    # };
   };
-};
+}
