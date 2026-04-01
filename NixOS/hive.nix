@@ -1,51 +1,36 @@
 {
   meta = {
     nixpkgs = <nixpkgs>;
-    description = "Homelab NixOS Infrastructure";
+    description = "Homelab NixOS Hive";
   };
 
   defaults = { pkgs, ... }: {
-    system.stateVersion = "25.11"; 
-
-    services.openssh = {
-      enable = true;
-      settings.PasswordAuthentication = false;
-      settings.PermitRootLogin = "prohibit-password";
-    };
-
-    # Consistent SSH access for all machines
-    users.users.root.openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPU5JMr8VHXzj9iQf17/rTYIYfbR41a73eCmxsFepUtH stefan.cyliax@gmail.com"
-    ];
-  };
-
-  # The main Infrastructure & Komodo VM
-  komodo-vm = { name, nodes, pkgs, ... }: {
     deployment = {
-      targetHost = "10.1.23.100"; 
-      targetUser = "root";
-      sshOptions = [ "-o" "StrictHostKeyChecking=no" "-o" "UserKnownHostsFile=/dev/null" ];
+      targetUser = "stefan"; # Using your user as defined in configuration.nix
+      # Allow using sudo for deployment
+      privilegeEscalationCommand = [ "sudo" "-S" "-p" "''" "--" ];
     };
-    imports = [ ./nodes/komodo-vm/configuration.nix ];
   };
 
-  # The Services VM (Managed by Komodo Core)
-  services-vm = { name, nodes, pkgs, ... }: {
+  infra-stack = { name, nodes, pkgs, ... }: {
     deployment = {
-      targetHost = "10.1.23.101"; # Replace with actual IP
-      targetUser = "root";
-      sshOptions = [ "-o" "StrictHostKeyChecking=no" "-o" "UserKnownHostsFile=/dev/null" ];
+      targetHost = "10.1.23.240";
     };
-    imports = [ ./nodes/services-vm/configuration.nix ];
+    imports = [ ./nodes/infra-stack/configuration.nix ];
   };
 
-  # The GitHub Runner VM
-  github-runner-nixos = { name, nodes, pkgs, ... }: {
+  services-stack = { name, nodes, pkgs, ... }: {
     deployment = {
-      targetHost = "10.1.23.102"; # Replace with actual IP
-      targetUser = "root";
-      sshOptions = [ "-o" "StrictHostKeyChecking=no" "-o" "UserKnownHostsFile=/dev/null" ];
+      targetHost = "10.1.23.36";
     };
-    imports = [ ./nodes/github-runner-nixos/configuration.nix ];
+    imports = [ ./nodes/services-stack/configuration.nix ];
   };
+
+  another-test = { name, nodes, pkgs, ... }: {
+    deployment = {
+      targetHost = "10.1.23.242";
+    };
+    imports = [ ./nodes/another-test/configuration.nix ];
+  };
+
 }

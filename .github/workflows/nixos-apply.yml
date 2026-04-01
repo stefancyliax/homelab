@@ -10,16 +10,13 @@ on:
 jobs:
   nixos:
     runs-on: [ self-hosted, nixos ]
-    container:
-        image: nixos/nixos:latest
     
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Deploy with Colmena
-        # This step is crucial for Colmena to be able to push to the VM.
-        # You'll need to add your SSH private key to GitHub Secrets.
+      - name: Deploy with Colmenao
+        working-directory: ./NixOS
         run: |
           whoami
           ls -la
@@ -29,4 +26,4 @@ jobs:
           eval $(ssh-agent -s)
           echo "${{ secrets.SSH_PRIVATE_DEPLOY_KEY }}" | ssh-add -
           
-          colmena eval NixOS/hive.nix
+          colmena build
