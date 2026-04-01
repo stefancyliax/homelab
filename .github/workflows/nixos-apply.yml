@@ -23,7 +23,6 @@ jobs:
 
           eval $(ssh-agent -s)
           echo "${{ secrets.SSH_PRIVATE_DEPLOY_KEY }}" | ssh-add -
-          
-          echo $NIX_PATH
-          
-          # colmena build
+                    
+          colmena build
+          # colmena apply -f flake.nix
