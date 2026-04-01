@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    colmena.url = "github:zhaofengli/colmena";
+    colmena.url = "github:zhaofengli/colmena/stable";
   };
 
   outputs = { self, nixpkgs, colmena }: {
