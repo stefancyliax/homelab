@@ -83,29 +83,37 @@
   # Enable Docker
   virtualisation.docker.enable = true;
 
-  # # Enable the Komodo Periphery agent for self-management
-  # services.komodo-periphery = {
-  #   enable = true;
-  #   # Ensure Docker is accessible to Komodo
-  #   environment = {
-  #     DOCKER_HOST = "unix:///var/run/docker.sock";
-  #   };
-  # };
+  # Run Komodo Periphery as an OCI container (Compatible with 24.11)
+  virtualisation.oci-containers.backend = "docker";
+  virtualisation.oci-containers.containers."komodo-periphery" = {
+    image = "ghcr.io/moghtech/komodo-periphery:latest";
+    ports = [ "8120:8120" ];
+    volumes = [
+      "/var/run/docker.sock:/var/run/docker.sock"
+      "/var/lib/komodo-periphery:/etc/komodo"
+    ];
+    environment = {
+      # PERIPHERY_CORE_ADDRESS = "http://localhost:9120"; # Core is on the same machine
+    };
+  };
 
-  # # Deploy Komodo Core (Dashboard) as an OCI container
-  # virtualisation.oci-containers.backend = "docker";
-  # virtualisation.oci-containers.containers."komodo-core" = {
-  #   image = "ghcr.io/moghtech/komodo-core:latest";
-  #   ports = [ "9120:9120" ];
-  #   volumes = [
-  #     "/var/lib/komodo/config:/config"
-  #     "/var/lib/komodo/data:/data"
-  #     "/var/run/docker.sock:/var/run/docker.sock" # Allow Komodo to manage local containers
-  #   ];
-  #   environment = {
-  #     KOMODO_HTTP_PORT = "9120";
-  #   };
-  # };
+  # Deploy Komodo Core (Dashboard) as an OCI container
+  virtualisation.oci-containers.containers."komodo-core" = {
+    image = "ghcr.io/moghtech/komodo-core:latest";
+    ports = [ "9120:9120" ];
+    volumes = [
+      "/var/lib/komodo/config:/config"
+      "/var/lib/komodo/data:/data"
+      "/var/run/docker.sock:/var/run/docker.sock" 
+    ];
+    environment = {
+      KOMODO_HTTP_PORT = "9120";
+    };
+  };
+
+  # # Open ports in firewall
+  # networking.firewall.allowedTCPPorts = [ 9120 8120 ];
+
 
 
   # Some programs need SUID wrappers, can be configured further or are

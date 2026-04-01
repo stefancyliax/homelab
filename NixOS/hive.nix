@@ -1,40 +1,51 @@
 {
   meta = {
-    # Default nixpkgs for the hive
-    # You might want to pin this using a flake or a specific commit in the future.
     nixpkgs = <nixpkgs>;
     description = "Homelab NixOS Infrastructure";
   };
 
   defaults = { pkgs, ... }: {
-    # Basic system-wide settings for all nodes
     system.stateVersion = "25.11"; 
 
-    # Enable SSH for Colmena deployments
     services.openssh = {
       enable = true;
       settings.PasswordAuthentication = false;
       settings.PermitRootLogin = "prohibit-password";
     };
 
-    # Add your SSH public key here for initial access
+    # Consistent SSH access for all machines
     users.users.root.openssh.authorizedKeys.keys = [
-     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIODSyeGQIw18PlZYiV+xyjtHkSX5D87z0vkqm98uxBtn homelab-deployment" 
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPU5JMr8VHXzj9iQf17/rTYIYfbR41a73eCmxsFepUtH stefan.cyliax@gmail.com"
     ];
   };
 
+  # The main Infrastructure & Komodo VM
   komodo-vm = { name, nodes, pkgs, ... }: {
     deployment = {
-      targetHost = "10.1.23.245"; # REPLACE with the actual IP address of the VM
+      targetHost = "10.1.23.100"; 
       targetUser = "root";
-      sshOptions = [
-        "-o" "StrictHostKeyChecking=no"
-        "-o" "UserKnownHostsFile=/dev/null"
-      ];
+      sshOptions = [ "-o" "StrictHostKeyChecking=no" "-o" "UserKnownHostsFile=/dev/null" ];
     };
+    imports = [ ./nodes/komodo-vm/configuration.nix ];
+  };
 
-    imports = [
-      ./nodes/komodo-vm/configuration.nix
-    ];
+  # The Services VM (Managed by Komodo Core)
+  services-vm = { name, nodes, pkgs, ... }: {
+    deployment = {
+      targetHost = "10.1.23.101"; # Replace with actual IP
+      targetUser = "root";
+      sshOptions = [ "-o" "StrictHostKeyChecking=no" "-o" "UserKnownHostsFile=/dev/null" ];
+    };
+    imports = [ ./nodes/services-vm/configuration.nix ];
+  };
+
+  # The GitHub Runner VM
+  github-runner-nixos = { name, nodes, pkgs, ... }: {
+    deployment = {
+      targetHost = "10.1.23.102"; # Replace with actual IP
+      targetUser = "root";
+      sshOptions = [ "-o" "StrictHostKeyChecking=no" "-o" "UserKnownHostsFile=/dev/null" ];
+    };
+    imports = [ ./nodes/github-runner-nixos/configuration.nix ];
   };
 }
