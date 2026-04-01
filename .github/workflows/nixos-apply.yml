@@ -24,4 +24,5 @@ jobs:
           eval $(ssh-agent -s)
           echo "${{ secrets.SSH_PRIVATE_DEPLOY_KEY }}" | ssh-add -
           
-          nix-shell --run "colmena build"
+          colmena --version
+          # nix-shell --run "colmena build"
