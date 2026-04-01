@@ -29,7 +29,7 @@
     curl
     wget
     docker-compose
-    tree
+    fzf
   ];
 
   # User Configuration ("stefan")

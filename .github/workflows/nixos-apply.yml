@@ -18,11 +18,7 @@ jobs:
       - name: Deploy with Colmenao
         working-directory: ./NixOS
         run: |
-          whoami
-          ls -la
-
           eval $(ssh-agent -s)
           echo "${{ secrets.SSH_PRIVATE_DEPLOY_KEY }}" | ssh-add -
                     
-          # colmena build
           colmena apply -f flake.nix
