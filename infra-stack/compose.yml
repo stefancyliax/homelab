@@ -1,6 +1,0 @@
-services:
-  image: nginx
-  name: webserver
-  ports:
-    - 8001:80
-  

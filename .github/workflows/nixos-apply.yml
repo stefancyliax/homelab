@@ -3,8 +3,8 @@ name: NixOS Apply
 on:
   push:
     branches: [ main ]
-    # paths:
-    #   - 'NixOS/**'
+    paths:
+      - 'NixOS/**'
   workflow_dispatch: # Allows manual triggering
 
 jobs:
