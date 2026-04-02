@@ -35,6 +35,11 @@
         deployment.targetHost = "10.1.23.242";
         imports = [ ./nodes/another-test/configuration.nix ];
       };
+
+      gpu-worker = { name, nodes, pkgs, ... }: {
+        deployment.targetHost = "10.1.23.247";
+        imports = [ ./nodes/gpu-worker/configuration.nix ];
+      };
     };
 
     # # Optional: nix develop to get colmena in your shell

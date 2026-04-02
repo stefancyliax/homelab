@@ -1,11 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  # Bootloader
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.grub.useOSProber = true;
-
   # Networking
   networking.networkmanager.enable = true;
 
@@ -65,6 +60,7 @@
 
   # Allow the deployment user to push unsigned closures
   nix.settings.trusted-users = [ "root" "stefan" ];
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   system.stateVersion = "25.11"; 
 }
