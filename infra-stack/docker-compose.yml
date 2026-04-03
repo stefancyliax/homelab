@@ -1,7 +1,19 @@
+## Infra Stack
+
 services:
   webserver:
     image: nginx
     container_name: webserver
     ports:
-      - 8001:80
+      - 8004:80
   
+  # uptime-kuma:
+  #   image: uptime-kuma/uptime-kuma:latest
+  #   container_name: uptime-kuma
+  #   ports:
+  #     - 3001:3001
+  #   volumes:
+  #     - ./uptime-kuma:/app/data
+  #   restart: unless-stopped
+
+    
