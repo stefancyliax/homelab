@@ -30,3 +30,27 @@ The infrastructure is split to ensure lightweight operation and proper separatio
 
 * **Infrastructure/OS Changes:** Push `.nix` updates to GitHub ➡️ LXC Runner triggers ➡️ Colmena builds and pushes state to the VM via SSH.
 * **Application Changes:** Push `docker-compose.yml` updates to GitHub ➡️ Komodo detects changes ➡️ Komodo pulls configurations and updates Docker stacks on the VM.
+
+## 🛠️ NixOS Management (Colmena)
+
+The NixOS configurations are managed using **Colmena**. You can apply changes from your local machine (remote) or directly on a node (local).
+
+### Remote Deployment (from your Mac/Runner)
+To push configurations to one or all nodes from your local machine:
+```bash
+# Apply to all nodes
+export COLMENA_SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+colmena apply --flake ./NixOS
+
+# Apply to a specific node (e.g., gpu-worker)
+colmena apply --flake ./NixOS --on gpu-worker
+```
+
+### Local Provisioning (Directly on a Node)
+If you are logged into a NixOS node and want to apply the configuration locally (e.g., during bootstrapping):
+```bash
+cd NixOS/
+sudo colmena apply-local --flake . --on gpu-worker
+```
+
+> **Note:** For the first-time provisioning of a new node, ensure your user is added to `trusted-users` in `common.nix` and has `NOPASSWD` sudo rights as defined in the configuration.
