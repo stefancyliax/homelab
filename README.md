@@ -61,9 +61,11 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [ ] **Offline Node Handling:** Research the best practice in Colmena / GitHub Actions to cleanly skip or handle nodes (like the `gpu-worker`) that aren't inherently online during deployment, avoiding failed CI pipelines.
 - [ ] **Wake-on-LAN Integration:** Explore how Wake-on-LAN (WOL) can be integrated into the infrastructure stack to automatically wake the `gpu-worker` specifically when its AI endpoints are queried.
 - [ ] **Volume Layout Design:** Figure out the optimal logic for where and how Docker containers bind-mount their persistent config and data within the NixOS VMs, mapping it back to the backup strategy.
+- [ ] **ZeroByte Backups:** Research evaluating "ZeroByte" for configuring internal/external backup pipelines and scheduling, and how it compares to or replaces PBS.
 - [ ] **NixOS VM Firmware:** Currently SeaBIOS is used for the NixOS VMs. Research the benefits of moving to UEFI (OVMF) on NixOS. What are the upsides? What would a migration of existing VMs entail?
 - [ ] **Secrets Management:** Evaluate and pick a tool for managing secrets declaratively (e.g., `sops-nix`, `agenix`).
 - [ ] **Ingress & SSL:** Research Tailscale's built-in SSL certificate generation for internal HTTPS vs using a standard reverse proxy.
+- [ ] **Docker API Security:** Research the best method (TLS certificates or Tailscale network policies) to physically secure the exposed Docker API over the network when managing clients via Dockhand/Hawser.
 - [ ] **NAS OS Choice:** Decide on the operating system for the future NAS unit (ZimaOS, Unraid, or managed NixOS).
 
 ### Implementation Tasks
