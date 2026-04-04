@@ -28,7 +28,7 @@
         deployment.targetHost = "10.1.23.184";
         imports = [ 
           ./nodes/infra-stack/configuration.nix 
-          # ./modules/hawser.nix
+          ./modules/dockhand.nix
         ];
       };
 
@@ -36,7 +36,7 @@
         deployment.targetHost = "10.1.23.224";
         imports = [ 
           ./nodes/services-stack/configuration.nix 
-          # ./modules/hawser.nix
+          ./modules/hawser.nix
         ];
       };
 
