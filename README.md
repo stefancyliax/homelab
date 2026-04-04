@@ -62,7 +62,8 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [ ] **Comin Deployment Orchestration:** Research migrating from GitHub Actions to `comin` (a GitOps pull-model tool for NixOS) for infrastructure updates. A pull model natively solves the offline node problem since nodes fetch changes when they wake up.
 - [ ] **Wake-on-LAN Integration:** Explore how Wake-on-LAN (WOL) can be integrated into the infrastructure stack to automatically wake the `gpu-worker` specifically when its AI endpoints are queried.
 - [ ] **Volume Layout Design:** Figure out the optimal logic for where and how Docker containers bind-mount their persistent config and data within the NixOS VMs, mapping it back to the backup strategy.
-- [ ] **ZeroByte Backups:** Research evaluating "ZeroByte" for configuring internal/external backup pipelines and scheduling, and how it compares to or replaces PBS.
+- [ ] **ZeroByte Backups:** Initially deployed to the `infra-stack` for active testing. Full research and comparison against PBS is pending before official adoption.
+- [ ] **NixOS Node Renaming:** Rename the underlying NixOS node `infra-stack` (and maybe `services-stack`) because having the physical VM hostnames clash identically with the Docker Compose stack names causes architectural confusion.
 - [ ] **NixOS VM Firmware:** Currently SeaBIOS is used for the NixOS VMs. Research the benefits of moving to UEFI (OVMF) on NixOS. What are the upsides? What would a migration of existing VMs entail?
 - [x] **Secrets Management:** Evaluated and picked `agenix`. Need to finalize system keys in `secrets.nix` and encrypt the payloads on disk.
 - [ ] **Ingress & SSL:** Research Tailscale's built-in SSL certificate generation for internal HTTPS vs using a standard reverse proxy.
