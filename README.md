@@ -82,6 +82,10 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [ ] **Cloud Backups:** Implement the encrypted extramural backup pipeline to Google Drive.
 - [ ] **Local Backups:** Set up the Proxmox Backup Server (PBS) on the Intel NUC.
 - [ ] **Service Deployment:** Write docker-compose files and deploy the planned apps (Paperless-ngx, Frigate, NocoDB, n8n, etc.).
+- [ ] **Dashboard API: Proxmox & PBS:** Generate an explicit API Token within Proxmox/PBS to extract hypervisor hardware thresholds natively into `widgets.yaml`.
+- [ ] **Dashboard API: Home Assistant:** Configure a Long-Lived Access Token to query specific switch/temperature `entity_id` telemetry securely onto internal service buttons.
+- [ ] **Dashboard API: Paperless-ngx:** Generate a secure API Token to dynamically poll the scanner "Inbox" count onto the dashboard's service badge.
+- [ ] **Dashboard API: Grafana & SSO:** Pipe generic localized metrics or SSO lockout states from Authentik and Grafana securely through the Homepage REST parser.
 
 ## 🛠️ NixOS Management (Colmena)
 

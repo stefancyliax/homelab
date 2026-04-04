@@ -1,0 +1,22 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configuration/widgets
+
+# A clean, minimalist date and time display instead of weather/search
+- datetime:
+    text_size: xl
+    format:
+      timeStyle: short
+      dateStyle: medium
+
+# Natively reads from the /var/run/docker.sock we explicitly mapped!
+# This will display total running containers, offline containers, and memory usage for the 'infra-node' immediately on boot.
+- docker:
+    url: /var/run/docker.sock
+
+# TODO: Proxmox Metrics (Requires generating an API Token in Proxmox)
+# - proxmox:
+#     url: https://10.1.23.4:8006
+#     apiTokenId: "root@pam!homepage"
+#     apiTokenSecret: "your-proxmox-api-token-here"
+#     node: pve 

@@ -1,0 +1,10 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configuration/bookmarks
+
+- Infrastructure Code:
+    - Homelab Repository:
+        - abbr: HL
+          href: https://github.com/stefancyliax/homelab
+          icon: github
+          description: GitOps Infrastructure as Code
