@@ -63,7 +63,7 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [ ] **Wake-on-LAN Integration:** Explore how Wake-on-LAN (WOL) can be integrated into the infrastructure stack to automatically wake the `gpu-worker` specifically when its AI endpoints are queried.
 - [ ] **Volume Layout Design:** Figure out the optimal logic for where and how Docker containers bind-mount their persistent config and data within the NixOS VMs, mapping it back to the backup strategy.
 - [ ] **ZeroByte Backups:** Initially deployed to the `infra-stack` for active testing. Full research and comparison against PBS is pending before official adoption.
-- [ ] **NixOS Node Renaming:** Rename the underlying NixOS node `infra-stack` (and maybe `services-stack`) because having the physical VM hostnames clash identically with the Docker Compose stack names causes architectural confusion.
+- [x] **NixOS Node Renaming:** Renamed the underlying NixOS nodes to `infra-node` and `services-node` to avoid architectural confusion with the docker-compose stacks natively resting on top of them.
 - [x] **NixOS VM Firmware:** Researched. Migrating existing SeaBIOS VMs to UEFI is exceptionally tedious (requires resizing partitions for EFI). SeaBIOS has no performance penalty post-boot. Conclusion: Leave existing VMs on SeaBIOS; build all future VMs with OVMF/UEFI natively.
 - [x] **Secrets Management:** Evaluated and picked `agenix`. Need to finalize system keys in `secrets.nix` and encrypt the payloads on disk.
 - [ ] **Ingress & SSL:** Research Tailscale's built-in SSL certificate generation for internal HTTPS vs using a standard reverse proxy.

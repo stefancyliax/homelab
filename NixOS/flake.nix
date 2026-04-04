@@ -24,18 +24,18 @@
         };
       };
 
-      infra-stack = { name, nodes, pkgs, ... }: {
+      infra-node = { name, nodes, pkgs, ... }: {
         deployment.targetHost = "10.1.23.184";
         imports = [ 
-          ./nodes/infra-stack/configuration.nix 
+          ./nodes/infra-node/configuration.nix 
           ./modules/dockhand.nix
         ];
       };
 
-      services-stack = { name, nodes, pkgs, ... }: {
+      services-node = { name, nodes, pkgs, ... }: {
         deployment.targetHost = "10.1.23.224";
         imports = [ 
-          ./nodes/services-stack/configuration.nix 
+          ./nodes/services-node/configuration.nix 
           ./modules/hawser.nix
         ];
       };
