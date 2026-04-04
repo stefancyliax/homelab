@@ -59,11 +59,12 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [ ] **Docker Rootless Mode:** Research whether configuring Docker natively in "rootless" mode via NixOS is necessary or strongly desirable for security, and how it impacts volume/bind-mount permissions.
 - [ ] **GPU-Worker Desktop Environment:** Research and decide which desktop environment (e.g., KDE Plasma, GNOME, Hyprland) to provision via NixOS on the GPU-worker, as it doubles as a daily workstation and LLM backend.
 - [ ] **Offline Node Handling:** Research the best practice in Colmena / GitHub Actions to cleanly skip or handle nodes (like the `gpu-worker`) that aren't inherently online during deployment, avoiding failed CI pipelines.
+- [ ] **Comin Deployment Orchestration:** Research migrating from GitHub Actions to `comin` (a GitOps pull-model tool for NixOS) for infrastructure updates. A pull model natively solves the offline node problem since nodes fetch changes when they wake up.
 - [ ] **Wake-on-LAN Integration:** Explore how Wake-on-LAN (WOL) can be integrated into the infrastructure stack to automatically wake the `gpu-worker` specifically when its AI endpoints are queried.
 - [ ] **Volume Layout Design:** Figure out the optimal logic for where and how Docker containers bind-mount their persistent config and data within the NixOS VMs, mapping it back to the backup strategy.
 - [ ] **ZeroByte Backups:** Research evaluating "ZeroByte" for configuring internal/external backup pipelines and scheduling, and how it compares to or replaces PBS.
 - [ ] **NixOS VM Firmware:** Currently SeaBIOS is used for the NixOS VMs. Research the benefits of moving to UEFI (OVMF) on NixOS. What are the upsides? What would a migration of existing VMs entail?
-- [ ] **Secrets Management:** Evaluate and pick a tool for managing secrets declaratively (e.g., `sops-nix`, `agenix`).
+- [x] **Secrets Management:** Evaluated and picked `agenix`. Need to finalize system keys in `secrets.nix` and encrypt the payloads on disk.
 - [ ] **Ingress & SSL:** Research Tailscale's built-in SSL certificate generation for internal HTTPS vs using a standard reverse proxy.
 - [ ] **Docker API Security:** Research the best method (TLS certificates or Tailscale network policies) to physically secure the exposed Docker API over the network when managing clients via Dockhand/Hawser.
 - [ ] **NAS OS Choice:** Decide on the operating system for the future NAS unit (ZimaOS, Unraid, or managed NixOS).

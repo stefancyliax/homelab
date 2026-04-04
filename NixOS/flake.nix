@@ -4,9 +4,11 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     colmena.url = "github:zhaofengli/colmena/stable";
+    agenix.url = "github:ryantm/agenix";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, colmena }: {
+  outputs = { self, nixpkgs, colmena, agenix }: {
 
     colmenaHive = colmena.lib.makeHive {
       meta = {
@@ -15,6 +17,7 @@
       };
 
       defaults = { pkgs, ... }: {
+        imports = [ agenix.nixosModules.default ];
         deployment = {
           targetUser = "stefan";
           privilegeEscalationCommand = [ "sudo" "-S" "-p" "''" "--" ];
@@ -22,24 +25,33 @@
       };
 
       infra-stack = { name, nodes, pkgs, ... }: {
-        deployment.targetHost = "10.1.23.240";
-        imports = [ ./nodes/infra-stack/configuration.nix ];
+        deployment.targetHost = "10.1.23.184";
+        imports = [ 
+          ./nodes/infra-stack/configuration.nix 
+          # ./modules/hawser.nix
+        ];
       };
 
       services-stack = { name, nodes, pkgs, ... }: {
-        deployment.targetHost = "10.1.23.36";
-        imports = [ ./nodes/services-stack/configuration.nix ];
+        deployment.targetHost = "10.1.23.224";
+        imports = [ 
+          ./nodes/services-stack/configuration.nix 
+          # ./modules/hawser.nix
+        ];
       };
 
       another-test = { name, nodes, pkgs, ... }: {
-        deployment.targetHost = "10.1.23.242";
-        imports = [ ./nodes/another-test/configuration.nix ];
+        deployment.targetHost = "10.1.23.165";
+        imports = [ 
+          ./nodes/another-test/configuration.nix 
+          ./modules/hawser.nix
+        ];
       };
 
-      gpu-worker = { name, nodes, pkgs, ... }: {
-        deployment.targetHost = "10.1.23.247";
-        imports = [ ./nodes/gpu-worker/configuration.nix ];
-      };
+      # gpu-worker = { name, nodes, pkgs, ... }: {
+      #   deployment.targetHost = "10.1.23.247";
+      #   imports = [ ./nodes/gpu-worker/configuration.nix ];
+      # };
     };
 
     # # Optional: nix develop to get colmena in your shell
