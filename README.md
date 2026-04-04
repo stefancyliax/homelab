@@ -64,7 +64,7 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [ ] **Volume Layout Design:** Figure out the optimal logic for where and how Docker containers bind-mount their persistent config and data within the NixOS VMs, mapping it back to the backup strategy.
 - [ ] **ZeroByte Backups:** Initially deployed to the `infra-stack` for active testing. Full research and comparison against PBS is pending before official adoption.
 - [ ] **NixOS Node Renaming:** Rename the underlying NixOS node `infra-stack` (and maybe `services-stack`) because having the physical VM hostnames clash identically with the Docker Compose stack names causes architectural confusion.
-- [ ] **NixOS VM Firmware:** Currently SeaBIOS is used for the NixOS VMs. Research the benefits of moving to UEFI (OVMF) on NixOS. What are the upsides? What would a migration of existing VMs entail?
+- [x] **NixOS VM Firmware:** Researched. Migrating existing SeaBIOS VMs to UEFI is exceptionally tedious (requires resizing partitions for EFI). SeaBIOS has no performance penalty post-boot. Conclusion: Leave existing VMs on SeaBIOS; build all future VMs with OVMF/UEFI natively.
 - [x] **Secrets Management:** Evaluated and picked `agenix`. Need to finalize system keys in `secrets.nix` and encrypt the payloads on disk.
 - [ ] **Ingress & SSL:** Research Tailscale's built-in SSL certificate generation for internal HTTPS vs using a standard reverse proxy.
 - [ ] **Docker API Security:** Research the best method (TLS certificates or Tailscale network policies) to physically secure the exposed Docker API over the network when managing clients via Dockhand/Hawser.
@@ -74,9 +74,9 @@ Below is the planned list of services running in the homelab. This list acts as 
 ### Implementation Tasks
 - [ ] **Comin Migration:** Migrate the physical deployment workflow to leverage `comin` starting exclusively with the `gpu-worker` (to natively mitigate its offline nature), and weigh rolling it across the rest of the node cluster.
 - [ ] **Dockhand & Hawser Migration:** Migrate the application deployment orchestrator from Komodo over to Dockhand, utilizing Hawser on the remote client VMs.
-- [ ] **GitHub Actions for Deployment:** Set up GitHub Actions to handle triggering webhook deployments specifically when changes map to the `infra-stack` or `services-stack`.
+- [x] **GitHub Actions for Deployment:** Workflow files created to automatically trigger internal webhooks inside the self-hosted network when `infra-stack` or `services-stack` are updated.
 - [ ] **Home Assistant Migration:** Migrate the configuration and data from the old Home Assistant instance over to the new homelab HAOS VM.
-- [ ] **CPU Host Mode Migration:** Migrate the CPU type of existing Proxmox VMs to `host` mode via the Proxmox UI.
+- [x] **CPU Host Mode Migration:** Migrated the CPU type of all existing Proxmox VMs directly to `host` mode via the UI.
 - [ ] **Storage Configuration:** Finalize and document the specific roles and mount points for the 3 Proxmox SSDs.
 - [ ] **Secrets Implementation:** Remove hardcoded SSH keys from `configuration.nix` and replace them with the chosen secrets management system.
 - [ ] **GPU Worker Setup:** Provision the dedicated GPU node with NixOS, Nvidia drivers, and AI tooling (LLM Studio). See [`docs/06-gpu-worker.md`](docs/06-gpu-worker.md).
