@@ -1,0 +1,51 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configuration/services
+
+- Infrastructure:
+    - Proxmox:
+        href: https://10.1.23.4:8006
+        icon: proxmox
+        description: Virtualization Hypervisor
+    - Unraid:
+        href: http://10.1.23.5
+        icon: unraid
+        description: Storage NAS
+    - Dockhand:
+        href: http://10.1.23.184:3000
+        icon: docker
+        description: Deployment Orchestrator
+    - ZeroByte:
+        href: http://10.1.23.184:4096
+        icon: network
+        description: Secure Backup Framework
+
+- Smart Home:
+    - Home Assistant:
+        href: http://10.1.23.5:8123
+        icon: home-assistant
+        description: Home Automation Hub
+    - ESPHome:
+        href: http://10.1.107.8:6052
+        icon: esphome
+        description: Microcontroller Firmware Management
+
+- Web Services:
+    - Infra Webserver:
+        href: http://10.1.23.184:8004
+        icon: nginx
+        description: Infra Test Server
+    - Services Webserver:
+        href: http://10.1.23.224:8001
+        icon: nginx
+        description: Services Test Server
+    - Homepage:
+        href: http://10.1.23.184:3002
+        icon: homepage
+        description: Main Dashboard
+
+- Monitoring:
+    - Grafana:
+        href: http://10.1.23.5:3000
+        icon: grafana
+        description: Metrics Visualization

@@ -43,9 +43,8 @@ Below is the planned list of services running in the homelab. This list acts as 
 | **Metrics / Data Logs** | InfluxDB | For Home Assistant long-term data tracking. |
 | **Media Server** | Jellyfin | Will run on the NAS. |
 | **Cloud Storage** | Nextcloud / Seafile | Needs research on which to pick. |
-| **Monitoring** | Uptime Kuma | |
 | **Visualization** | Grafana | |
-| **Dashboard** | Homepage / Glance | |
+| **Dashboard** | Homepage | Fully declarative layout via YAML in GitOps. |
 
 ## 🔄 Deployment Workflows
 
