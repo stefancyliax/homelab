@@ -4,6 +4,9 @@
   # Define the secret payload file pointing to your age-encrypted file
   age.secrets.hawser-token.file = ../secrets/hawser-token.age;
 
+  # Explicitly force the OCI engine to be Docker rather than defaulting to Podman
+  virtualisation.oci-containers.backend = "docker";
+
   virtualisation.oci-containers.containers.hawser = {
     image = "ghcr.io/finsys/hawser:latest";
     ports = [ "2376:2376" ];
