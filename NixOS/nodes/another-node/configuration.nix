@@ -11,5 +11,5 @@
   boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.useOSProber = true;
 
-  networking.hostName = "another-test";
+  networking.hostName = "another-node";
 }
