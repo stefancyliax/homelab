@@ -13,11 +13,20 @@ Configurations are managed centrally via a Flake and applied using `colmena`.
 
 ### 🔒 Secrets Management
 
-> [!WARNING]
-> **TODO:** Implement proper secrets management. Currently, the public SSH key is directly embedded in `configuration.nix`. 
+We utilize **Agenix** natively within the `NixOS` environments for encrypting and strictly handling secrets. Public SSH host-keys for the physical deployment machines (as well as explicit user keys) are mapped exclusively in the root `secrets.nix` file.
 
-**Planned Approach:**
-Research and integrate `sops-nix` or `agenix` to securely encrypt secrets (like database passwords, Tailscale auth keys, API tokens) directly within this Git repository. The NixOS runner/nodes will decrypt these at deployment time using their local SSH host keys or age keys.
+## 📝 VM Templating & Cloning
+
+When utilizing a baseline NixOS VM pattern to clone instances across your Proxmox pool, you must explicitly ensure that hardware-tied entity states are wiped. If they aren't, configurations heavily reliant on unique host identification (like Tailscale IP allocation and Agenix decryption) will significantly conflict across your cluster.
+
+Right before converting your configured base VM into a Proxmox template, execute:
+```bash
+sudo rm /etc/machine-id
+sudo rm /etc/ssh/ssh_host_*
+sudo shutdown now
+```
+> [!NOTE] 
+> NixOS is designed to automatically generate completely clean, unique SSH host keys and a fresh `machine-id` strictly upon the first system boot of the cloned VM.
 
 ## 🚀 Deployment Process
 
