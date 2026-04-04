@@ -1,16 +1,16 @@
 # 04 - Application Deployment
 
-The application layer utilizes a GitOps pull-model via docker-compose and Komodo.
+The application layer utilizes a GitOps pull-model via docker-compose and Dockhand via the Hawser agent.
 
 ## 🛳️ Deployment Workflow
 
 We keep `docker-compose.yml` files organized within this repository. 
-Komodo monitors the repository, pulls the configurations down, and updates the deployments using native Docker APIs.
+When code is pushed to Github, the local GitHub Actions runner physically triggers Dockhand's internal REST webhooks. Dockhand then actively pulls the updated configurations down via git and routes the deployment securely to the target nodes via the Hawser APIs.
 
 ### Infrastructure vs Services
 To avoid monolithic failures and ensure proper resource allocation, the application stacks are split across different virtual machines:
-* **Infrastructure Stack:** Runs foundational services like Komodo itself, and other core network or deployment bridges.
-* **Services Stack:** Runs higher-level applications like Paperless-ngx, NocoDB, Nextcloud, etc.
+* **Infrastructure Node:** Runs foundational service natively via NixOS OCI mapping (Dockhand), and networking bridges. Other infrastructure services will be in a docker-compose stack orchestrated via Dockhand.
+* **Services Node:** Runs higher-level applications via Docker Compose orchestrated via Dockhand (Paperless-ngx, NocoDB, Nextcloud, etc.).
 
 ## 🌐 Networking and Ingress
 
@@ -21,6 +21,7 @@ To avoid monolithic failures and ensure proper resource allocation, the applicat
 
 ## 📝 Adding a New Service
 
-1. Create a directory or append to an existing `docker-compose.yml` within the relevant stack folder.
-2. Commit and push the changes to GitHub.
-3. Komodo automatically detects the commit, pulls any necessary Docker images, and deploys/updates the container workloads without manual intervention.
+1. Create a directory or append to an existing `docker-compose.yml` within the relevant stack folder (e.g. `services-stack`).
+2. Commit and push the changes to your `main` branch.
+3. The specific path-bound GitHub Actions workflow detects the commit securely.
+4. The runner automatically explicitly fires the appropriate Dockhand webhook, deploying the container updates strictly using the authenticated Hawser container natively without any manual human intervention.

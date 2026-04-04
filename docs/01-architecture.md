@@ -32,13 +32,13 @@ This document outlines the high-level architecture of the homelab, including har
 The main Proxmox node runs multiple isolated Virtual Machines to separate concerns:
 
 1. **GitHub Runner (NixOS VM):** Responsible for executing GitHub Actions pipelines (specifically `colmena` deploy steps) in a secure, isolated manner.
-2. **Infrastructure Stack (NixOS VM):** Runs core infrastructure Docker containers like Komodo.
-3. **Services Stack (NixOS VM):** Runs the main application workloads via Docker Compose (Paperless, NocoDB, Nextcloud, etc.).
+2. **Infrastructure Node (NixOS VM):** Runs core infrastructure toolsets (like Dockhand and ZeroByte).
+3. **Services Node (NixOS VM):** Runs the main application workloads via Docker Compose (Paperless, NocoDB, Nextcloud, etc.).
 4. **HAOS (VM):** A dedicated Home Assistant Operating System instance for smart home control.
-5. **Tailscale Subnet Router (VM):** Provides network access between Tailscale and internal subnets. (May eventually be merged into the Infrastructure Stack).
+5. **Tailscale Subnet Router (VM):** Provides network access between Tailscale and internal subnets. (May eventually be merged into the Infrastructure Node).
 
 ## 🔄 Deployment Strategy
 
 The environment follows a strict **GitOps** philosophy:
-* **OS Level:** NixOS configurations are written in this repository and pushed to nodes via `Colmena`.
-* **Application Level:** Docker Compose files are maintained in this repository. Komodo detects changes and pulls them to update the `Infrastructure` and `Services` VMs.
+* **OS Level:** NixOS configurations are written in this repository and pushed to standard nodes natively via `Colmena`. Intermittent nodes (like `gpu-worker`) utilize `comin` to actively natively "pull" state changes safely upon boot.
+* **Application Level:** Docker Compose files are maintained in this repository. A local GitHub Actions runner natively triggers physical webhooks to Dockhand, initiating Docker deployment pulls onto the `Infrastructure` and `Services` VMs via the `Hawser` agent endpoint.

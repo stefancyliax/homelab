@@ -8,7 +8,7 @@ The homelab utilizes a GitOps approach, separating the base operating system con
 
 * **Source of Truth:** GitHub (This repository)
 * **OS Configuration Management:** NixOS & Colmena (Push Model) - See `/NixOS`
-* **Application Deployment:** Docker Compose & Komodo (Pull Model)
+* **Application Deployment:** Docker Compose & Dockhand (Webhooks & Pull Model)
 
 ## 🖥️ Node Provisioning
 
@@ -16,8 +16,8 @@ The infrastructure is split into several virtual machines and physical nodes to 
 
 ### Core Proxmox VMs
 - **GitHub Runner (NixOS VM):** Executes GitHub Actions pipelines for `colmena` deployments.
-- **Infrastructure Stack (NixOS VM):** Hosts core infrastructure services via Docker Compose (e.g., Komodo).
-- **Services Stack (NixOS VM):** Hosts the main application services via Docker Compose.
+- **Infrastructure Node (NixOS VM):** Runs natively orchestrated foundational engines (Dockhand) and hosts the `infra-stack` Docker Compose workloads.
+- **Services Node (NixOS VM):** Dedicated to hosting the main `services-stack` docker application workloads (orchestrated via Hawser).
 - **HAOS (VM):** Dedicated Home Assistant Operating System.
 - **Tailscale Subnet Router (VM):** Dedicated routing for Tailscale access (may move to infrastructure stack later).
 
@@ -31,7 +31,7 @@ Below is the planned list of services running in the homelab. This list acts as 
 
 | Purpose | Tool | Notes |
 | :--- | :--- | :--- |
-| **Deployment / GitOps** | Komodo | Core deployment tool pulling compose files. |
+| **Deployment / GitOps** | Dockhand & Hawser | Core deployment tool pulling compose files. |
 | **Smart Home** | Home Assistant | Hosted in dedicated HAOS VM. |
 | **Microcontrollers** | ESPHome | Firmwares for smart switches and sensors. |
 | **Security / CCTV** | Frigate | |
@@ -50,7 +50,7 @@ Below is the planned list of services running in the homelab. This list acts as 
 ## 🔄 Deployment Workflows
 
 * **Infrastructure/OS Changes:** Push `.nix` updates to GitHub ➡️ Runner VM triggers ➡️ Colmena builds and pushes state to the nodes via SSH.
-* **Application Changes:** Push `docker-compose.yml` updates to GitHub ➡️ Komodo detects changes ➡️ Komodo pulls configurations and updates Docker stacks on the Infrastructure/Services VMs.
+* **Application Changes:** Push `docker-compose.yml` updates to GitHub ➡️ Local GH Runner hits internal Webhook ➡️ Dockhand securely pulls Git configurations and dictates updates mapped to the Infrastructure/Services Nodes via Hawser APIs.
 
 ## 📋 Master To-Do List
 
@@ -58,8 +58,8 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [x] **CPU Host Mode:** Research using CPU `host` mode for Proxmox VMs and its impact on performance vs live-migration natively.
 - [ ] **Docker Rootless Mode:** Research whether configuring Docker natively in "rootless" mode via NixOS is necessary or strongly desirable for security, and how it impacts volume/bind-mount permissions.
 - [ ] **GPU-Worker Desktop Environment:** Research and decide which desktop environment (e.g., KDE Plasma, GNOME, Hyprland) to provision via NixOS on the GPU-worker, as it doubles as a daily workstation and LLM backend.
-- [ ] **Offline Node Handling:** Research the best practice in Colmena / GitHub Actions to cleanly skip or handle nodes (like the `gpu-worker`) that aren't inherently online during deployment, avoiding failed CI pipelines.
-- [ ] **Comin Deployment Orchestration:** Research migrating from GitHub Actions to `comin` (a GitOps pull-model tool for NixOS) for infrastructure updates. A pull model natively solves the offline node problem since nodes fetch changes when they wake up.
+- [x] **Offline Node Handling:** Solved via `comin`. The `gpu-worker` will autonomously poll for its branch updates dynamically whenever it goes online, cleanly decoupling it from the rigid timeout vulnerabilities inherent to centralized Colmena pushes.
+- [x] **Comin Deployment Orchestration:** Decision made. The `gpu-worker` will exclusively utilize `comin` to natively pull its own configuration state from Git whenever it powers on, flawlessly bypassing the offline timeout vulnerabilities inherent to push-based orchestrators like Colmena. (Tracked in Implementation Tasks)
 - [ ] **Wake-on-LAN Integration:** Explore how Wake-on-LAN (WOL) can be integrated into the infrastructure stack to automatically wake the `gpu-worker` specifically when its AI endpoints are queried.
 - [ ] **Volume Layout Design:** Figure out the optimal logic for where and how Docker containers bind-mount their persistent config and data within the NixOS VMs, mapping it back to the backup strategy.
 - [ ] **ZeroByte Backups:** Initially deployed to the `infra-stack` for active testing. Full research and comparison against PBS is pending before official adoption.
@@ -67,18 +67,17 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [x] **NixOS VM Firmware:** Researched. Migrating existing SeaBIOS VMs to UEFI is exceptionally tedious (requires resizing partitions for EFI). SeaBIOS has no performance penalty post-boot. Conclusion: Leave existing VMs on SeaBIOS; build all future VMs with OVMF/UEFI natively.
 - [x] **Secrets Management:** Evaluated and picked `agenix`. Need to finalize system keys in `secrets.nix` and encrypt the payloads on disk.
 - [ ] **Ingress & SSL:** Research Tailscale's built-in SSL certificate generation for internal HTTPS vs using a standard reverse proxy.
-- [ ] **Docker API Security:** Research the best method (TLS certificates or Tailscale network policies) to physically secure the exposed Docker API over the network when managing clients via Dockhand/Hawser.
+- [x] **Docker API Security:** Resolved natively. Instead of generating manual TLS certificates to expose the raw Docker API over the network, the `Hawser` agent handles security automatically. It mounts the raw local socket under the hood and securely proxies traffic via its own REST interface strictly guarded by the shared `agenix` encrypted token.
 - [ ] **NAS OS Choice:** Decide on the operating system for the future NAS unit (ZimaOS, Unraid, or managed NixOS).
 - [ ] **Single Sign-On (SSO):** Research and evaluate SSO solutions (e.g., Authentik, Authelia, or Keycloak) to provide centralized login and identity management across the various web services.
 
 ### Implementation Tasks
 - [ ] **Comin Migration:** Migrate the physical deployment workflow to leverage `comin` starting exclusively with the `gpu-worker` (to natively mitigate its offline nature), and weigh rolling it across the rest of the node cluster.
-- [ ] **Dockhand & Hawser Migration:** Migrate the application deployment orchestrator from Komodo over to Dockhand, utilizing Hawser on the remote client VMs.
+- [x] **Dockhand & Hawser Migration:** Successfully migrated the infrastructure orchestrator away from Komodo and over to natively defined Dockhand and Hawser nodes via NixOS.
 - [x] **GitHub Actions for Deployment:** Workflow files created to automatically trigger internal webhooks inside the self-hosted network when `infra-stack` or `services-stack` are updated.
 - [ ] **Home Assistant Migration:** Migrate the configuration and data from the old Home Assistant instance over to the new homelab HAOS VM.
 - [x] **CPU Host Mode Migration:** Migrated the CPU type of all existing Proxmox VMs directly to `host` mode via the UI.
 - [ ] **Storage Configuration:** Finalize and document the specific roles and mount points for the 3 Proxmox SSDs.
-- [ ] **Secrets Implementation:** Remove hardcoded SSH keys from `configuration.nix` and replace them with the chosen secrets management system.
 - [ ] **GPU Worker Setup:** Provision the dedicated GPU node with NixOS, Nvidia drivers, and AI tooling (LLM Studio). See [`docs/06-gpu-worker.md`](docs/06-gpu-worker.md).
 - [ ] **Cloud Backups:** Implement the encrypted extramural backup pipeline to Google Drive.
 - [ ] **Local Backups:** Set up the Proxmox Backup Server (PBS) on the Intel NUC.

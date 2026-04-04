@@ -32,8 +32,11 @@ sudo shutdown now
 
 The deployment workflow acts on a push-model mechanism either from a CI runner or an administrator's machine.
 
-### GitHub Actions Runner
-A dedicated NixOS VM acts as a GitHub Actions runner. When updates are pushed to the `main` branch, the runner triggers the `colmena apply` process, deploying the declarative changes over SSH to the target machines.
+### GitHub Actions Runner (Push Model)
+A dedicated NixOS VM acts as a local GitHub Actions runner. When updates are pushed to the `main` branch, the runner triggers the `colmena apply` process, deploying the declarative changes over SSH to the targeted permanently online machines.
+
+### Comin (Pull Model)
+For nodes that are frequently offline (like the `gpu-worker`), a push model would instantly time out and fail the CI pipeline. To resolve this gracefully, these NixOS nodes run the `comin` service. When the node physically powers on, it authenticates to Git natively, fetches the newest `flake.nix` updates automatically, and applies them completely unprompted. 
 
 ### Manual Application
 To push configuration updates to all targeted nodes from an authorized local machine (useful during bootstrapping or debugging):

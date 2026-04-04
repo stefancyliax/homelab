@@ -1,9 +1,9 @@
-# 08 - Services Stack
+# 08 - Services Node
 
-This document tracks the main user-facing applications deployed within the homelab.
+This document tracks the main user-facing container applications deployed natively within the homelab.
 
 ## 🏢 Purpose
-The Services Stack runs on its own dedicated NixOS VM. It houses the primary applications used day-to-day. All services here are declarative and managed by Komodo pulling configurations straight from the repository.
+The Services Node runs on its own dedicated similarly-named NixOS VM. It securely houses the primary workloads utilized day-to-day. All services here are declarative and strictly managed by Dockhand (via the node's local `Hawser` proxy agent) applying robust pull configurations fetched out of the central repository.
 
 ## 📱 Planned Services
 The following services are mapped out for deployment:
