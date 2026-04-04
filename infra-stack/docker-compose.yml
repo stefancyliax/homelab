@@ -32,6 +32,8 @@ services:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
     restart: unless-stopped
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=10.1.23.184:3002,10.1.23.184
     ports:
       - 3002:3000
     volumes:
