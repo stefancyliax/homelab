@@ -39,10 +39,6 @@
         href: http://10.1.23.224:8001
         icon: nginx
         description: Services Test Server
-    - Homepage:
-        href: http://10.1.23.184:3002
-        icon: homepage
-        description: Main Dashboard
 
 - Monitoring:
     - Grafana:
