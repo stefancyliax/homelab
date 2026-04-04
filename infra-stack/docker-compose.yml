@@ -16,4 +16,25 @@ services:
   #     - ./uptime-kuma:/app/data
   #   restart: unless-stopped
 
-    
+  zerobyte:
+    image: ghcr.io/nicotsx/zerobyte:latest
+    container_name: zerobyte
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN # Required for fuse mounts handling by restic
+    ports:
+      - "4096:4096"
+    devices:
+      - /dev/fuse:/dev/fuse
+    environment:
+      - TZ=UTC 
+      - BASE_URL=http://localhost:4096 # Update when exposing behind a proxy
+      - APP_SECRET=${ZEROBYTE_APP_SECRET} # Ensure this is passed securely via Dockhand environments!
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - zerobyte_data:/var/lib/zerobyte
+      # TODO: Mount the host directories you actually want backed up as read-only below.
+      # - /example/data/to/backup:/host/target:ro
+
+volumes:
+  zerobyte_data:
