@@ -7,14 +7,6 @@ services:
     ports:
       - 8004:80
   
-  # uptime-kuma:
-  #   image: uptime-kuma/uptime-kuma:latest
-  #   container_name: uptime-kuma
-  #   ports:
-  #     - 3001:3001
-  #   volumes:
-  #     - ./uptime-kuma:/app/data
-  #   restart: unless-stopped
 
   zerobyte:
     image: ghcr.io/nicotsx/zerobyte:latest
@@ -35,6 +27,16 @@ services:
       - zerobyte_data:/var/lib/zerobyte
       # TODO: Mount the host directories you actually want backed up as read-only below.
       # - /example/data/to/backup:/host/target:ro
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    ports:
+      - 3002:3000
+    volumes:
+      - ./homepage:/app/config # Binds the local declarative YAML files
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Allows native Docker stats widgets later
 
 volumes:
   zerobyte_data:

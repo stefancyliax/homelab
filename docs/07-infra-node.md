@@ -21,16 +21,11 @@ These services are defined natively via the `infra-stack/docker-compose.yml` fil
 * **Role:** Automated Encrypted Backup Engine.
 * **Function:** Triggers deduplicated and explicitly encrypted volume backups securely off-site via automated Restic scheduling.
 
-#### Monitoring (Uptime Kuma)
-* **Role:** Uptime and service health tracking.
-* **Function:** Resides uniquely on the Infra Node so that if the `services-node` completely crashes, Kuma seamlessly survives structurally to send you failure alerts. 
-
-#### Dashboards (Homepage / Glance)
+#### Dashboard (Homepage)
 * **Role:** Central point of access for all homelab services.
 * **Function:** Housed here so you can rapidly reach the core admin portal even if backend production apps go offline. 
 
 ## 🚀 Deployment Checklist
 - [x] Integrate Dockhand natively into the `infra-node` NixOS layer.
-- [ ] Finalize the base `infra-stack/docker-compose.yml` file to fully map ZeroByte, Dashboards, and Kuma.
-- [ ] Connect Dashboards to the deployment metrics.
+- [x] Finalize the base `infra-stack/docker-compose.yml` file to fully map ZeroByte and Homepage.
 - [x] Connect Dockhand definitively to the localized GitHub Actions Webhooks.
