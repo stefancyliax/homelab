@@ -1,0 +1,17 @@
+name: Dockhand - Services Stack
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'services-stack/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [ self-hosted, nixos ]
+    steps:
+      - name: Trigger Dockhand Webhook
+        # Uses curl directly from the self-hosted runner to ping the internal IP
+        run: |
+          curl -X POST "http://10.1.23.184:3000/api/git/stacks/2/webhook?token=${{ secrets.SERVICES_STACK_WEBHOOK }}" \
+            -H "Content-Type: application/json"

@@ -68,6 +68,7 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [ ] **Ingress & SSL:** Research Tailscale's built-in SSL certificate generation for internal HTTPS vs using a standard reverse proxy.
 - [ ] **Docker API Security:** Research the best method (TLS certificates or Tailscale network policies) to physically secure the exposed Docker API over the network when managing clients via Dockhand/Hawser.
 - [ ] **NAS OS Choice:** Decide on the operating system for the future NAS unit (ZimaOS, Unraid, or managed NixOS).
+- [ ] **Single Sign-On (SSO):** Research and evaluate SSO solutions (e.g., Authentik, Authelia, or Keycloak) to provide centralized login and identity management across the various web services.
 
 ### Implementation Tasks
 - [ ] **Comin Migration:** Migrate the physical deployment workflow to leverage `comin` starting exclusively with the `gpu-worker` (to natively mitigate its offline nature), and weigh rolling it across the rest of the node cluster.
