@@ -28,7 +28,7 @@ services:
       - /dev/fuse:/dev/fuse
     environment:
       - TZ=UTC 
-      - BASE_URL=http://localhost:4096 # Update when exposing behind a proxy
+      - BASE_URL=http://10.1.23.184:4096 # Update when exposing behind a proxy
       - APP_SECRET=${ZEROBYTE_APP_SECRET} # Ensure this is passed securely via Dockhand environments!
     volumes:
       - /etc/localtime:/etc/localtime:ro
