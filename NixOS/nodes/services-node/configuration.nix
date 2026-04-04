@@ -11,5 +11,5 @@
   boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.useOSProber = true;
 
-  networking.hostName = "infra-stack";
+  networking.hostName = "services-node";
 }
