@@ -38,6 +38,7 @@ Below is the planned list of services running in the homelab. This list acts as 
 | **Document Mgmt** | Paperless-ngx | Alongside Paperless-ai / Paperless-gpt. |
 | **Automation** | n8n | |
 | **PDF Tools** | Stirling PDF | |
+| **AI / LLM Interface** | OpenWebUI | Universal WebUI connecting backend models (e.g., from gpu-worker) |
 | **Bookmarks / Archive**| Grimoire | |
 | **Database/Spreadsheet**| NocoDB | |
 | **Metrics / Data Logs** | InfluxDB | For Home Assistant long-term data tracking. |
