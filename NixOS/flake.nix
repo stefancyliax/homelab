@@ -40,10 +40,10 @@
         ];
       };
 
-      another-test = { name, nodes, pkgs, ... }: {
+      another-node = { name, nodes, pkgs, ... }: {
         deployment.targetHost = "10.1.23.165";
         imports = [ 
-          ./nodes/another-test/configuration.nix 
+          ./nodes/another-node/configuration.nix 
           ./modules/hawser.nix
         ];
       };
