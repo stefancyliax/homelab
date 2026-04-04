@@ -70,6 +70,7 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [ ] **NAS OS Choice:** Decide on the operating system for the future NAS unit (ZimaOS, Unraid, or managed NixOS).
 
 ### Implementation Tasks
+- [ ] **Comin Migration:** Migrate the physical deployment workflow to leverage `comin` starting exclusively with the `gpu-worker` (to natively mitigate its offline nature), and weigh rolling it across the rest of the node cluster.
 - [ ] **Dockhand & Hawser Migration:** Migrate the application deployment orchestrator from Komodo over to Dockhand, utilizing Hawser on the remote client VMs.
 - [ ] **GitHub Actions for Deployment:** Set up GitHub Actions to handle triggering webhook deployments specifically when changes map to the `infra-stack` or `services-stack`.
 - [ ] **Home Assistant Migration:** Migrate the configuration and data from the old Home Assistant instance over to the new homelab HAOS VM.
