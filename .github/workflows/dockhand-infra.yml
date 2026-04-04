@@ -13,5 +13,5 @@ jobs:
       - name: Trigger Dockhand Webhook
         # Uses curl directly from the self-hosted runner to ping the internal IP
         run: |
-          curl -X POST "http://10.1.23.184:3000/api/git/stacks/1/webhook?token=${{ secrets.INFRA_STACK_WEBHOOK }}" \
+          curl -sf "http://10.1.23.184:3000/api/git/stacks/1/webhook?secret=${{ secrets.INFRA_STACK_WEBHOOK }}" \
             -H "Content-Type: application/json"

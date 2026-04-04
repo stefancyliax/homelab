@@ -88,6 +88,8 @@
       nix
       colmena
       openssh
+      curl
+      wget
     ];
 
     # Optional: Labels to help GitHub identify this runner
