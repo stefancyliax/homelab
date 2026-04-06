@@ -8,3 +8,9 @@
           href: https://github.com/stefancyliax/homelab
           icon: github
           description: GitOps Infrastructure as Code
+
+- Network:
+    - Tailscale:
+        href: https://login.tailscale.com/admin/machines
+        icon: tailscale
+        description: Tailscale Admin Console
