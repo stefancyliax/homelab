@@ -42,6 +42,7 @@ Below is the planned list of services running in the homelab. This list acts as 
 | **Bookmarks / Archive**| Grimoire | |
 | **Database/Spreadsheet**| NocoDB | |
 | **Metrics / Data Logs** | InfluxDB | For Home Assistant long-term data tracking. |
+| **Monitoring** | Prometheus | Cluster-wide metrics scraper (Docker & Comin nodes). |
 | **Media Server** | Jellyfin | Will run on the NAS. |
 | **Cloud Storage** | Nextcloud / Seafile | Needs research on which to pick. |
 | **Visualization** | Grafana | |
@@ -81,6 +82,9 @@ Below is the planned list of services running in the homelab. This list acts as 
 - [ ] **GPU Worker Setup:** Provision the dedicated GPU node with NixOS, Nvidia drivers, and AI tooling (LLM Studio). See [`docs/06-gpu-worker.md`](docs/06-gpu-worker.md).
 - [ ] **Cloud Backups:** Implement the encrypted extramural backup pipeline to Google Drive.
 - [ ] **Local Backups:** Set up the Proxmox Backup Server (PBS) on the Intel NUC.
+- [ ] **Monitoring Stack:** Deploy Prometheus, Grafana, and InfluxDB to the `infra-stack`.
+    - [ ] Configure Prometheus scrapers for `comin` and Docker daemon metrics.
+    - [ ] Set up basic Grafana dashboards for cluster-wide node and container health.
 - [ ] **Service Deployment:** Write docker-compose files and deploy the planned apps (Paperless-ngx, Frigate, NocoDB, n8n, etc.).
 - [ ] **Dashboard API: Proxmox & PBS:** Generate an explicit API Token within Proxmox/PBS to extract hypervisor hardware thresholds natively into `widgets.yaml`.
 - [ ] **Dashboard API: Home Assistant:** Configure a Long-Lived Access Token to query specific switch/temperature `entity_id` telemetry securely onto internal service buttons.

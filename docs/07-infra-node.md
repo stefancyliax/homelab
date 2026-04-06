@@ -25,7 +25,12 @@ These services are defined natively via the `infra-stack/docker-compose.yml` fil
 * **Role:** Central point of access for all homelab services.
 * **Function:** Housed here so you can rapidly reach the core admin portal even if backend production apps go offline. 
 
+#### Monitoring Stack (Planned)
+* **Role:** Cluster-wide Telemetry & Visualization.
+* **Function:** Hosts Prometheus (to scrape Docker and Comin node metrics), Grafana (for dashboards), and InfluxDB (for time-series data storage). Keeping this in the infra-stack ensures monitoring stays functional even if the main services layer fails. See [10-monitoring.md](file:///Users/stefan/Documents/workspace/homelab/docs/10-monitoring.md) for the full implementation plan.
+
 ## 🚀 Deployment Checklist
 - [x] Integrate Dockhand natively into the `infra-node` NixOS layer.
 - [x] Finalize the base `infra-stack/docker-compose.yml` file to fully map ZeroByte and Homepage.
 - [x] Connect Dockhand definitively to the localized GitHub Actions Webhooks.
+- [ ] Deploy the Monitoring Stack (Prometheus, Grafana, InfluxDB) into the `infra-stack/docker-compose.yml`.

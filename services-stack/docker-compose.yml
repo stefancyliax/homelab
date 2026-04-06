@@ -6,4 +6,5 @@ services:
     container_name: webserver
     ports:
       - 8001:80
+    restart: unless-stopped
   

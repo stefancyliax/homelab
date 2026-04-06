@@ -6,6 +6,7 @@ services:
     container_name: webserver
     ports:
       - 8004:80
+    restart: unless-stopped
   
 
   zerobyte:
