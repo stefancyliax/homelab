@@ -11,6 +11,7 @@
 
 - Network:
     - Tailscale:
-        href: https://login.tailscale.com/admin/machines
-        icon: tailscale
-        description: Tailscale Admin Console
+        - abbr: TS
+          href: https://login.tailscale.com/admin/machines
+          icon: tailscale
+          description: Tailscale Admin Console
