@@ -13,4 +13,5 @@ in
 {
   # Example: The hawser token can be decrypted by Stefan and (eventually) the nodes that run Hawser.
   "secrets/hawser-token.age".publicKeys = users ++ systems;
+  "secrets/rclone-conf.age".publicKeys = users ++ [ infra-node ];
 }
