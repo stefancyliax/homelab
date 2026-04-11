@@ -57,7 +57,6 @@ Hosts foundational services that must remain operational even if the application
 | Service | Type | Status |
 |---|---|---|
 | [Dockhand](https://github.com/nicotsx/dockhand) | Native NixOS OCI container | ✅ Running |
-| [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`infra-stack`) | 🚧 Deployed, not configured |
 | [Homepage](https://gethomepage.dev/) | Docker Compose (`infra-stack`) | ✅ Running |
 | Prometheus / Grafana / InfluxDB | Docker Compose (`infra-stack`) | 🔲 Planned |
 

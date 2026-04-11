@@ -17,7 +17,7 @@ This document describes the backup strategy for the homelab — how data is back
 
 The primary backup strategy relies on [ZeroByte](https://github.com/nicotsx/zerobyte) to push encrypted, deduplicated backups to Google Drive via Restic. This ensures critical data survives total physical site loss.
 
-**Current status:** ZeroByte is deployed to the `infra-stack` but not yet configured with backup targets or schedules.
+**Current status:** ZeroByte is deployed to the `services-stack` but not yet configured with backup targets or schedules.
 
 ### Setup
 

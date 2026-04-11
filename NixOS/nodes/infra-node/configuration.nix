@@ -13,8 +13,5 @@
 
   networking.hostName = "infra-node";
 
-  # Decrypt the rclone configuration file
-  age.secrets."rclone-conf".file = ../../secrets/rclone-conf.age;
-  # Optionally, symlink it to a common location so rclone or systemd can easily find it
-  environment.etc."rclone/rclone.conf".source = config.age.secrets."rclone-conf".path;
+
 }

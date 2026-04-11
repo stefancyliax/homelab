@@ -9,26 +9,6 @@ services:
     restart: unless-stopped
   
 
-  zerobyte:
-    image: ghcr.io/nicotsx/zerobyte:latest
-    container_name: zerobyte
-    restart: unless-stopped
-    cap_add:
-      - SYS_ADMIN # Required for fuse mounts handling by restic
-    ports:
-      - "4096:4096"
-    devices:
-      - /dev/fuse:/dev/fuse
-    environment:
-      - TZ=UTC 
-      - BASE_URL=http://10.1.23.184:4096 # Update when exposing behind a proxy
-      - APP_SECRET=${ZEROBYTE_APP_SECRET} # Ensure this is passed securely via Dockhand environments!
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - zerobyte_data:/var/lib/zerobyte
-      - /etc/rclone/rclone.conf:/root/.config/rclone/rclone.conf:ro
-      # TODO: Mount the host directories you actually want backed up as read-only below.
-      - /home/stefan/sample-data:/mnt/sample-data:ro
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
@@ -41,6 +21,3 @@ services:
     volumes:
       - ./homepage:/app/config # Binds the local declarative YAML files
       - /var/run/docker.sock:/var/run/docker.sock:ro # Allows native Docker stats widgets later
-
-volumes:
-  zerobyte_data:
