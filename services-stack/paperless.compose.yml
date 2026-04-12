@@ -55,6 +55,19 @@ services:
   tika:
     image: docker.io/apache/tika:latest
     restart: unless-stopped
+
+  paperless-gpt:
+    image: ghcr.io/icereed/paperless-gpt:latest
+    container_name: paperless-gpt
+    restart: unless-stopped
+    depends_on:
+      - webserver
+    environment:
+      PAPERLESS_BASE_URL: "http://webserver:8000"
+      PAPERLESS_API_TOKEN: "${PAPERLESS_API_TOKEN}"
+      LLM_PROVIDER: "${LLM_PROVIDER:-openai}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+
 volumes:
   data:
   media:
