@@ -32,7 +32,7 @@
   # Enable NFS Server for the Paperless consume hot-folder
   services.nfs.server.enable = true;
   services.nfs.server.exports = ''
-    /home/stefan/paperless-consume  10.1.23.0/24(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=100)
+    /home/stefan/paperless-consume  10.1.23.0/24(rw,sync,insecure,no_subtree_check,all_squash,anonuid=1000,anongid=100)
   '';
 
   # Open the firewall for NFS
