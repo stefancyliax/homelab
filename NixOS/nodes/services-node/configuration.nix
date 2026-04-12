@@ -29,13 +29,34 @@
   # Optionally, symlink it to a common location so rclone or systemd can easily find it
   environment.etc."rclone/rclone.conf".source = config.age.secrets."rclone-conf".path;
 
-  # Enable NFS Server for the Paperless consume hot-folder
-  services.nfs.server.enable = true;
-  services.nfs.server.exports = ''
-    /home/stefan/paperless-consume  10.1.23.0/24(rw,sync,insecure,no_subtree_check,all_squash,anonuid=1000,anongid=100)
-  '';
+  # Enable Samba Server for the Paperless consume hot-folder
+  services.samba = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      global = {
+        "workgroup" = "WORKGROUP";
+        "server string" = "services-node";
+        "netbios name" = "services-node";
+        "security" = "user";
+        "map to guest" = "bad user";
+      };
+      "paperless-consume" = {
+        "path" = "/home/stefan/paperless-consume";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "force user" = "stefan";
+        "force group" = "users";
+      };
+    };
+  };
 
-  # Open the firewall for NFS (including macOS discovery ports like rpcbind)
-  networking.firewall.allowedTCPPorts = [ 111 2049 20048 ];
-  networking.firewall.allowedUDPPorts = [ 111 2049 20048 ];
+  # Make the Samba share discoverable natively on macOS/Windows (WSDD)
+  services.samba-wsdd = {
+    enable = true;
+    openFirewall = true;
+  };
 }
