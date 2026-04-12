@@ -59,7 +59,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
     - [ ] Configure Prometheus scrapers for Comin and Docker daemon metrics.
     - [ ] Enable Node Exporters on all NixOS VMs.
     - [ ] Set up Grafana dashboards for cluster-wide node and container health.
-- [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, n8n, etc.). See [services.md](docs/services.md).
+- [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, n8n, IT-Tools, etc.). See [services.md](docs/services.md).
 - [ ] **Dashboard APIs:** Connect Homepage widgets to live data sources:
     - [ ] Proxmox & PBS API tokens for hypervisor metrics.
     - [ ] Home Assistant long-lived access token for entity telemetry.

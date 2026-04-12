@@ -11,6 +11,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Home Assistant](https://www.home-assistant.io/) | Dedicated HAOS VM | ✅ Running |
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | 🚧 Deployed, not configured |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | 🔲 Planned |
+| [IT-Tools](https://github.com/CorentinTh/it-tools) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Jellyfin](https://jellyfin.org/) | NAS | 🔲 Planned |
 | [Frigate](https://frigate.video/) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [n8n](https://n8n.io/) | Docker Compose (`services-stack`) | 🔲 Planned |
