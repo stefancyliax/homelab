@@ -27,7 +27,7 @@ services:
       - zerobyte_data:/var/lib/zerobyte
       - /etc/rclone/rclone.conf:/root/.config/rclone/rclone.conf:ro
       # TODO: Mount the host directories you actually want backed up as read-only below.
-      # e.g., - /mnt/data:/mnt/data:ro
+      - /mnt/data:/mnt/data:ro
 
 volumes:
   zerobyte_data:
