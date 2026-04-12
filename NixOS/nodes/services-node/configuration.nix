@@ -19,6 +19,11 @@
     options = [ "defaults" ];
   };
 
+  # Declaratively ensure the mount point is owned by the main user
+  systemd.tmpfiles.rules = [
+    "d /mnt/data 0755 stefan users -"
+  ];
+
   # Decrypt the rclone configuration file
   age.secrets."rclone-conf".file = ../../secrets/rclone-conf.age;
   # Optionally, symlink it to a common location so rclone or systemd can easily find it
