@@ -35,7 +35,7 @@
     /home/stefan/paperless-consume  10.1.23.0/24(rw,sync,insecure,no_subtree_check,all_squash,anonuid=1000,anongid=100)
   '';
 
-  # Open the firewall for NFS
-  networking.firewall.allowedTCPPorts = [ 2049 ];
-
+  # Open the firewall for NFS (including macOS discovery ports like rpcbind)
+  networking.firewall.allowedTCPPorts = [ 111 2049 20048 ];
+  networking.firewall.allowedUDPPorts = [ 111 2049 20048 ];
 }
