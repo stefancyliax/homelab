@@ -6,9 +6,10 @@
     colmena.url = "github:zhaofengli/colmena/stable";
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
+    comin.url = "github:nlewo/comin";
   };
 
-  outputs = { self, nixpkgs, colmena, agenix }: {
+  outputs = { self, nixpkgs, colmena, agenix, comin }: {
 
     colmenaHive = colmena.lib.makeHive {
       meta = {
@@ -52,6 +53,19 @@
       #   deployment.targetHost = "10.1.23.247";
       #   imports = [ ./nodes/gpu-worker/configuration.nix ];
       # };
+    };
+
+    nixosConfigurations = {
+      # We define comin-test here instead of colmenaHive so that Comin pulls it naturally,
+      # but Colmena ignores it when pushing.
+      "comin-test" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./nodes/comin-test/configuration.nix
+          agenix.nixosModules.default
+          comin.nixosModules.comin
+        ];
+      };
     };
 
     # # Optional: nix develop to get colmena in your shell
