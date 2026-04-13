@@ -3,13 +3,19 @@
 {
   services.comin = {
     enable = true;
+    repositorySubdir = "NixOS";
     remotes = [{
       name = "origin";
       url = "git@github.com:stefancyliax/homelab.git";
-      auth.type = "ed25519";
-      auth.path = config.age.secrets."deploy-key".path;
     }];
   };
+
+  # Configure SSH to use this deploy key when Comin reaches out to GitHub
+  programs.ssh.extraConfig = ''
+    Host github.com
+      IdentityFile ${config.age.secrets."deploy-key".path}
+      StrictHostKeyChecking accept-new
+  '';
 
   # Decrypt the deploy key using agenix
   age.secrets."deploy-key" = {
