@@ -6,20 +6,14 @@
     repositorySubdir = "NixOS";
     remotes = [{
       name = "origin";
-      url = "git@github.com:stefancyliax/homelab.git";
+      url = "https://github.com/stefancyliax/homelab.git";
+      auth.access_token_path = config.age.secrets."comin-github-pat".path;
     }];
   };
 
-  # Configure SSH to use this deploy key when Comin reaches out to GitHub
-  programs.ssh.extraConfig = ''
-    Host github.com
-      IdentityFile ${config.age.secrets."deploy-key".path}
-      StrictHostKeyChecking accept-new
-  '';
-
-  # Decrypt the deploy key using agenix
-  age.secrets."deploy-key" = {
-    file = ../secrets/comin-deploy-key.age;
+  # Decrypt the GitHub PAT using agenix
+  age.secrets."comin-github-pat" = {
+    file = ../secrets/comin-github-pat.age;
     owner = "root";
     group = "root";
     mode = "0400";

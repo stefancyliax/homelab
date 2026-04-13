@@ -17,5 +17,5 @@ in
   "secrets/rclone-conf.age".publicKeys = users ++ [ services-node ];
   
   # Comin deploy key, readable by the user and all systems that might run Comin
-  "secrets/comin-deploy-key.age".publicKeys = users ++ systems;
+  "secrets/comin-github-pat.age".publicKeys = users ++ systems;
 }
