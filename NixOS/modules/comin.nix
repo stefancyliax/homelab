@@ -7,6 +7,7 @@
     remotes = [{
       name = "origin";
       url = "https://github.com/stefancyliax/homelab.git";
+      branches.main.name = "main";
       auth.access_token_path = config.age.secrets."comin-github-pat".path;
     }];
   };
