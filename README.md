@@ -38,6 +38,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 ### Research & Decisions
 
 - [ ] **Docker Rootless Mode:** Research whether configuring Docker natively in rootless mode via NixOS is necessary for security, and how it impacts volume/bind-mount permissions.
+- [ ] **Paperless-GPT Integration:** Research configuration parameters, setup Ollama on the `gpu-worker`, and define the prompt templates and routing for Paperless-GPT before enabling it in the stack. [Paperless-GPT Github](https://github.com/icereed/paperless-gpt?tab=readme-ov-file#docker-compose)
 - [ ] **GPU Worker Desktop Environment:** Decide which desktop environment (KDE Plasma, GNOME, Hyprland) to provision on the GPU Worker.
 - [ ] **Wake-on-LAN Integration:** Explore how WOL can automatically wake the GPU Worker when its AI endpoints are queried.
 - [ ] **Volume Layout Design:** Define the logic for where and how Docker containers bind-mount persistent config and data within the NixOS VMs, tied to the backup strategy.
