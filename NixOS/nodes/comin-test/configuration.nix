@@ -13,4 +13,8 @@
   boot.loader.grub.useOSProber = true;
 
   networking.hostName = "comin-test";
+
+  environment.systemPackages = with pkgs; [
+    yazi
+  ];
 }
