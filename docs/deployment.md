@@ -26,11 +26,6 @@ NixOS/
 └── secrets.nix     # Maps SSH public keys to secret files for decryption
 ```
 
-### Colmena (Push Model)
-
-[Colmena](https://github.com/zhaofengli/colmena) is used to deploy NixOS configurations to always-online nodes. It evaluates the flake, builds the system closures, and pushes them to the target machines over SSH.
-
-The `flake.nix` defines a `colmenaHive` mapping each node to its configuration and deployment target (IP address).
 
 ### Comin (Pull Model)
 
@@ -108,36 +103,26 @@ See [architecture.md](architecture.md) for the full service-to-node mapping.
 
 A dedicated NixOS VM runs a self-hosted GitHub Actions runner inside the local network:
 
-- **`nixos-apply.yml`**: Triggers `colmena apply` when NixOS configs change on `main`.
 - **`dockhand-infra.yml`**: Triggers the Dockhand webhook for `infra-stack` changes.
 - **`dockhand-services.yml`**: Triggers the Dockhand webhook for `services-stack` changes.
 
 ## Deployment Commands
 
-### Remote Deployment (from Mac or Runner)
+### Automated Deployment (Comin)
 
-Push configurations to one or all nodes:
+All nodes run the Comin systemd service. Pushing updates to the `NixOS/` directory in the `main` branch of this repository will automatically be pulled and applied by all VMs within 60 seconds without manual intervention or CI/CD pipelines.
 
-```bash
-# Apply to all nodes
-export COLMENA_SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-colmena apply --flake ./NixOS
+### Local Provisioning (Manual Bootstrapping)
 
-# Apply to a specific node
-colmena apply --flake ./NixOS --on gpu-worker
-```
-
-### Local Provisioning (directly on a Node)
-
-If logged into a NixOS node, apply the configuration locally (e.g., during bootstrapping):
+If you are provisioning a brand new node for the first time, you must bootstrap it using standard NixOS commands so it can install Comin:
 
 ```bash
-cd NixOS/
-sudo colmena apply-local --flake . --on <node_name>
+cd /NixOS
+sudo nixos-rebuild switch --flake .#<node-name>
 ```
 
 > [!NOTE]
-> For first-time provisioning, ensure your user is added to `trusted-users` in `common.nix` and has `NOPASSWD` sudo rights.
+> Once bootstrapped this exact way, the node permanently manages itself.
 
 ### Checking Deployed Version
 
