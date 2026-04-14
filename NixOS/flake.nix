@@ -34,26 +34,34 @@
         };
       };
 
-      infra-node = { name, nodes, pkgs, ... }: {
-        deployment.targetHost = "10.1.23.184";
-        imports = [ 
-          ./nodes/infra-node/configuration.nix 
-          ./modules/dockhand.nix
-        ];
-      };
+      # infra-node = { name, nodes, pkgs, ... }: {
+      #   deployment.targetHost = "10.1.23.184";
+      #   imports = [ 
+      #     ./nodes/infra-node/configuration.nix 
+      #     ./modules/dockhand.nix
+      #   ];
+      # };
 
-      services-node = { name, nodes, pkgs, ... }: {
-        deployment.targetHost = "10.1.23.224";
-        imports = [ 
-          ./nodes/services-node/configuration.nix 
-          ./modules/hawser.nix
-        ];
-      };
+      # services-node = { name, nodes, pkgs, ... }: {
+      #   deployment.targetHost = "10.1.23.224";
+      #   imports = [ 
+      #     ./nodes/services-node/configuration.nix 
+      #     ./modules/hawser.nix
+      #   ];
+      # };
 
-      another-node = { name, nodes, pkgs, ... }: {
-        deployment.targetHost = "10.1.23.165";
+      # another-node = { name, nodes, pkgs, ... }: {
+      #   deployment.targetHost = "10.1.23.165";
+      #   imports = [ 
+      #     ./nodes/another-node/configuration.nix 
+      #     ./modules/hawser.nix
+      #   ];
+      # };
+
+      gpu-worker = { name, nodes, pkgs, ... }: {
+        deployment.targetHost = "10.1.23.247";
         imports = [ 
-          ./nodes/another-node/configuration.nix 
+          ./nodes/gpu-worker/configuration.nix 
           ./modules/hawser.nix
         ];
       };
@@ -88,6 +96,14 @@
         system = "x86_64-linux";
         modules = baseModules ++ [
           ./nodes/comin-test/configuration.nix
+        ];
+      };
+      
+      "gpu-worker" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/gpu-worker/configuration.nix 
+          ./modules/hawser.nix
         ];
       };
 
