@@ -20,6 +20,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Grimoire](https://github.com/goniszewski/grimoire) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [ESPHome](https://esphome.io/) | Docker Compose (`services-stack`) | 🔲 Planned |
+| [Tududi](https://github.com/chrisvel/tududi) | Docker Compose (`services-stack`) | 🔲 Planned |
 | Cloud Storage (Nextcloud or Seafile) | Docker Compose (`services-stack`) | 🔲 Planned |
 
 See [home-assistant.md](home-assistant.md) for the full Home Assistant ecosystem details.
