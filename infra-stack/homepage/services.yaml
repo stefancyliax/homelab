@@ -41,7 +41,19 @@
         description: Services Test Server
 
 - Monitoring:
-    - Grafana:
+    - Grafana old:
         href: http://10.1.23.5:3000
         icon: grafana
-        description: Metrics Visualization
+        description: Metrics & Visualization
+    - Grafana:
+        href: http://10.1.23.184:3000
+        icon: grafana
+        description: Metrics & Visualization
+    - Prometheus:
+        href: http://10.1.23.184:9090
+        icon: prometheus
+        description: Time-series Metrics
+    - InfluxDB:
+        href: http://10.1.23.184:8086
+        icon: influxdb
+        description: Long-term Database

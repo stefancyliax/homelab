@@ -14,11 +14,24 @@
   virtualisation.docker = {
     enable = true;
     autoPrune.enable = true;
+    daemon.settings = {
+      metrics-addr = "0.0.0.0:9323";
+    };
   };
 
   # Enable the QEMU Guest Agent
   services.qemuGuest.enable = true;
-  
+
+  # Enable Prometheus Node Exporter
+  services.prometheus.exporters.node = {
+    enable = true;
+    openFirewall = true;
+    port = 9100;
+  };
+
+  # Open Docker metrics port
+  networking.firewall.allowedTCPPorts = [ 9323 ];
+
   environment.systemPackages = with pkgs; [
     vim
     curl
