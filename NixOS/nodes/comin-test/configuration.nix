@@ -4,7 +4,6 @@
   imports = [
     ../../common.nix
     ./hardware-configuration.nix
-    ../../modules/comin.nix
   ];
 
   # Bootloader

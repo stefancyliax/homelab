@@ -42,6 +42,14 @@ For nodes that are frequently offline (like the `gpu-worker`), a push model woul
 
 This cleanly decouples intermittent nodes from the rigid timeouts of centralized push deployments.
 
+#### Why Migrate All Nodes to Comin?
+We are actively transitioning the entire cluster away from Colmena towards Comin for the following architectural benefits:
+- **Better Version Handling:** Native Comin deployments accurately stamp the OS with the Git Flake commit. Colmena-deployed hosts often generically show "25.11pre-git" without workarounds.
+- **Improved Security (No Centralized Push):** We no longer need a central GitHub Actions runner storing SSH private keys with root access to every single node.
+- **Resilience:** Comin natively handles intermittent nodes (like the GPU worker) entering and leaving the network without breaking CI pipelines.
+- **Architectural Alignment:** Using a single, unified deployment model across all nodes reduces operational overhead.
+- **Native Syntax:** Pull-based deployment allows us to completely omit Colmena-specific syntax (`colmenaHive` mapping and `deployment` attributes), returning fully to standard `nixosConfigurations`.
+
 ### Secrets Management (Agenix)
 
 [Agenix](https://github.com/ryantm/agenix) encrypts secrets at rest in the repository using SSH public keys. At deployment time, NixOS decrypts them using the host's private SSH key.
@@ -130,6 +138,16 @@ sudo colmena apply-local --flake . --on <node_name>
 
 > [!NOTE]
 > For first-time provisioning, ensure your user is added to `trusted-users` in `common.nix` and has `NOPASSWD` sudo rights.
+
+### Checking Deployed Version
+
+To check the exact Git commit SHA that a NixOS node is currently running, log into the node and run:
+
+```bash
+nixos-version --configuration-revision
+```
+
+This returns the `self.rev` (or `self.dirtyRev`) set during the build, allowing you to instantly verify if the running configuration matches the remote repository.
 
 ## Deployment Monitoring
 

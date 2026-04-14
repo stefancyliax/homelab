@@ -9,7 +9,16 @@
     comin.url = "github:nlewo/comin";
   };
 
-  outputs = { self, nixpkgs, colmena, agenix, comin }: {
+  outputs = { self, nixpkgs, colmena, agenix, comin }: 
+  let
+    # Reusable baseline for all cluster nodes
+    baseModules = [
+      { system.configurationRevision = self.rev or self.dirtyRev or null; }
+      agenix.nixosModules.default
+      comin.nixosModules.comin
+      ./modules/comin.nix
+    ];
+  in {
 
     colmenaHive = colmena.lib.makeHive {
       meta = {
@@ -18,8 +27,7 @@
       };
 
       defaults = { pkgs, ... }: {
-        imports = [ agenix.nixosModules.default ];
-        system.configurationRevision = self.rev or self.dirtyRev or null;
+        imports = baseModules;
         deployment = {
           targetUser = "stefan";
           privilegeEscalationCommand = [ "sudo" "-S" "-p" "''" "--" ];
@@ -49,30 +57,40 @@
           ./modules/hawser.nix
         ];
       };
-
-      # gpu-worker = { name, nodes, pkgs, ... }: {
-      #   deployment.targetHost = "10.1.23.247";
-      #   imports = [ ./nodes/gpu-worker/configuration.nix ];
-      # };
     };
 
     nixosConfigurations = {
-      # We define comin-test here instead of colmenaHive so that Comin pulls it naturally,
-      # but Colmena ignores it when pushing.
-      "comin-test" = nixpkgs.lib.nixosSystem {
+      "infra-node" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [
-          { system.configurationRevision = self.rev or self.dirtyRev or null; }
-          ./nodes/comin-test/configuration.nix
-          agenix.nixosModules.default
-          comin.nixosModules.comin
+        modules = baseModules ++ [
+          ./nodes/infra-node/configuration.nix 
+          ./modules/dockhand.nix
         ];
       };
-    };
 
-    # # Optional: nix develop to get colmena in your shell
-    # devShells.aarch64-darwin.default = nixpkgs.legacyPackages.aarch64-darwin.mkShell {
-    #   packages = [ colmena.packages.aarch64-darwin.colmena ];    
-    # };
+      "services-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/services-node/configuration.nix 
+          ./modules/hawser.nix
+        ];
+      };
+
+      "another-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/another-node/configuration.nix 
+          ./modules/hawser.nix
+        ];
+      };
+
+      "comin-test" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/comin-test/configuration.nix
+        ];
+      };
+
+    };
   };
 }

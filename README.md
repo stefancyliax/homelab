@@ -19,7 +19,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Feature | Status | Details |
 |---|---|---|
 | NixOS Provisioning (Colmena) | ✅ Done | [deployment.md](docs/deployment.md) |
-| Pull-Based Deployment (Comin) | 🚧 Partial | [deployment.md](docs/deployment.md) |
+| Pull-Based Deployment (Comin) | ✅ Done | [deployment.md](docs/deployment.md) |
 | Secrets Management (Agenix) | ✅ Done | [deployment.md](docs/deployment.md) |
 | GitOps App Deployment (Dockhand/Hawser) | ✅ Done | [deployment.md](docs/deployment.md) |
 | GitHub Actions CI/CD | ✅ Done | [deployment.md](docs/deployment.md) |
@@ -50,7 +50,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 
 ### Implementation
 
-- [ ] **Comin Migration:** Migrate the deployment workflow to Comin starting with the GPU Worker, then evaluate rolling it across the cluster.
+- [ ] **Comin Migration:** Migrate all nodes over to Comin.
 - [ ] **Home Assistant Migration:** Migrate configuration and data from the legacy HA instance to the new HAOS VM.
 - [ ] **Storage Configuration:** Finalize and document the specific roles and mount points for the 3 Proxmox SSDs.
 - [ ] **GPU Worker Setup:** Provision the node with NixOS, Nvidia drivers, and AI tooling. See [gpu-worker.md](docs/gpu-worker.md).
