@@ -19,6 +19,7 @@
 
       defaults = { pkgs, ... }: {
         imports = [ agenix.nixosModules.default ];
+        system.configurationRevision = self.rev or self.dirtyRev or null;
         deployment = {
           targetUser = "stefan";
           privilegeEscalationCommand = [ "sudo" "-S" "-p" "''" "--" ];
@@ -61,6 +62,7 @@
       "comin-test" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
+          { system.configurationRevision = self.rev or self.dirtyRev or null; }
           ./nodes/comin-test/configuration.nix
           agenix.nixosModules.default
           comin.nixosModules.comin

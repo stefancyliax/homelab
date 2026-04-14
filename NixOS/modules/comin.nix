@@ -4,6 +4,7 @@
   services.comin = {
     enable = true;
     repositorySubdir = "NixOS";
+    exporter.openFirewall = true;
     remotes = [{
       name = "origin";
       url = "https://github.com/stefancyliax/homelab.git";
