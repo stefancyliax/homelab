@@ -46,7 +46,7 @@
         icon: grafana
         description: Metrics & Visualization
     - Grafana:
-        href: http://10.1.23.184:3000
+        href: http://10.1.23.184:3001
         icon: grafana
         description: Metrics & Visualization
     - Prometheus:

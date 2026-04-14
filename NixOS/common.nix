@@ -38,6 +38,7 @@
     wget
     docker-compose
     fzf
+    yazi
   ];
 
   # User Configuration ("stefan")
