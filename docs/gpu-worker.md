@@ -36,7 +36,7 @@ This node doubles as a daily workstation. A desktop environment needs to be sele
 
 Provides a backend server for downloading and running Large Language Models locally. Can be deployed natively via Nix packages or as a containerized stack (e.g., Ollama + Open-WebUI).
 
-**Integration goal:** Connect the local AI models to services running on the main homelab (e.g., Paperless-ai, Paperless-gpt on the Services Node).
+**Integration goal:** Connect the local AI models to services running on the main homelab (e.g., Paperless-AI on the Services Node).
 
 ### Workstation Tools
 

@@ -28,6 +28,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Local Backups (PBS) | 🔲 Planned | [backup.md](docs/backup.md) |
 | Monitoring (Prometheus/Grafana/InfluxDB) | ✅ Done | [monitoring.md](docs/monitoring.md) |
 | GPU Worker / AI Stack | 🔲 Planned | [gpu-worker.md](docs/gpu-worker.md) |
+| Ollama Node (LLM Inference) | 🚧 Config defined, VM provisioned | — |
 | Services (Paperless, Jellyfin, etc.) | 🔲 Planned | [services.md](docs/services.md) |
 | Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |
 | Ingress & SSL | 🔲 Planned | — |
@@ -38,7 +39,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 ### Research & Decisions
 
 - [ ] **Docker Rootless Mode:** Research whether configuring Docker natively in rootless mode via NixOS is necessary for security, and how it impacts volume/bind-mount permissions.
-- [ ] **Paperless-GPT Integration:** Research configuration parameters, setup Ollama on the `gpu-worker`, and define the prompt templates and routing for Paperless-GPT before enabling it in the stack. [Paperless-GPT Github](https://github.com/icereed/paperless-gpt?tab=readme-ov-file#docker-compose)
+- [ ] **Paperless-AI Integration:** Research configuration parameters, setup Ollama on the `gpu-worker`, and define the prompt templates and routing for Paperless-AI before enabling it in the stack. [Paperless-AI Github](https://github.com/clusterzx/paperless-ai)
 - [ ] **GPU Worker Desktop Environment:** Decide which desktop environment (KDE Plasma, GNOME, Hyprland) to provision on the GPU Worker.
 - [ ] **Wake-on-LAN Integration:** Explore how WOL can automatically wake the GPU Worker when its AI endpoints are queried.
 - [ ] **Volume Layout Design:** Define the logic for where and how Docker containers bind-mount persistent config and data within the NixOS VMs, tied to the backup strategy.
@@ -88,8 +89,9 @@ homelab/
 │   ├── nodes/              # Per-node configurations
 │   │   ├── infra-node/
 │   │   ├── services-node/
-│   │   └── gpu-worker/
-│   ├── modules/            # Reusable NixOS modules (Dockhand, Hawser)
+│   │   ├── gpu-worker/
+│   │   └── ollama-node/
+│   ├── modules/            # Reusable NixOS modules (Dockhand, Hawser, Ollama)
 │   ├── secrets/            # Agenix-encrypted secret files (.age)
 │   └── secrets.nix         # SSH key → secret file mappings
 ├── infra-stack/            # Docker Compose for infrastructure services

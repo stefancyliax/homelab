@@ -57,108 +57,26 @@ services:
     image: docker.io/apache/tika:latest
     restart: unless-stopped
 
-  # paperless-gpt:
-  #   # Use one of these image sources:
-  #   image: icereed/paperless-gpt:latest # Docker Hub
-  #   # image: ghcr.io/icereed/paperless-gpt:latest  # GitHub Container Registry
+  # paperless-ai:
+  #   image: clusterzx/paperless-ai:latest
+  #   container_name: paperless-ai
+  #   restart: unless-stopped
   #   environment:
-  #     PAPERLESS_BASE_URL: "http://paperless-ngx:8000"
-  #     PAPERLESS_API_TOKEN: "your_paperless_api_token"
-  #     PAPERLESS_PUBLIC_URL: "http://paperless.mydomain.com" # Optional
-  #     MANUAL_TAG: "paperless-gpt" # Optional, default: paperless-gpt
-  #     AUTO_TAG: "paperless-gpt-auto" # Optional, default: paperless-gpt-auto
-  #     # LLM Configuration - Choose one:
-
-  #     # Option 1: Standard OpenAI
-  #     # LLM_PROVIDER: "openai"
-  #     # LLM_MODEL: "gpt-4o"
-  #     # OPENAI_API_KEY: "your_openai_api_key"
-
-  #     # Option 2: Mistral
-  #     # LLM_PROVIDER: "mistral"
-  #     # LLM_MODEL: "mistral-large-latest"
-  #     # MISTRAL_API_KEY: "your_mistral_api_key"
-
-  #     # Option 3: Azure OpenAI
-  #     # LLM_PROVIDER: "openai"
-  #     # LLM_MODEL: "your-deployment-name"
-  #     # OPENAI_API_KEY: "your_azure_api_key"
-  #     # OPENAI_API_TYPE: "azure"
-  #     # OPENAI_BASE_URL: "https://your-resource.openai.azure.com"
-
-  #     # Option 4: Ollama (Local)
-  #     LLM_PROVIDER: "ollama"
-  #     LLM_MODEL: "qwen3:8b"
-  #     OLLAMA_HOST: "http://10.1.23.247:11434"
-  #     OLLAMA_CONTEXT_LENGTH: "8192" # Sets Ollama NumCtx (context window)
-  #     TOKEN_LIMIT: 1000 # Recommended for smaller models
-
-  #     # Option 5: Anthropic/Claude
-  #     # LLM_PROVIDER: "anthropic"
-  #     # LLM_MODEL: "claude-sonnet-4-5"
-  #     # ANTHROPIC_API_KEY: "your_anthropic_api_key"
-
-  #     # Optional LLM Settings
-  #     # LLM_LANGUAGE: "English" # Optional, default: English
-
-  #     # OCR Configuration - Choose one:
-  #     # Option 1: LLM-based OCR
-  #     OCR_PROVIDER: "llm" # Default OCR provider
-  #     VISION_LLM_PROVIDER: "ollama" # openai, ollama, mistral, or anthropic
-  #     VISION_LLM_MODEL: "minicpm-v" # minicpm-v (ollama) or gpt-4o (openai) or claude-sonnet-4-5 (anthropic/claude)
-  #     OLLAMA_HOST: "http://host.docker.internal:11434" # If using Ollama
-
-  #     # OCR Processing Mode
-  #     OCR_PROCESS_MODE: "image" # Optional, default: image, other options: pdf, whole_pdf
-  #     PDF_SKIP_EXISTING_OCR: "false" # Optional, skip OCR for PDFs with existing OCR
-
-  #     # Option 2: Google Document AI
-  #     # OCR_PROVIDER: 'google_docai'       # Use Google Document AI
-  #     # GOOGLE_PROJECT_ID: 'your-project'  # Your GCP project ID
-  #     # GOOGLE_LOCATION: 'us'              # Document AI region
-  #     # GOOGLE_PROCESSOR_ID: 'processor-id' # Your processor ID
-  #     # GOOGLE_APPLICATION_CREDENTIALS: '/app/credentials.json' # Path to service account key
-
-  #     # Option 3: Azure Document Intelligence
-  #     # OCR_PROVIDER: 'azure'              # Use Azure Document Intelligence
-  #     # AZURE_DOCAI_ENDPOINT: 'your-endpoint' # Your Azure endpoint URL
-  #     # AZURE_DOCAI_KEY: 'your-key'        # Your Azure API key
-  #     # AZURE_DOCAI_MODEL_ID: 'prebuilt-read' # Optional, defaults to prebuilt-read
-  #     # AZURE_DOCAI_TIMEOUT_SECONDS: '120'  # Optional, defaults to 120 seconds
-  #     # AZURE_DOCAI_OUTPUT_CONTENT_FORMAT: 'text' # Optional, defaults to 'text', other valid option is 'markdown'
-  #     # 'markdown' requires the 'prebuilt-layout' model
-
-  #     # Enhanced OCR Features
-  #     CREATE_LOCAL_HOCR: "false" # Optional, save hOCR files locally
-  #     LOCAL_HOCR_PATH: "/app/hocr" # Optional, path for hOCR files
-  #     CREATE_LOCAL_PDF: "false" # Optional, save enhanced PDFs locally
-  #     LOCAL_PDF_PATH: "/app/pdf" # Optional, path for PDF files
-  #     PDF_UPLOAD: "false" # Optional, upload enhanced PDFs to paperless-ngx
-  #     PDF_REPLACE: "false" # Optional and DANGEROUS, delete original after upload
-  #     PDF_COPY_METADATA: "true" # Optional, copy metadata from original document
-  #     PDF_OCR_TAGGING: "true" # Optional, add tag to processed documents
-  #     PDF_OCR_COMPLETE_TAG: "paperless-gpt-ocr-complete" # Optional, tag name
-
-  #     # Option 4: Docling Server
-  #     # OCR_PROVIDER: 'docling'              # Use a Docling server
-  #     # DOCLING_URL: 'http://your-docling-server:port' # URL of your Docling instance
-  #     # DOCLING_IMAGE_EXPORT_MODE: "placeholder" # Optional, defaults to "embedded"
-  #     # DOCLING_OCR_PIPELINE: "standard" # Optional, defaults to "vlm"
-  #     # DOCLING_OCR_ENGINE: "easyocr" # Optional, defaults to "easyocr" (only used when `DOCLING_OCR_PIPELINE is set to 'standard')
-
-
-  #     AUTO_OCR_TAG: "paperless-gpt-ocr-auto" # Optional, default: paperless-gpt-ocr-auto
-  #     OCR_LIMIT_PAGES: "5" # Optional, default: 5. Set to 0 for no limit.
-  #     LOG_LEVEL: "info" # Optional: debug, warn, error
-  #   volumes:
-  #     - /mnt/data/paperless/prompts:/app/prompts # Mount the prompts directory
+  #     PUID: 1000
+  #     PGID: 1000
+  #     PAPERLESS_AI_PORT: 3000
+  #     RAG_SERVICE_URL: http://webserver:8000
+  #     RAG_SERVICE_ENABLED: true
   #   ports:
-  #     - "8080:8080"
+  #     - "3000:3000"
+  #   volumes:
+  #     - paperless-ai_data:/app/data
   #   depends_on:
-  #     - paperless-ngx
+  #     - webserver
 
 volumes:
   data:
   media:
   pgdata:
   redisdata:
+  paperless-ai_data:
