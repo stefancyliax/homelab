@@ -2,7 +2,7 @@
 
 This document outlines the setup and provisioning of the dedicated AI/GPU workstation. This node is a physical machine (not a Proxmox VM) and is not always online to save power.
 
-**Current status:** 🔲 Not yet provisioned.
+**Current status:** 🚧 Config defined, not yet provisioned.
 
 ## Hardware
 
@@ -16,25 +16,32 @@ This document outlines the setup and provisioning of the dedicated AI/GPU workst
 
 ### Nvidia Drivers
 
-Proprietary Nvidia drivers must be declared in the NixOS config (`nodes/gpu-worker/configuration.nix`) to enable CUDA and Tensor core utilization:
+Proprietary Nvidia drivers are declared in `nodes/gpu-worker/configuration.nix`:
 
-- Add `nvidia` to `services.xserver.videoDrivers`.
-- Enable `hardware.nvidia` settings (`modesetting`, `open = false`, etc.).
+- `services.xserver.videoDrivers = [ "nvidia" ]`
+- `hardware.nvidia.open = false` (proprietary for full CUDA/Tensor support)
+- `hardware.nvidia.modesetting.enable = true`
+- `hardware.graphics.enable = true` for GPU acceleration
 - Verify with `nvidia-smi` after deployment.
 
 ### Container Toolkit
 
-The Docker engine must be configured with `nvidia-container-toolkit` passthrough so that containerized AI workloads can access the GPU natively.
+The Docker engine is configured with `nvidia-container-toolkit` passthrough (`hardware.nvidia-container-toolkit.enable = true`) so containerized AI workloads can access the GPU natively.
 
 ### Desktop Environment
 
 This node doubles as a daily workstation. A desktop environment needs to be selected and provisioned via NixOS (e.g., KDE Plasma, GNOME, or Hyprland).
 
+**Status:** 🔲 Not yet configured — CLI-only for now.
+
 ## Application Stack
 
 ### LLM Backend (Ollama)
 
-Provides a backend server for downloading and running Large Language Models locally. Can be deployed natively via Nix packages or as a containerized stack (e.g., Ollama + Open-WebUI).
+Ollama runs as a native NixOS service with CUDA acceleration enabled (`services.ollama.acceleration = "cuda"`). The package is sourced from `nixpkgs-unstable` for the latest version.
+
+- Listens on `0.0.0.0:11434` (firewall opened)
+- Open-WebUI on the Services Node can connect to this instance as well
 
 **Integration goal:** Connect the local AI models to services running on the main homelab (e.g., Paperless-AI on the Services Node).
 
@@ -44,18 +51,28 @@ Since this node is also a workstation, the following should be provisioned:
 
 **User Management:** 2 active user accounts.
 
-**Applications:**
+**Applications (require desktop environment):**
 - AI & Creative: ComfyUI, Bambu Studio, LLM Studio
 - General: Chrome, Spotify, Obsidian, Bitwarden, Signal, Steam
 
-**CLI & Development:**
-- `git`, `gh` (GitHub CLI)
-- `docker`, `docker-compose`, `docker-buildx`
-- `neovim`, `ghostty` (terminal emulator)
-- `yazi`, `fzf`, `tree`
-- `walker`
-- `gemini-cli`
-- `lazyssh`, `lazydocker`, `lazyjournal`
+**CLI & Development (✅ configured):**
+
+| Tool | Source | Notes |
+|---|---|---|
+| `git`, `gh` | `configuration.nix` | Version control & GitHub CLI |
+| `docker`, `docker-compose` | `common.nix` | Container runtime |
+| `docker-buildx` | `configuration.nix` | Multi-platform builds |
+| `neovim` | `configuration.nix` | Editor |
+| `fzf`, `yazi`, `tree` | `common.nix` / `configuration.nix` | File navigation |
+| `lazydocker` | `configuration.nix` | Docker TUI |
+| `nvtop` | `configuration.nix` | GPU monitoring TUI |
+| `pciutils` | `configuration.nix` | `lspci` for hardware diagnostics |
+
+**Not yet packaged in nixpkgs / require further setup:**
+- `ghostty` — terminal emulator (may need overlay or custom derivation)
+- `walker` — application launcher (needs desktop environment)
+- `gemini-cli` — Google AI CLI
+- `lazyssh`, `lazyjournal` — newer lazy* tools, check nixpkgs availability
 
 ## Wake-on-LAN
 

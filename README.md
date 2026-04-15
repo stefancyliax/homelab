@@ -27,7 +27,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Cloud Backups (ZeroByte) | 🚧 Deployed, not configured | [backup.md](docs/backup.md) |
 | Local Backups (PBS) | 🔲 Planned | [backup.md](docs/backup.md) |
 | Monitoring (Prometheus/Grafana/InfluxDB) | ✅ Done | [monitoring.md](docs/monitoring.md) |
-| GPU Worker / AI Stack | 🔲 Planned | [gpu-worker.md](docs/gpu-worker.md) |
+| GPU Worker / AI Stack | 🚧 Config defined, not yet provisioned | [gpu-worker.md](docs/gpu-worker.md) |
 | Ollama Node (LLM Inference) | 🚧 Config defined, VM provisioned | — |
 | Services (Paperless, Jellyfin, etc.) | 🔲 Planned | [services.md](docs/services.md) |
 | Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |

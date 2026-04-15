@@ -11,4 +11,54 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "gpu-worker";
+
+  # ---------------------------------------------------------------------------
+  # Nvidia GPU (proprietary drivers)
+  # ---------------------------------------------------------------------------
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    open = false;                  # Use proprietary driver for full CUDA/Tensor support
+    nvidiaSettings = true;         # Enable nvidia-settings GUI
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
+
+  # Enable OpenGL / GPU acceleration
+  hardware.graphics.enable = true;
+
+  # ---------------------------------------------------------------------------
+  # Docker + Nvidia Container Toolkit (GPU passthrough for containers)
+  # ---------------------------------------------------------------------------
+  hardware.nvidia-container-toolkit.enable = true;
+
+  # ---------------------------------------------------------------------------
+  # Ollama — uses shared modules/ollama.nix, just enable CUDA here
+  # ---------------------------------------------------------------------------
+  services.ollama.acceleration = "cuda";
+
+  # ---------------------------------------------------------------------------
+  # CLI & Development Tools
+  # (fzf, yazi, docker-compose, curl, wget, vim already in common.nix)
+  # ---------------------------------------------------------------------------
+  environment.systemPackages = with pkgs; [
+    # Dev & Git
+    git
+    gh
+    neovim
+
+    # Container tooling
+    docker-buildx
+
+    # CLI utilities
+    tree
+    lazydocker
+
+    # GPU diagnostics
+    pciutils         # lspci
+    nvtopPackages.nvidia
+  ];
+
+  # Allow unfree packages (required for Nvidia drivers)
+  nixpkgs.config.allowUnfree = true;
 }
