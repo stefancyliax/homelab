@@ -59,4 +59,25 @@
     enable = true;
     openFirewall = true;
   };
+
+  # Paperless-ngx automated backup exporter
+  systemd.services.paperless-exporter = {
+    description = "Export Paperless-ngx database and media";
+    script = ''
+      ${pkgs.docker}/bin/docker exec paperless-webserver document_exporter /usr/src/paperless/export --delete
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+    };
+  };
+
+  systemd.timers.paperless-exporter = {
+    description = "Run Paperless-ngx exporter daily at 02:00";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "*-*-* 02:00:00";
+      Persistent = true;
+    };
+  };
 }
