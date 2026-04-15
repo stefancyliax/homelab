@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, pkgs-unstable, ... }:
 
 {
   imports = [
@@ -33,9 +33,10 @@
   hardware.nvidia-container-toolkit.enable = true;
 
   # ---------------------------------------------------------------------------
-  # Ollama — uses shared modules/ollama.nix, just enable CUDA here
+  # Ollama — use CUDA variant for GPU acceleration
   # ---------------------------------------------------------------------------
   services.ollama.acceleration = "cuda";
+  services.ollama.package = pkgs-unstable.ollama-cuda;
 
   # ---------------------------------------------------------------------------
   # CLI & Development Tools
