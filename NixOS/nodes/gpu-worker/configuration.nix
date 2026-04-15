@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-unstable, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [
@@ -31,12 +31,6 @@
   # Docker + Nvidia Container Toolkit (GPU passthrough for containers)
   # ---------------------------------------------------------------------------
   hardware.nvidia-container-toolkit.enable = true;
-
-  # ---------------------------------------------------------------------------
-  # Ollama — use CUDA variant for GPU acceleration
-  # ---------------------------------------------------------------------------
-  services.ollama.acceleration = "cuda";
-  services.ollama.package = pkgs-unstable.ollama-cuda;
 
   # ---------------------------------------------------------------------------
   # CLI & Development Tools
