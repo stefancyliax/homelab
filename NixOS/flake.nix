@@ -3,13 +3,16 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
     comin.url = "github:nlewo/comin";
   };
 
-  outputs = { self, nixpkgs, agenix, comin }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, agenix, comin }:
   let
+    # Import unstable nixpkgs for packages that need bleeding-edge versions
+    pkgs-unstable = import nixpkgs-unstable { system = "x86_64-linux"; };
     # Reusable baseline for all cluster nodes
     baseModules = [
       { system.configurationRevision = self.rev or self.dirtyRev or null; }
@@ -55,6 +58,7 @@
 
       "ollama-node" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit pkgs-unstable; };
         modules = baseModules ++ [
           ./nodes/ollama-node/configuration.nix
           ./modules/ollama.nix
