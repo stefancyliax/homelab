@@ -26,7 +26,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Dashboard (Homepage) | ✅ Done | [architecture.md](docs/architecture.md) |
 | Cloud Backups (ZeroByte) | 🚧 Deployed, not configured | [backup.md](docs/backup.md) |
 | Local Backups (PBS) | 🔲 Planned | [backup.md](docs/backup.md) |
-| Monitoring (Prometheus/Grafana/InfluxDB) | 🔲 Planned | [monitoring.md](docs/monitoring.md) |
+| Monitoring (Prometheus/Grafana/InfluxDB) | ✅ Done | [monitoring.md](docs/monitoring.md) |
 | GPU Worker / AI Stack | 🔲 Planned | [gpu-worker.md](docs/gpu-worker.md) |
 | Services (Paperless, Jellyfin, etc.) | 🔲 Planned | [services.md](docs/services.md) |
 | Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |
@@ -47,19 +47,15 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **NAS OS Choice:** Decide on the operating system for the NAS (ZimaOS, Unraid, or managed NixOS).
 - [ ] **Single Sign-On (SSO):** Evaluate SSO solutions (Authentik, Authelia, Keycloak) for centralized login across services.
 - [ ] **Cloud Storage Choice:** Research Nextcloud vs. Seafile for self-hosted file sync.
+- [ ] **Notifications:** Research the best way to handle cluster-wide push notifications (e.g., NTFY, Gotify, or Home Assistant) for backup reports, Grafana alerts, and container failures.
 
 ### Implementation
 
-- [ ] **Comin Migration:** Migrate all nodes over to Comin.
 - [ ] **Home Assistant Migration:** Migrate configuration and data from the legacy HA instance to the new HAOS VM.
 - [ ] **Storage Configuration:** Finalize and document the specific roles and mount points for the 3 Proxmox SSDs.
 - [ ] **GPU Worker Setup:** Provision the node with NixOS, Nvidia drivers, and AI tooling. See [gpu-worker.md](docs/gpu-worker.md).
 - [ ] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.
-- [ ] **Monitoring Stack:** Deploy Prometheus, Grafana, and InfluxDB to the `infra-stack`. See [monitoring.md](docs/monitoring.md).
-    - [ ] Configure Prometheus scrapers for Comin and Docker daemon metrics.
-    - [ ] Enable Node Exporters on all NixOS VMs.
-    - [ ] Set up Grafana dashboards for cluster-wide node and container health.
 - [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, n8n, IT-Tools, etc.). See [services.md](docs/services.md).
 - [ ] **Tududi Deployment:** Write the Docker Compose definitions to deploy the [Tududi](https://github.com/chrisvel/tududi) task management service to the `services-stack`.
 - [ ] **Dashboard APIs:** Connect Homepage widgets to live data sources:
@@ -70,6 +66,8 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 
 ### Completed
 
+- [x] **Monitoring Stack:** Deployed Prometheus, Grafana, and InfluxDB with node exporters and fully declarative dashboards!
+- [x] **Comin Migration:** Natively implemented Comin across all nodes, removing all traces of Colmena.
 - [x] **Dockhand & Hawser Migration:** Migrated away from Komodo to natively defined Dockhand and Hawser nodes via NixOS.
 - [x] **GitHub Actions for Deployment:** Workflows trigger internal webhooks when `infra-stack` or `services-stack` are updated.
 - [x] **CPU Host Mode Migration:** All Proxmox VMs migrated to CPU `host` mode.
@@ -109,7 +107,6 @@ homelab/
 │   ├── home-assistant.md   # Smart home ecosystem
 │   └── monitoring.md       # Prometheus, Grafana, InfluxDB
 └── .github/workflows/      # CI/CD pipelines
-    ├── nixos-apply.yml
     ├── dockhand-infra.yml
     └── dockhand-services.yml
 ```

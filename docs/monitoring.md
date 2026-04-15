@@ -2,7 +2,7 @@
 
 This document describes the monitoring and observability strategy for the homelab — how metrics are collected, stored, and visualized.
 
-**Current status:** 🔲 Planned — not yet deployed.
+**Current status:** ✅ Done — Fully deployed via Docker Compose with declarative provisioning.
 
 ## Overview
 
