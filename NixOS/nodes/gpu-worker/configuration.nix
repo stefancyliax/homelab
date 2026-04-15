@@ -19,7 +19,7 @@
 
   hardware.nvidia = {
     modesetting.enable = true;
-    open = false;                  # Use proprietary driver for full CUDA/Tensor support
+    open = true;                   # Required for RTX 5060 Ti (Blackwell/GB206)
     nvidiaSettings = true;         # Enable nvidia-settings GUI
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
