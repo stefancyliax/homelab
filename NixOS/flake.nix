@@ -12,7 +12,10 @@
   outputs = { self, nixpkgs, nixpkgs-unstable, agenix, comin }:
   let
     # Import unstable nixpkgs for packages that need bleeding-edge versions
-    pkgs-unstable = import nixpkgs-unstable { system = "x86_64-linux"; };
+    pkgs-unstable = import nixpkgs-unstable {
+      system = "x86_64-linux";
+      config.allowUnfree = true;
+    };
     # Reusable baseline for all cluster nodes
     baseModules = [
       { system.configurationRevision = self.rev or self.dirtyRev or null; }
