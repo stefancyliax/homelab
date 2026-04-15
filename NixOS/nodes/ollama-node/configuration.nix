@@ -11,9 +11,5 @@
   boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.useOSProber = true;
 
-  networking.hostName = "comin-test";
-
-  environment.systemPackages = with pkgs; [
-    yazi
-  ];
+  networking.hostName = "ollama-node";
 }

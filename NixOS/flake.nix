@@ -44,17 +44,20 @@
         ];
       };
 
-      "comin-test" = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = baseModules ++ [
-          ./nodes/comin-test/configuration.nix
-        ];
-      };
       
       "gpu-worker" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = baseModules ++ [
           ./nodes/gpu-worker/configuration.nix 
+          ./modules/hawser.nix
+        ];
+      };
+
+      "ollama-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/ollama-node/configuration.nix
+          ./modules/ollama.nix
           ./modules/hawser.nix
         ];
       };
