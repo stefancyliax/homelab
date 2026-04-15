@@ -80,12 +80,13 @@ Provides network access between Tailscale and internal subnets. May eventually b
 
 #### Ollama Node (NixOS VM)
 
-Dedicated LLM inference node running Ollama natively via the NixOS `services.ollama` module, with Open-WebUI for browser-based interaction. IP: `10.1.23.17`.
+Dedicated LLM inference node running Ollama natively via the NixOS `services.ollama` module. IP: `10.1.23.17`.
 
 | Service | Type | Status |
 |---|---|---|
 | [Ollama](https://ollama.com/) | Native NixOS service | 🚧 Config defined |
-| [Open-WebUI](https://github.com/open-webui/open-webui) | Native NixOS OCI container | 🚧 Config defined |
+
+[Open-WebUI](https://github.com/open-webui/open-webui) runs on the Services Node (via Docker Compose) and connects to this node's Ollama API.
 
 ## Deployment Strategy
 

@@ -29,5 +29,17 @@ services:
       # TODO: Mount the host directories you actually want backed up as read-only below.
       - /mnt/data:/mnt/data:ro
 
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      OLLAMA_BASE_URL: http://10.1.23.17:11434
+    volumes:
+      - open-webui_data:/app/backend/data
+
 volumes:
   zerobyte_data:
+  open-webui_data:
