@@ -12,4 +12,8 @@
   boot.loader.grub.useOSProber = true;
 
   networking.hostName = "ollama-node";
+
+  environment.systemPackages = with pkgs; [
+    btop
+  ];
 }

@@ -48,6 +48,7 @@
     # CLI utilities
     tree
     lazydocker
+    btop
 
     # GPU diagnostics
     pciutils         # lspci
