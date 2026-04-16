@@ -13,5 +13,12 @@
 
   networking.hostName = "infra-node";
 
+  # Enable Tailscale
+  services.tailscale.enable = true;
 
+  # Enable IP forwarding for Tailscale subnet router
+  boot.kernel.sysctl = {
+    "net.ipv4.ip_forward" = 1;
+    "net.ipv6.conf.all.forwarding" = 1;
+  };
 }

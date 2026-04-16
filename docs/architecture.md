@@ -44,6 +44,20 @@ Will serve as local backup target and media storage.
 | Public Exposure | **None** — nothing is forwarded from the WAN router |
 | SSL Certificates | TBD — researching Tailscale's built-in SSL capabilities |
 
+### Tailscale Configuration
+
+The `infra-node` acts as a Tailscale Subnet Router, allowing remote devices to access internal subnets without opening WAN ports.
+
+**Manual Setup Steps:**
+1. **NixOS Configuration:** IP forwarding and `services.tailscale.enable = true` are defined declaratively in the `infra-node` flake.
+2. **Apply Configuration:** Commit and push so Comin deploys the configuration onto the node.
+3. **Advertise Routes:** SSH into the `infra-node` and run:
+   ```bash
+   sudo tailscale up --advertise-routes=192.168.1.0/24
+   ```
+   *(Update the IP range to match your local LAN subnet)*
+4. **Approve in Dashboard:** Go to the Tailscale admin console, locate `infra-node`, select "Edit route settings", and toggle the subnet routes switch to "on".
+
 ## Virtual Machine Landscape
 
 All VMs run on the single Proxmox host. Each VM is isolated to separate concerns.
@@ -52,12 +66,13 @@ All VMs run on the single Proxmox host. Each VM is isolated to separate concerns
 
 #### Infrastructure Node (NixOS VM)
 
-Hosts foundational services that must remain operational even if the application layer fails.
+Hosts foundational services that must remain operational even if the application layer fails. It also acts as the **Tailscale Subnet Router** to provide secure remote access to the homelab.
 
 | Service | Type | Status |
 |---|---|---|
 | [Dockhand](https://github.com/nicotsx/dockhand) | Native NixOS OCI container | ✅ Running |
 | [Homepage](https://gethomepage.dev/) | Docker Compose (`infra-stack`) | ✅ Running |
+| Tailscale Subnet Router | Native NixOS Service | ✅ Running |
 | Prometheus / Grafana / InfluxDB | Docker Compose (`infra-stack`) | 🔲 Planned |
 
 Dockhand is deployed natively via NixOS modules (`virtualisation.oci-containers`) to ensure it stays operational independently of Docker Compose. It orchestrates application deployments across the cluster by receiving webhooks from the CI pipeline.
@@ -73,10 +88,6 @@ Executes GitHub Actions pipelines. When code is pushed to `main`, it triggers `c
 #### HAOS (VM)
 
 Dedicated Home Assistant Operating System instance for smart home control. Attached to the IoT VLAN. See [home-assistant.md](home-assistant.md).
-
-#### Tailscale Subnet Router (VM)
-
-Provides network access between Tailscale and internal subnets. May eventually be merged into the Infrastructure Node.
 
 #### Ollama Node (NixOS VM)
 

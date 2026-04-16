@@ -13,6 +13,9 @@
 
   networking.hostName = "services-node";
 
+  # Enable Tailscale
+  services.tailscale.enable = true;
+
   fileSystems."/mnt/data" = {
     device = "/dev/disk/by-uuid/6e1823cc-4e89-4901-ad18-546f28cefc37";
     fsType = "ext4";
