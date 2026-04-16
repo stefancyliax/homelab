@@ -97,9 +97,24 @@ services:
       - NODE_ENV=production
       - PUBLIC_URL=http://10.1.23.224:3001
 
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    ports:
+      - "8096:8096"
+    volumes:
+      - jellyfin_config:/config
+      - jellyfin_cache:/cache
+      - /mnt/data:/media
+    devices:
+      - /dev/dri:/dev/dri
+
 volumes:
   zerobyte_data:
   open-webui_data:
   n8n_data:
   nocodb_data:
   grimoire_data:
+  jellyfin_config:
+  jellyfin_cache:

@@ -16,6 +16,16 @@
   # Enable Tailscale
   services.tailscale.enable = true;
 
+  # Hardware Graphics Acceleration (for Intel iGPU passthrough)
+  boot.kernelModules = [ "i915" ];
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+      intel-vaapi-driver
+    ];
+  };
+
   fileSystems."/mnt/data" = {
     device = "/dev/disk/by-uuid/6e1823cc-4e89-4901-ad18-546f28cefc37";
     fsType = "ext4";

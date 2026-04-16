@@ -12,7 +12,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | 🚧 Deployed, not configured |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | 🚧 Needs Testing |
 | [IT-Tools](https://github.com/CorentinTh/it-tools) | Docker Compose (`services-stack`) | 🔲 Planned |
-| [Jellyfin](https://jellyfin.org/) | NAS | 🔲 Planned |
+| [Jellyfin](https://jellyfin.org/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Frigate](https://frigate.video/) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [n8n](https://n8n.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed |

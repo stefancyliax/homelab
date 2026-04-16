@@ -29,7 +29,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Monitoring (Prometheus/Grafana/InfluxDB) | ✅ Done | [monitoring.md](docs/monitoring.md) |
 | GPU Worker / AI Stack | 🚧 Config defined, not yet provisioned | [gpu-worker.md](docs/gpu-worker.md) |
 | Ollama Node (LLM Inference) | 🚧 Config defined, VM provisioned | — |
-| Services (Paperless, Jellyfin, etc.) | 🔲 Planned | [services.md](docs/services.md) |
+| Services (Paperless, Jellyfin, etc.) | 🚧 In Progress | [services.md](docs/services.md) |
 | Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |
 | Ingress & SSL | 🔲 Planned | — |
 | Single Sign-On (SSO) | 🔲 Planned | — |
