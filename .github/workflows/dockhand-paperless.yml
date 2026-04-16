@@ -1,18 +1,18 @@
-name: Dockhand - Services Stack
+name: Dockhand - Paperless Stack
 on:
   push:
     branches: [ main ]
     paths:
-      - 'services-stack/docker-compose.yml'
+      - 'services-stack/paperless.compose.yml'
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: [ self-hosted, nixos ]
     steps:
-      - name: Trigger Dockhand Webhook for general services stack
+      - name: Trigger Dockhand Webhook for paperless stack
         # Uses curl directly from the self-hosted runner to ping the internal IP
         run: |
-          curl -sf "http://10.1.23.184:3000/api/git/stacks/2/webhook?secret=${{ secrets.SERVICES_STACK_WEBHOOK }}" \
+          curl -sf "http://10.1.23.184:3000/api/git/stacks/3/webhook?secret=${{ secrets.SERVICES_STACK_WEBHOOK }}" \
             -H "Content-Type: application/json"
 

@@ -57,22 +57,21 @@ services:
     image: docker.io/apache/tika:latest
     restart: unless-stopped
 
-  # paperless-ai:
-  #   image: clusterzx/paperless-ai:latest
-  #   container_name: paperless-ai
-  #   restart: unless-stopped
-  #   environment:
-  #     PUID: 1000
-  #     PGID: 1000
-  #     PAPERLESS_AI_PORT: 3000
-  #     RAG_SERVICE_URL: http://webserver:8000
-  #     RAG_SERVICE_ENABLED: true
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - paperless-ai_data:/app/data
-  #   depends_on:
-  #     - webserver
+  paperless-ai:
+    image: clusterzx/paperless-ai:latest
+    container_name: paperless-ai
+    restart: unless-stopped
+    environment:
+      PUID: 1000
+      PGID: 1000
+      RAG_SERVICE_URL: http://webserver:8000
+      RAG_SERVICE_ENABLED: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - paperless-ai_data:/app/data
+    depends_on:
+      - webserver
 
 volumes:
   data:
