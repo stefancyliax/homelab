@@ -40,6 +40,24 @@
         icon: nginx
         description: Services Test Server
 
+- Applications:
+    - Open-WebUI:
+        href: http://10.1.23.224:3000
+        icon: open-webui
+        description: LLM Chat Interface
+    - n8n:
+        href: http://10.1.23.224:5678
+        icon: n8n
+        description: Workflow Automation
+    - NocoDB:
+        href: http://10.1.23.224:8080
+        icon: nocodb
+        description: Database Platform
+    - Paperless-ngx:
+        href: http://10.1.23.224:8000
+        icon: paperless-ngx
+        description: Document Management
+
 - Monitoring:
     - Grafana old:
         href: http://10.1.23.5:3000

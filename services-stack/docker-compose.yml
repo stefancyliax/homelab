@@ -40,6 +40,32 @@ services:
     volumes:
       - open-webui_data:/app/backend/data
 
+  n8n:
+    image: docker.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_HOST: 0.0.0.0
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://10.1.23.224:5678/
+      GENERIC_TIMEZONE: Europe/Berlin
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  nocodb:
+    image: nocodb/nocodb:latest
+    container_name: nocodb
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - nocodb_data:/usr/app/data
+
 volumes:
   zerobyte_data:
   open-webui_data:
+  n8n_data:
+  nocodb_data:

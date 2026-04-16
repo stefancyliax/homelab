@@ -14,11 +14,11 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [IT-Tools](https://github.com/CorentinTh/it-tools) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Jellyfin](https://jellyfin.org/) | NAS | 🔲 Planned |
 | [Frigate](https://frigate.video/) | Docker Compose (`services-stack`) | 🔲 Planned |
-| [n8n](https://n8n.io/) | Docker Compose (`services-stack`) | 🔲 Planned |
-| [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🔲 Planned |
+| [n8n](https://n8n.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Grimoire](https://github.com/goniszewski/grimoire) | Docker Compose (`services-stack`) | 🔲 Planned |
-| [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🔲 Planned |
+| [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [ESPHome](https://esphome.io/) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Tududi](https://github.com/chrisvel/tududi) | Docker Compose (`services-stack`) | 🔲 Planned |
 | Cloud Storage (Nextcloud or Seafile) | Docker Compose (`services-stack`) | 🔲 Planned |
