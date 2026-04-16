@@ -67,7 +67,7 @@ services:
       RAG_SERVICE_URL: http://webserver:8000
       RAG_SERVICE_ENABLED: true
     ports:
-      - "3000:3000"
+      - "8001:3000"
     volumes:
       - paperless-ai_data:/app/data
     depends_on:
