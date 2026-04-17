@@ -87,7 +87,7 @@ services:
       - NODE_ENV=production
       - PUBLIC_URL=http://10.1.23.224:3001
 
-faster-whisper:
+  faster-whisper:
     image: lscr.io/linuxserver/faster-whisper:latest
     container_name: faster-whisper
     environment:
@@ -97,7 +97,7 @@ faster-whisper:
       - WHISPER_LANG=auto #optional
       - WHISPER_MODEL=auto #optional
     volumes:
-      - /mnt/data/faster-whisper:/config
+      - faster-whisper_data:/config
     ports:
       - 10300:10300
     restart: unless-stopped
