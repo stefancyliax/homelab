@@ -93,6 +93,9 @@ services:
     volumes:
       - hf-hub-cache:/home/ubuntu/.cache/huggingface/hub
     restart: unless-stopped
+    environment:
+      - TRANSCRIPTION_MODEL_ID=Systran/faster-distil-whisper-base
+      - SPEACHES_BASE_URL=http://10.1.23.224:8003
     ports:
       - 8003:8000
     healthcheck:
