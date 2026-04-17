@@ -30,15 +30,6 @@
         icon: esphome
         description: Microcontroller Firmware Management
 
-- Web Services:
-    - Infra Webserver:
-        href: http://10.1.23.184:8004
-        icon: nginx
-        description: Infra Test Server
-    - Services Webserver:
-        href: http://10.1.23.224:8001
-        icon: nginx
-        description: Services Test Server
 
 - Applications:
     - Open-WebUI:
@@ -57,6 +48,24 @@
         href: http://10.1.23.224:8000
         icon: paperless-ngx
         description: Document Management
+    - Paperless-AI:
+        href: http://10.1.23.224:8001
+        icon: paperless-ngx
+        description: AI Document Classifier
+    - Grimoire:
+        href: http://10.1.23.224:5173
+        icon: grimoire
+        description: Bookmark Manager
+    - NextExplorer:
+        href: http://10.1.23.224:3001
+        icon: files
+        description: File Explorer
+
+- AI & ML:
+    - Ollama:
+        href: http://10.1.23.17:11434
+        icon: ollama
+        description: LLM Inference Server
 
 - Monitoring:
     - Grafana old:

@@ -17,11 +17,14 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [n8n](https://n8n.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF) | Docker Compose (`services-stack`) | 🔲 Planned |
-| [Grimoire](https://github.com/goniszewski/grimoire) | Docker Compose (`services-stack`) | 🔲 Planned |
+| [Grimoire](https://github.com/goniszewski/grimoire) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [ESPHome](https://esphome.io/) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Tududi](https://github.com/chrisvel/tududi) | Docker Compose (`services-stack`) | 🔲 Planned |
 | Cloud Storage (Nextcloud or Seafile) | Docker Compose (`services-stack`) | 🔲 Planned |
+| [Paperless-AI](https://github.com/clusterzx/paperless-ai) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| [Ollama](https://ollama.com/) | Dedicated NixOS VM (`ollama-node`) | 🚧 Deployed |
 
 See [home-assistant.md](home-assistant.md) for the full Home Assistant ecosystem details.
 

@@ -1,13 +1,7 @@
 ## Services Stack
 
 services:
-  webserver:
-    image: nginx
-    container_name: webserver
-    ports:
-      - 8001:80
-    restart: unless-stopped
-  
+
   zerobyte:
     image: ghcr.io/nicotsx/zerobyte:latest
     container_name: zerobyte

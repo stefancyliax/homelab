@@ -1,14 +1,6 @@
 ## Infra Stack
 
 services:
-  webserver:
-    image: nginx
-    container_name: webserver
-    ports:
-      - 8004:80
-    restart: unless-stopped
-  
-
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
