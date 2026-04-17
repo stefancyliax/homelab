@@ -87,20 +87,20 @@ services:
       - NODE_ENV=production
       - PUBLIC_URL=http://10.1.23.224:3001
 
-  faster-whisper:
-    image: lscr.io/linuxserver/faster-whisper:latest
-    container_name: faster-whisper
-    environment:
-      - PUID=1000
-      - PGID=100
-      - TZ=Etc/UTC
-      - WHISPER_LANG=auto #optional
-      - WHISPER_MODEL=auto #optional
+  speaches:
+    image: ghcr.io/speaches-ai/speaches:latest-cpu
+    container_name: speaches
     volumes:
-      - faster-whisper_data:/config
-    ports:
-      - 10300:10300
+      - hf-hub-cache:/home/ubuntu/.cache/huggingface/hub
     restart: unless-stopped
+    ports:
+      - 8003:8000
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://0.0.0.0:8000/health"] # TODO: won't work if a user changes the port
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
 volumes:
   zerobyte_data:
@@ -108,4 +108,4 @@ volumes:
   n8n_data:
   nocodb_data:
   grimoire_data:
-  faster-whisper_data:
+  hf-hub-cache:
