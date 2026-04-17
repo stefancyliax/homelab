@@ -91,9 +91,21 @@ services:
       - NODE_ENV=production
       - PUBLIC_URL=http://10.1.23.224:3001
 
+  faster-whisper:
+    image: fedirz/faster-whisper-server:latest
+    container_name: faster-whisper
+    restart: unless-stopped
+    ports:
+      - "8300:8000"
+    environment:
+      WHISPER__MODEL: Systran/faster-distil-whisper-base
+    volumes:
+      - faster-whisper_data:/root/.cache/huggingface
+
 volumes:
   zerobyte_data:
   open-webui_data:
   n8n_data:
   nocodb_data:
   grimoire_data:
+  faster-whisper_data:

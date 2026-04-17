@@ -25,6 +25,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Paperless-AI](https://github.com/clusterzx/paperless-ai) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Ollama](https://ollama.com/) | Dedicated NixOS VM (`ollama-node`) | 🚧 Deployed |
+| [Faster Whisper](https://github.com/fedirz/faster-whisper-server) | Docker Compose (`services-stack`) | 🚧 Deployed |
 
 See [home-assistant.md](home-assistant.md) for the full Home Assistant ecosystem details.
 

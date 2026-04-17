@@ -66,6 +66,10 @@
         href: http://10.1.23.17:11434
         icon: ollama
         description: LLM Inference Server
+    - Faster Whisper:
+        href: http://10.1.23.224:8300
+        icon: whisper
+        description: Speech-to-Text API
 
 - Monitoring:
     - Grafana old:
