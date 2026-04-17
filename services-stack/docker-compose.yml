@@ -87,16 +87,20 @@ services:
       - NODE_ENV=production
       - PUBLIC_URL=http://10.1.23.224:3001
 
-  faster-whisper:
-    image: linuxserver/faster-whisper:latest
+faster-whisper:
+    image: lscr.io/linuxserver/faster-whisper:latest
     container_name: faster-whisper
-    restart: unless-stopped
-    ports:
-      - "8300:8000"
     environment:
-      WHISPER__MODEL: Systran/faster-distil-whisper-base
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - WHISPER_LANG=auto #optional
+      - WHISPER_MODEL=auto #optional
     volumes:
-      - faster-whisper_data:/root/.cache/huggingface
+      - /mnt/data/faster-whisper:/config
+    ports:
+      - 10300:10300
+    restart: unless-stopped
 
 volumes:
   zerobyte_data:
