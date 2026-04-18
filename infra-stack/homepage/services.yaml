@@ -52,10 +52,10 @@
         href: http://10.1.23.224:8001
         icon: paperless-ngx
         description: AI Document Classifier
-    - Grimoire:
-        href: http://10.1.23.224:5173
-        icon: grimoire
-        description: Bookmark Manager
+    - Grimmory:
+        href: http://10.1.23.224:6060
+        icon: booklore
+        description: Digital Library Manager
     - NextExplorer:
         href: http://10.1.23.224:3001
         icon: files
@@ -66,8 +66,8 @@
         href: http://10.1.23.17:11434
         icon: ollama
         description: LLM Inference Server
-    - Faster Whisper:
-        href: http://10.1.23.224:8300
+    - Speaches:
+        href: http://10.1.23.224:8003
         icon: whisper
         description: Speech-to-Text API
 

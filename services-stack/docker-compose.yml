@@ -59,19 +59,6 @@ services:
     volumes:
       - nocodb_data:/usr/app/data
 
-  grimoire:
-    image: goniszewski/grimoire:latest 
-    container_name: grimoire
-    restart: unless-stopped
-    environment:
-      - PORT=5173
-      - PUBLIC_HTTPS_ONLY=false
-      - PUBLIC_SIGNUP_DISABLED=false
-    volumes:
-      - grimoire_data:/app/data/
-    ports:
-      - "5173:5173"
-
   nextexplorer:
     image: nxzai/explorer:latest
     container_name: nextexplorer
@@ -107,10 +94,59 @@ services:
       retries: 3
       start_period: 5s
 
+  grimmory:
+    image: grimmory/grimmory:latest
+    container_name: grimmory
+    restart: unless-stopped
+    depends_on:
+      grimmory-db:
+        condition: service_healthy
+    ports:
+      - "6060:6060"
+    environment:
+      - USER_ID=1000
+      - GROUP_ID=100
+      - TZ=Europe/Berlin
+      - DATABASE_URL=jdbc:mariadb://grimmory-db:3306/grimmory
+      - DATABASE_USERNAME=grimmory
+      - DATABASE_PASSWORD=${GRIMMORY_DB_PASSWORD}
+      - DISK_TYPE=LOCAL
+    volumes:
+      - grimmory_data:/app/data
+      - /mnt/data/grimmory/books:/books
+      - /mnt/data/grimmory/bookdrop:/bookdrop
+    healthcheck:
+      test: wget -q -O - http://localhost:6060/api/v1/healthcheck
+      interval: 60s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+
+  grimmory-db:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: grimmory-db
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=Europe/Berlin
+      - MYSQL_ROOT_PASSWORD=${GRIMMORY_DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=grimmory
+      - MYSQL_USER=grimmory
+      - MYSQL_PASSWORD=${GRIMMORY_DB_PASSWORD}
+    volumes:
+      - grimmory_mariadb:/config
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 volumes:
   zerobyte_data:
   open-webui_data:
   n8n_data:
   nocodb_data:
-  grimoire_data:
   hf-hub-cache:
+  grimmory_data:
+  grimmory_mariadb:

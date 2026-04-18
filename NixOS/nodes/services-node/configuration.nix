@@ -54,6 +54,16 @@
         "force user" = "stefan";
         "force group" = "users";
       };
+      "grimmory-bookdrop" = {
+        "path" = "/mnt/data/grimmory/bookdrop";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "force user" = "stefan";
+        "force group" = "users";
+      };
     };
   };
 
