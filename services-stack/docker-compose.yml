@@ -82,11 +82,11 @@ services:
     restart: unless-stopped
     environment:
       - TRANSCRIPTION_MODEL_ID=Systran/faster-distil-whisper-base
-      - SPEACHES_BASE_URL=http://10.1.23.224:8003
+      - SPEACHES_BASE_URL=http://10.1.23.224:8000
       - CHAT_COMPLETION_BASE_URL=""
-      - SPEACHES_LOOPBACK_HOST_URL=http://127.0.0.1:8000
+      # - SPEACHES_LOOPBACK_HOST_URL=http://127.0.0.1:8000
     ports:
-      - 8003:8000
+      - 8000:8000
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://0.0.0.0:8000/health"] # TODO: won't work if a user changes the port
       interval: 30s

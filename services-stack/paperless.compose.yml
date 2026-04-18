@@ -15,9 +15,9 @@ services:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
       POSTGRES_PASSWORD: paperless
-  webserver:
+  paperless-ngx:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
-    container_name: paperless-webserver
+    container_name: paperless-ngx
     restart: unless-stopped
     depends_on:
       - db
@@ -25,7 +25,7 @@ services:
       - gotenberg
       - tika
     ports:
-      - "8000:8000"
+      - "8008:8000"
     volumes:
       - /mnt/data/paperless/data:/usr/src/paperless/data
       - /mnt/data/paperless/media:/usr/src/paperless/media
@@ -64,14 +64,14 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
-      RAG_SERVICE_URL: http://webserver:8000
+      RAG_SERVICE_URL: http://paperless-ngx:8008
       RAG_SERVICE_ENABLED: true
     ports:
       - "8001:3000"
     volumes:
       - paperless-ai_data:/app/data
     depends_on:
-      - webserver
+      - paperless-ngx
 
 volumes:
   data:

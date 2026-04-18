@@ -77,7 +77,7 @@
   systemd.services.paperless-exporter = {
     description = "Export Paperless-ngx database and media";
     script = ''
-      ${pkgs.docker}/bin/docker exec paperless-webserver document_exporter /usr/src/paperless/export --delete
+      ${pkgs.docker}/bin/docker exec paperless-ngx document_exporter /usr/src/paperless/export --delete
     '';
     serviceConfig = {
       Type = "oneshot";
