@@ -60,6 +60,10 @@
         href: http://10.1.23.224:3001
         icon: files
         description: File Explorer
+    - Kestra:
+        href: http://10.1.23.224:8082
+        icon: kestra
+        description: Workflow Orchestration
 
 - AI & ML:
     - Ollama:

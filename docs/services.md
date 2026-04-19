@@ -26,6 +26,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Ollama](https://ollama.com/) | Dedicated NixOS VM (`ollama-node`) | 🚧 Deployed |
 | [Speaches](https://github.com/speaches-ai/speaches) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| [Kestra](https://kestra.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 
 See [home-assistant.md](home-assistant.md) for the full Home Assistant ecosystem details.
 

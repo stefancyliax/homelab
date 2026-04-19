@@ -142,6 +142,61 @@ services:
       timeout: 5s
       retries: 10
 
+  kestra:
+    image: kestra/kestra:latest
+    container_name: kestra
+    restart: unless-stopped
+    stop_grace_period: 6m
+    user: "root"
+    command: server standalone
+    depends_on:
+      kestra-db:
+        condition: service_healthy
+    ports:
+      - "8082:8080"
+      - "8083:8081"
+    environment:
+      KESTRA_CONFIGURATION: |
+        datasources:
+          postgres:
+            url: jdbc:postgresql://kestra-db:5432/kestra
+            driverClassName: org.postgresql.Driver
+            username: kestra
+            password: ${KESTRA_DB_PASSWORD}
+        kestra:
+          repository:
+            type: postgres
+          storage:
+            type: local
+            local:
+              base-path: "/app/storage"
+          queue:
+            type: postgres
+          tasks:
+            tmp-dir:
+              path: /tmp/kestra-wd/tmp
+          url: http://10.1.23.224:8082/
+    volumes:
+      - kestra_data:/app/storage
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/kestra-wd:/tmp/kestra-wd
+
+  kestra-db:
+    image: postgres:18
+    container_name: kestra-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kestra
+      POSTGRES_USER: kestra
+      POSTGRES_PASSWORD: ${KESTRA_DB_PASSWORD}
+    volumes:
+      - kestra_postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
 volumes:
   zerobyte_data:
   open-webui_data:
@@ -150,3 +205,5 @@ volumes:
   hf-hub-cache:
   grimmory_data:
   grimmory_mariadb:
+  kestra_data:
+  kestra_postgres:
