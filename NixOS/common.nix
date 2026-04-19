@@ -39,6 +39,7 @@
     docker-compose
     fzf
     yazi
+    btop
   ];
 
   # User Configuration ("stefan")
