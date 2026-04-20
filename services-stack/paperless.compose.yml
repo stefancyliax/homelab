@@ -73,6 +73,22 @@ services:
     depends_on:
       - paperless-ngx
 
+  paperless-gpt:
+    image: icereed/paperless-gpt:latest
+    container_name: paperless-gpt
+    restart: unless-stopped
+    environment:
+      PAPERLESS_BASE_URL: "http://paperless-ngx:8000"
+      PAPERLESS_API_TOKEN: ${PAPERLESS_API_TOKEN}
+      LLM_PROVIDER: "ollama"
+      LLM_MODEL: "gemma4:e4b"
+      OLLAMA_HOST: "http://100.90.227.95:11434"
+      LLM_LANGUAGE: "German"
+    ports:
+      - "8002:8080"
+    depends_on:
+      - paperless-ngx
+
 volumes:
   data:
   media:

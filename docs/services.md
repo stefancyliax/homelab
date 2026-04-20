@@ -23,6 +23,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Tududi](https://github.com/chrisvel/tududi) | Docker Compose (`services-stack`) | 🔲 Planned |
 | Cloud Storage (Nextcloud or Seafile) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Paperless-AI](https://github.com/clusterzx/paperless-ai) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| [Paperless-GPT](https://github.com/icereed/paperless-gpt) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Ollama](https://ollama.com/) | Dedicated NixOS VM (`ollama-node`) | 🚧 Deployed |
 | [Speaches](https://github.com/speaches-ai/speaches) | Docker Compose (`services-stack`) | 🚧 Deployed |

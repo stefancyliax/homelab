@@ -52,6 +52,10 @@
         href: http://10.1.23.224:8001
         icon: paperless-ngx
         description: AI Document Classifier
+    - Paperless-GPT:
+        href: http://10.1.23.224:8002
+        icon: paperless-ngx
+        description: Document LLM Assistant
     - Grimmory:
         href: http://10.1.23.224:6060
         icon: booklore
