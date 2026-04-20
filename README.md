@@ -8,6 +8,12 @@ This project exists to learn by doing. The goal is to build a full-featured home
 
 The repo is fully open source and designed to contain no secrets or attack surfaces. All sensitive credentials are encrypted at rest using [Agenix](https://github.com/ryantm/agenix) and decrypted only at deployment time by the target machines.
 
+## Why this architecture?
+
+This architecture is weird. I know. A pure NixOS architecture would have been cleaner and better documents in this repo. But I wanted to look at Proxmox for a long time and also not get rusty in the career-relevant skills like Docker. 
+Reasoning for this architecture is that 
+Overall I wanted to rework my homelab from years ago and learn about new tools and play around with local hosted AI. 
+
 ## Architecture
 
 The homelab runs on a single Proxmox host with multiple isolated VMs, a physical GPU workstation, and a NAS.
@@ -49,12 +55,14 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Single Sign-On (SSO):** Evaluate SSO solutions (Authentik, Authelia, Keycloak) for centralized login across services.
 - [ ] **Cloud Storage Choice:** Research Nextcloud vs. Seafile for self-hosted file sync.
 - [ ] **Notifications:** Research the best way to handle cluster-wide push notifications (e.g., NTFY, Gotify, or Home Assistant) for backup reports, Grafana alerts, and container failures.
-
+- [ ] **Dozzle:** Look into deploying Dozzle for real-time web-based Docker log viewing.
+- [ ] **Nemoclaw:** Research Nemoclaw and evaluate its potential use-case in the homelab.
 ### Implementation
 
 - [ ] **Home Assistant Migration:** Migrate configuration and data from the legacy HA instance to the new HAOS VM.
 - [ ] **Storage Configuration:** Finalize and document the specific roles and mount points for the 3 Proxmox SSDs.
 - [ ] **GPU Worker Setup:** Provision the node with NixOS, Nvidia drivers, and AI tooling. See [gpu-worker.md](docs/gpu-worker.md).
+- [ ] **GPU Top:** Add `nvtop` to the `gpu-worker` node's system packages for monitoring GPU usage.
 - [ ] **ComfyUI Deployment:** Deploy [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on the `gpu-worker` for GPU-accelerated image generation workflows.
 - [ ] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.
