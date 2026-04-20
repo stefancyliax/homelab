@@ -84,6 +84,10 @@ services:
       LLM_MODEL: "gemma4:e4b"
       OLLAMA_HOST: "http://100.90.227.95:11434"
       LLM_LANGUAGE: "German"
+      OCR_PROVIDER: "llm"
+      VISION_LLM_PROVIDER: "ollama"
+      VISION_LLM_MODEL: "gemma4:e4b"
+      PDF_OCR_COMPLETE_TAG: "gpt-ocr-complete"
     ports:
       - "8002:8080"
     depends_on:
