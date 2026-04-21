@@ -63,6 +63,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Storage Configuration:** Finalize and document the specific roles and mount points for the 3 Proxmox SSDs.
 - [ ] **GPU Worker Setup:** Provision the node with NixOS, Nvidia drivers, and AI tooling. See [gpu-worker.md](docs/gpu-worker.md).
 - [ ] **GPU Top:** Add `nvtop` to the `gpu-worker` node's system packages for monitoring GPU usage.
+- [ ] **Paperless-GPT OCR:** Replace OCR provider for `paperless-gpt` with `docling-serve`.
 - [ ] **ComfyUI Deployment:** Deploy [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on the `gpu-worker` for GPU-accelerated image generation workflows.
 - [ ] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.

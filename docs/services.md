@@ -29,6 +29,13 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Speaches](https://github.com/speaches-ai/speaches) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Kestra](https://kestra.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 
+### Paperless AI Integrations
+
+> [!NOTE]
+> There are currently two local AI document processors running alongside Paperless-ngx: **Paperless-GPT** and **Paperless-AI**.
+> 
+> **Paperless-GPT** acts as the primary tool for document parsing, tagging, and metadata extraction. **Paperless-AI** will remain active in the stack as a fallback and will be used if the tagging capabilities of the `-gpt` variant do not work sufficiently.
+
 See [home-assistant.md](home-assistant.md) for the full Home Assistant ecosystem details.
 
 > [!NOTE]
