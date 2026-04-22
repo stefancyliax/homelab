@@ -64,6 +64,9 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **GPU Worker Setup:** Provision the node with NixOS, Nvidia drivers, and AI tooling. See [gpu-worker.md](docs/gpu-worker.md).
 - [ ] **GPU Top:** Add `nvtop` to the `gpu-worker` node's system packages for monitoring GPU usage.
 - [ ] **Paperless-GPT OCR:** Replace OCR provider for `paperless-gpt` with `docling-serve`.
+- [ ] **Paperless-GPT Native Parsing:** Set up a secondary instance of `paperless-gpt` using `docling` as the backend for non-scanned/digital native documents (e.g., received via email).
+- [ ] **Paperless Email Ingress:** Configure email fetching, accounts, and routing rules in Paperless-ngx.
+- [ ] **LLM Backend Migration:** Migrate from `ollama` to `llama-swap` configured with `llama-cpp` to manage the AI inference backend for all integrated systems.
 - [ ] **ComfyUI Deployment:** Deploy [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on the `gpu-worker` for GPU-accelerated image generation workflows.
 - [ ] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.
