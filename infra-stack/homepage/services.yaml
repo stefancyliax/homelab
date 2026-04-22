@@ -68,6 +68,10 @@
         href: http://10.1.23.224:8082
         icon: kestra
         description: Workflow Orchestration
+    - Stirling PDF:
+        href: http://10.1.23.224:8084
+        icon: pdf
+        description: PDF Manipulation Tools
 
 - AI & ML:
     - Ollama:

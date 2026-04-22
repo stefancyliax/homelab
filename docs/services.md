@@ -16,7 +16,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Frigate](https://frigate.video/) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [n8n](https://n8n.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| [Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF) | Docker Compose (`services-stack`) | 🔲 Planned |
+| [Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Grimmory](https://github.com/grimmory-tools/grimmory) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [ESPHome](https://esphome.io/) | Docker Compose (`services-stack`) | 🔲 Planned |

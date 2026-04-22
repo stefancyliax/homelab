@@ -197,6 +197,15 @@ services:
       timeout: 10s
       retries: 10
 
+  stirling-pdf:
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
+    container_name: stirling-pdf
+    restart: unless-stopped
+    ports:
+      - "8084:8080"
+    volumes:
+      - stirlingpdf_data:/configs
+
 volumes:
   zerobyte_data:
   open-webui_data:
@@ -207,3 +216,4 @@ volumes:
   grimmory_mariadb:
   kestra_data:
   kestra_postgres:
+  stirlingpdf_data:
