@@ -33,7 +33,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Cloud Backups (ZeroByte) | 🚧 Deployed, not configured | [backup.md](docs/backup.md) |
 | Local Backups (PBS) | 🔲 Planned | [backup.md](docs/backup.md) |
 | Monitoring (Prometheus/Grafana/InfluxDB) | ✅ Done | [monitoring.md](docs/monitoring.md) |
-| GPU Worker / AI Stack | 🚧 Config defined, not yet provisioned | [gpu-worker.md](docs/gpu-worker.md) |
+| GPU Worker / AI Stack (llama-swap) | 🚧 Config defined, not yet provisioned | [gpu-worker.md](docs/gpu-worker.md) |
 | Ollama Node (LLM Inference) | 🚧 Config defined, VM provisioned | — |
 | Services (Paperless, Jellyfin, etc.) | 🔲 Planned | [services.md](docs/services.md) |
 | Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |
@@ -66,7 +66,9 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Paperless-GPT OCR:** Replace OCR provider for `paperless-gpt` with `docling-serve`.
 - [ ] **Paperless-GPT Native Parsing:** Set up a secondary instance of `paperless-gpt` using `docling` as the backend for non-scanned/digital native documents (e.g., received via email).
 - [ ] **Paperless Email Ingress:** Configure email fetching, accounts, and routing rules in Paperless-ngx.
-- [ ] **LLM Backend Migration:** Migrate from `ollama` to `llama-swap` configured with `llama-cpp` to manage the AI inference backend for all integrated systems.
+- [x] **LLM Backend Migration (gpu-worker):** Migrated the `gpu-worker` from `ollama` to `llama-swap` as a native NixOS service with CUDA-accelerated `llama-cpp`. Initial model: Qwen3-VL-8B-Instruct (Q4_K_M). See [gpu-worker.md](docs/gpu-worker.md).
+- [ ] **LLM Backend Migration (ollama-node):** Evaluate migrating the `ollama-node` VM to `llama-swap` as well, to unify the AI inference backend across all nodes.
+- [ ] **Vision LLM Tuning:** Tune the vision LLM parameters based on the recommendations in this [Reddit discussion](https://www.reddit.com/r/LocalLLaMA/s/6GYklK8kvY).
 - [ ] **ComfyUI Deployment:** Deploy [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on the `gpu-worker` for GPU-accelerated image generation workflows.
 - [ ] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.

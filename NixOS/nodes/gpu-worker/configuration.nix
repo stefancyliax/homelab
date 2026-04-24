@@ -12,6 +12,9 @@
 
   networking.hostName = "gpu-worker";
 
+  # Enable Tailscale
+  services.tailscale.enable = true;
+
   # ---------------------------------------------------------------------------
   # Nvidia GPU (proprietary drivers)
   # ---------------------------------------------------------------------------

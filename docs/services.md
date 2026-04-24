@@ -26,6 +26,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Paperless-GPT](https://github.com/icereed/paperless-gpt) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Ollama](https://ollama.com/) | Dedicated NixOS VM (`ollama-node`) | 🚧 Deployed |
+| [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service (`gpu-worker`) | 🚧 Config defined |
 | [Speaches](https://github.com/speaches-ai/speaches) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Kestra](https://kestra.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 

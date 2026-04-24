@@ -36,14 +36,37 @@ This node doubles as a daily workstation. A desktop environment needs to be sele
 
 ## Application Stack
 
-### LLM Backend (Ollama)
+### LLM Backend (llama-swap)
 
-Ollama runs as a native NixOS service with CUDA acceleration enabled (`services.ollama.acceleration = "cuda"`). The package is sourced from `nixpkgs-unstable` for the latest version.
+[llama-swap](https://github.com/mostlygeek/llama-swap) runs as a native NixOS service (`services.llama-swap`) with CUDA-accelerated [llama.cpp](https://github.com/ggerganov/llama.cpp) as the inference backend. It provides an OpenAI-compatible API and automatically manages model loading/unloading.
 
-- Listens on `0.0.0.0:11434` (firewall opened)
-- Open-WebUI on the Services Node can connect to this instance as well
+- Declared in `modules/llama-swap.nix` (uses `pkgs-unstable` for both `llama-swap` and `llama-cpp`)
+- `llama-cpp` is overridden with `cudaSupport = true` for GPU acceleration
+- Listens on `0.0.0.0:8080` (firewall opened via `openFirewall = true`)
+- Access restricted to Tailscale network via `listenAddress` binding
 
-**Integration goal:** Connect the local AI models to services running on the main homelab (e.g., Paperless-AI on the Services Node).
+**Current model:** [Qwen3-VL-8B-Instruct](https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF) (`Q4_K_M` quantization) — a vision-language model supporting both text and image inputs. Ideal for document processing (Paperless-AI/GPT) and general chat via Open-WebUI.
+
+| Setting | Value |
+|---|---|
+| Context size | 16,384 tokens |
+| GPU layers | 99 (full offload) |
+| TTL | 300s (auto-unload after 5 min idle) |
+| Vision projector | `mmproj-Qwen3-VL-8B-Instruct-f16.gguf` |
+
+**Model files** must be downloaded manually to `/data/models/` on the gpu-worker:
+
+```bash
+mkdir -p /data/models
+wget -O /data/models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf \
+  "https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF/resolve/main/Qwen3-VL-8B-Instruct-Q4_K_M.gguf"
+wget -O /data/models/mmproj-Qwen3-VL-8B-Instruct-f16.gguf \
+  "https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF/resolve/main/mmproj-Qwen3-VL-8B-Instruct-f16.gguf"
+```
+
+**Adding more models:** Edit `modules/llama-swap.nix` and add entries to `settings.models`. llama-swap will automatically swap between them on demand — only one model is loaded at a time (unless a `matrix` is defined).
+
+**Integration:** Open-WebUI and other services on the Services Node can connect to this instance's API at `http://<gpu-worker-ip>:8080`.
 
 ### Workstation Tools
 

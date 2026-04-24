@@ -99,6 +99,14 @@ Dedicated LLM inference node running Ollama natively via the NixOS `services.oll
 
 [Open-WebUI](https://github.com/open-webui/open-webui) runs on the Services Node (via Docker Compose) and connects to this node's Ollama API.
 
+#### GPU Worker AI Backend
+
+The GPU Worker runs [llama-swap](https://github.com/mostlygeek/llama-swap) as a native NixOS service with CUDA-accelerated `llama-cpp`. It provides an OpenAI-compatible API on port 8080 and manages model hot-swapping on demand. See [gpu-worker.md](gpu-worker.md) for the full configuration.
+
+| Service | Type | Status |
+|---|---|---|
+| [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service | 🚧 Config defined |
+
 ## Deployment Strategy
 
 The environment follows a strict **GitOps** philosophy where this repository is the single source of truth:

@@ -56,7 +56,7 @@
         specialArgs = { inherit pkgs-unstable; };
         modules = baseModules ++ [
           ./nodes/gpu-worker/configuration.nix 
-          ./modules/ollama-cuda.nix
+          ./modules/llama-swap.nix
           ./modules/hawser.nix
         ];
       };
