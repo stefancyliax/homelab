@@ -5,6 +5,10 @@ let
   llama-server = "${llama-cpp-cuda}/bin/llama-server";
 in
 {
+  # Use the llama-swap module from nixpkgs-unstable (has listenAddress option)
+  disabledModules = [ "services/networking/llama-swap.nix" ];
+  imports = [ "${pkgs-unstable.path}/nixos/modules/services/networking/llama-swap.nix" ];
+
   services.llama-swap = {
     enable = true;
     package = pkgs-unstable.llama-swap;
@@ -26,3 +30,4 @@ in
     };
   };
 }
+
