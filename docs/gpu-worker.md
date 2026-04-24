@@ -52,16 +52,16 @@ This node doubles as a daily workstation. A desktop environment needs to be sele
 | Context size | 16,384 tokens |
 | GPU layers | 99 (full offload) |
 | TTL | 300s (auto-unload after 5 min idle) |
-| Vision projector | `mmproj-Qwen3-VL-8B-Instruct-f16.gguf` |
+| Vision projector | `mmproj-Qwen3VL-8B-Instruct-F16.gguf` |
 
-**Model files** must be downloaded manually to `/data/models/` on the gpu-worker:
+**Model files** must be downloaded manually to `/home/stefan/data/models/` on the gpu-worker:
 
 ```bash
-mkdir -p /data/models
-wget -O /data/models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf \
+mkdir -p /home/stefan/data/models
+wget -O /home/stefan/data/models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf \
   "https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF/resolve/main/Qwen3-VL-8B-Instruct-Q4_K_M.gguf"
-wget -O /data/models/mmproj-Qwen3-VL-8B-Instruct-f16.gguf \
-  "https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF/resolve/main/mmproj-Qwen3-VL-8B-Instruct-f16.gguf"
+wget -O /home/stefan/data/models/mmproj-Qwen3VL-8B-Instruct-F16.gguf \
+  "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct-GGUF/resolve/main/mmproj-Qwen3VL-8B-Instruct-F16.gguf"
 ```
 
 **Adding more models:** Edit `modules/llama-swap.nix` and add entries to `settings.models`. llama-swap will automatically swap between them on demand — only one model is loaded at a time (unless a `matrix` is defined).
