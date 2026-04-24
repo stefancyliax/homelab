@@ -12,7 +12,7 @@ in
   services.llama-swap = {
     enable = true;
     package = pkgs-unstable.llama-swap;
-    listenAddress = "0.0.0.0";
+    listenAddress = "100.90.253.20";
     port = 8080;
     openFirewall = true;
     settings = {
