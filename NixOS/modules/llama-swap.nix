@@ -19,10 +19,18 @@ in
       healthCheckTimeout = 120;
       models = {
         "qwen3-vl-8b" = {
-          cmd = "${llama-server} --port \${PORT} --model /home/stefan/data/models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf --mmproj /home/stefan/data/models/mmproj-Qwen3VL-8B-Instruct-F16.gguf --n-gpu-layers 99 --ctx-size 16384";
+          cmd = "${llama-server} --port \${PORT} --model /home/stefan/data/models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf --mmproj /home/stefan/data/models/mmproj-Qwen3VL-8B-Instruct-F16.gguf --n-gpu-layers 99 --ctx-size 51200";
           aliases = [
             "qwen3-vl"
             "vision"
+          ];
+          ttl = 300;
+        };
+        "qwen3.5-9b" = {
+          cmd = "${llama-server} --port \${PORT} --model /home/stefan/data/models/Qwen3.5-9B-UD-Q4_K_XL.gguf --n-gpu-layers 99 --ctx-size 51200";
+          aliases = [
+            "qwen3.5"
+            "chat"
           ];
           ttl = 300;
         };

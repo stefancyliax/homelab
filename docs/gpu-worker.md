@@ -45,14 +45,14 @@ This node doubles as a daily workstation. A desktop environment needs to be sele
 - Listens on `0.0.0.0:8080` (firewall opened via `openFirewall = true`)
 - Access restricted to Tailscale network via `listenAddress` binding
 
-**Current model:** [Qwen3-VL-8B-Instruct](https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF) (`Q4_K_M` quantization) — a vision-language model supporting both text and image inputs. Ideal for document processing (Paperless-AI/GPT) and general chat via Open-WebUI.
+**Current models:** 
+- [Qwen3-VL-8B-Instruct](https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF) (`Q4_K_M` quantization) — a vision-language model supporting both text and image inputs. Ideal for document processing (Paperless-AI/GPT) and general chat via Open-WebUI.
+- [Qwen3.5-9B](https://huggingface.co/unsloth/Qwen3.5-9B-GGUF) (`Q4_K_XL` quantization) — standard text/chat model.
 
-| Setting | Value |
-|---|---|
-| Context size | 16,384 tokens |
-| GPU layers | 99 (full offload) |
-| TTL | 300s (auto-unload after 5 min idle) |
-| Vision projector | `mmproj-Qwen3VL-8B-Instruct-F16.gguf` |
+| Model | Context size | GPU layers | TTL | Vision projector |
+|---|---|---|---|---|
+| Qwen3-VL-8B | 16,384 tokens | 99 (full) | 300s | `mmproj-Qwen3VL-8B-Instruct-F16.gguf` |
+| Qwen3.5-9B | 16,384 tokens | 99 (full) | 300s | N/A |
 
 **Model files** must be downloaded manually to `/home/stefan/data/models/` on the gpu-worker:
 
@@ -62,6 +62,8 @@ wget -O /home/stefan/data/models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf \
   "https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF/resolve/main/Qwen3-VL-8B-Instruct-Q4_K_M.gguf"
 wget -O /home/stefan/data/models/mmproj-Qwen3VL-8B-Instruct-F16.gguf \
   "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct-GGUF/resolve/main/mmproj-Qwen3VL-8B-Instruct-F16.gguf"
+wget -O /home/stefan/data/models/Qwen3.5-9B-UD-Q4_K_XL.gguf \
+  "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-UD-Q4_K_XL.gguf"
 ```
 
 **Adding more models:** Edit `modules/llama-swap.nix` and add entries to `settings.models`. llama-swap will automatically swap between them on demand — only one model is loaded at a time (unless a `matrix` is defined).
