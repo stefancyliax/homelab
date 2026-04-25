@@ -54,15 +54,15 @@ This node doubles as a daily workstation. A desktop environment needs to be sele
 | Qwen3-VL-8B | 16,384 tokens | 99 (full) | 300s | `mmproj-Qwen3VL-8B-Instruct-F16.gguf` |
 | Qwen3.5-9B | 16,384 tokens | 99 (full) | 300s | N/A |
 
-**Model files** must be downloaded manually to `/home/stefan/data/models/` on the gpu-worker:
+**Model files** must be downloaded manually to `/var/lib/models/` on the gpu-worker. Since `/var/lib` is owned by root, use `sudo`:
 
 ```bash
-mkdir -p /home/stefan/data/models
-wget -O /home/stefan/data/models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf \
+sudo mkdir -p /var/lib/models
+sudo wget -O /var/lib/models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf \
   "https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF/resolve/main/Qwen3-VL-8B-Instruct-Q4_K_M.gguf"
-wget -O /home/stefan/data/models/mmproj-Qwen3VL-8B-Instruct-F16.gguf \
+sudo wget -O /var/lib/models/mmproj-Qwen3VL-8B-Instruct-F16.gguf \
   "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct-GGUF/resolve/main/mmproj-Qwen3VL-8B-Instruct-F16.gguf"
-wget -O /home/stefan/data/models/Qwen3.5-9B-UD-Q4_K_XL.gguf \
+sudo wget -O /var/lib/models/Qwen3.5-9B-UD-Q4_K_XL.gguf \
   "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-UD-Q4_K_XL.gguf"
 ```
 
