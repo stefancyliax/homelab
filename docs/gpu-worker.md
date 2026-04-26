@@ -57,7 +57,7 @@ This node doubles as a daily workstation. A desktop environment needs to be sele
 | Qwen3-VL-8B | 51,200 tokens | 99 (full) | 300s | `mmproj-Qwen3VL-8B-Instruct-F16.gguf` |
 | Qwen3.5-9B | 51,200 tokens | 99 (full) | 300s | N/A |
 | GLM-OCR | 16,384 tokens | 99 (full) | 300s | `mmproj-GLM-OCR-Q8_0.gguf` |
-| Gemma4 E4B | 16,384 tokens | 99 (full) | 300s | N/A |
+| Gemma4 E4B | 32,768 tokens | 99 (full) | 300s | `mmproj-gemma-4-E4B-F16.gguf` |
 | MinerU 2.5 | 16,384 tokens | 99 (full) | 300s | `MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf` |
 
 **Model files** must be downloaded manually to `/var/lib/models/` on the gpu-worker. Since `/var/lib` is owned by root, use `sudo`:
@@ -76,6 +76,8 @@ sudo wget -O /var/lib/models/mmproj-GLM-OCR-Q8_0.gguf \
   "https://huggingface.co/ggml-org/GLM-OCR-GGUF/resolve/main/mmproj-GLM-OCR-Q8_0.gguf"
 sudo wget -O /var/lib/models/gemma-4-E4B-it-Q4_K_M.gguf \
   "https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF/resolve/main/gemma-4-E4B-it-Q4_K_M.gguf"
+sudo wget -O /var/lib/models/mmproj-gemma-4-E4B-F16.gguf \
+  "https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF/resolve/main/mmproj-F16.gguf"
 sudo wget -O /var/lib/models/MinerU2.5-Pro-2604-1.2B.f16.gguf \
   "https://huggingface.co/mradermacher/MinerU2.5-Pro-2604-1.2B-GGUF/resolve/main/MinerU2.5-Pro-2604-1.2B.f16.gguf"
 sudo wget -O /var/lib/models/MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf \
