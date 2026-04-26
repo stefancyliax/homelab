@@ -34,6 +34,28 @@ in
           ];
           ttl = 300;
         };
+        "glm-ocr" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/GLM-OCR-f16.gguf --mmproj /var/lib/models/mmproj-GLM-OCR-Q8_0.gguf --n-gpu-layers 99 --ctx-size 16384";
+          aliases = [
+            "glm"
+          ];
+          ttl = 300;
+        };
+        "gemma4" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-E4B-it-Q4_K_M.gguf --n-gpu-layers 99 --ctx-size 32768 --image-min-tokens 1024 --image-max-tokens 2240";
+          aliases = [
+            "gemma4-e4b"
+          ];
+          ttl = 300;
+        };
+        "mineru" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/MinerU2.5-Pro-2604-1.2B.f16.gguf --mmproj /var/lib/models/MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf --n-gpu-layers 99 --ctx-size 16384";
+          aliases = [
+            "mineru"
+            "miner-u"
+          ];
+          ttl = 300;
+        };
       };
     };
   };

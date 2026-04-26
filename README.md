@@ -57,6 +57,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Notifications:** Research the best way to handle cluster-wide push notifications (e.g., NTFY, Gotify, or Home Assistant) for backup reports, Grafana alerts, and container failures.
 - [ ] **Dozzle:** Look into deploying Dozzle for real-time web-based Docker log viewing.
 - [ ] **Nemoclaw:** Research Nemoclaw and evaluate its potential use-case in the homelab.
+- [ ] **GLM-OCR VM Migration:** Evaluate the performance of the GLM-OCR model on the `gpu-worker`. If it meets OCR requirements, research migrating it to a dedicated CPU-only Proxmox VM to free up GPU resources.
 ### Implementation
 
 - [ ] **Home Assistant Migration:** Migrate configuration and data from the legacy HA instance to the new HAOS VM.
