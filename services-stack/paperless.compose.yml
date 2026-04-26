@@ -87,7 +87,7 @@ services:
       LLM_LANGUAGE: "German"
       OCR_PROVIDER: "llm"
       VISION_LLM_PROVIDER: "openai"
-      VISION_LLM_MODEL: "qwen3-vl-8b"
+      VISION_LLM_MODEL: "glm-ocr"
       MANUAL_TAG: "manual-tag"
       AUTO_TAG: "auto-tag-no-ocr"
       AUTO_OCR_TAG: "auto-tag"
