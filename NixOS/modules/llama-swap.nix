@@ -57,6 +57,17 @@ in
           ttl = 300;
         };
       };
+      groups = {
+        paperless = {
+          swap = false;
+          members = [
+            "qwen3.5-9b"
+            "glm-ocr"
+            "gemma4"
+            "mineru"
+          ];
+        };
+      };
     };
   };
 }
