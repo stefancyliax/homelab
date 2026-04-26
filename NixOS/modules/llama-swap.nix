@@ -27,7 +27,7 @@ in
           ttl = 300;
         };
         "qwen3.5-9b" = {
-          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/Qwen3.5-9B-UD-Q4_K_XL.gguf --n-gpu-layers 99 --ctx-size 51200";
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/Qwen3.5-9B-UD-Q4_K_XL.gguf --n-gpu-layers 99 --ctx-size 16384";
           aliases = [
             "qwen3.5"
             "chat"
