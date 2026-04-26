@@ -56,6 +56,13 @@ in
           ];
           ttl = 300;
         };
+        "glm-ocr-cpu" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/GLM-OCR-f16.gguf --mmproj /var/lib/models/mmproj-GLM-OCR-Q8_0.gguf --n-gpu-layers 0 --ctx-size 16384";
+          aliases = [
+            "glm-ocr-cpu"
+          ];
+          ttl = 300;
+        };
       };
       groups = {
         paperless = {
@@ -65,6 +72,7 @@ in
             "glm-ocr"
             "gemma4"
             "mineru"
+            "glm-ocr-cpu"
           ];
         };
       };
