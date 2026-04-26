@@ -63,6 +63,13 @@ in
           ];
           ttl = 300;
         };
+        "minicpm-v" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/minicpm-v-2.6-Q4_K_M.gguf --mmproj /var/lib/models/minicpm-v-2.6-mmproj-f16.gguf --n-gpu-layers 99 --ctx-size 16384";
+          aliases = [
+            "minicpm"
+          ];
+          ttl = 300;
+        };
       };
       groups = {
         paperless = {
@@ -73,6 +80,7 @@ in
             "gemma4"
             "mineru"
             "glm-ocr-cpu"
+            "minicpm-v"
           ];
         };
       };
