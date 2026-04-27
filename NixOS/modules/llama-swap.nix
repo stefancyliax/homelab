@@ -70,6 +70,20 @@ in
           ];
           ttl = 300;
         };
+        "minicpm-v-4.5" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/minicpm-v-4.5-Q4_K_M.gguf --mmproj /var/lib/models/minicpm-v-4.5-mmproj-f16.gguf --n-gpu-layers 99 --ctx-size 16384";
+          aliases = [
+            "minicpm45"
+          ];
+          ttl = 300;
+        };
+        "nemotron-nano" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/NVIDIA-Nemotron-Nano-12B-v2-VL-Q5_K_M.gguf --mmproj /var/lib/models/NVIDIA-Nemotron-Nano-12B-v2-VL-BF16-mmproj.gguf --n-gpu-layers 99 --ctx-size 16384";
+          aliases = [
+            "nemotron"
+          ];
+          ttl = 300;
+        };
       };
       groups = {
         paperless = {
@@ -81,6 +95,8 @@ in
             "mineru"
             "glm-ocr-cpu"
             "minicpm-v"
+            "minicpm-v-4.5"
+            "nemotron-nano"
           ];
         };
       };

@@ -52,6 +52,8 @@ This node doubles as a daily workstation. A desktop environment needs to be sele
 - [Gemma 4 E4B](https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF) (`Q4_K_M` quantization) — highly efficient text model optimized for edge devices, ideal for fast parallel tagging.
 - [MinerU 2.5 Pro](https://huggingface.co/mradermacher/MinerU2.5-Pro-2604-1.2B-GGUF) (`f16` quantization) — specialized multimodal model for document parsing and structure extraction.
 - [MiniCPM-V 2.6](https://huggingface.co/openbmb/MiniCPM-V-2_6-gguf) (`Q4_K_M` quantization) — a highly capable 8B multimodal model, excellent alternative for OCR and visual reasoning.
+- [MiniCPM-V 4.5](https://huggingface.co/openbmb/MiniCPM-V-4_5-gguf) (`Q4_K_M` quantization) — the bleeding-edge iteration of MiniCPM-V, boasting better OCR accuracy.
+- [Nemotron-Nano-12B-VL](https://huggingface.co/Vastined/NVIDIA-Nemotron-Nano-12B-v2-VL-BF16-GGUF) (`Q5_K_M` quantization) — NVIDIA's 12B multimodal model with strong OCR capabilities.
 - **GLM-OCR CPU** (`f16` quantization) — the same GLM-OCR model, but executed entirely on the CPU (`-ngl 0`) via `llama-swap`. Useful for saving VRAM.
 
 | Model | Context size | GPU layers | TTL | Vision projector |
@@ -62,6 +64,8 @@ This node doubles as a daily workstation. A desktop environment needs to be sele
 | Gemma4 E4B | 32,768 tokens | 99 (full) | 300s | `mmproj-gemma-4-E4B-F16.gguf` |
 | MinerU 2.5 | 16,384 tokens | 99 (full) | 300s | `MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf` |
 | MiniCPM-V 2.6 | 16,384 tokens | 99 (full) | 300s | `minicpm-v-2.6-mmproj-f16.gguf` |
+| MiniCPM-V 4.5 | 16,384 tokens | 99 (full) | 300s | `minicpm-v-4.5-mmproj-f16.gguf` |
+| Nemotron-Nano 12B | 16,384 tokens | 99 (full) | 300s | `NVIDIA-Nemotron-Nano-12B-v2-VL-BF16-mmproj.gguf` |
 | GLM-OCR (CPU) | 16,384 tokens | 0 (CPU only) | 300s | `mmproj-GLM-OCR-Q8_0.gguf` |
 
 **Model files** must be downloaded manually to `/var/lib/models/` on the gpu-worker. Since `/var/lib` is owned by root, use `sudo`:
@@ -90,6 +94,14 @@ sudo wget -O /var/lib/models/minicpm-v-2.6-Q4_K_M.gguf \
   "https://huggingface.co/openbmb/MiniCPM-V-2_6-gguf/resolve/main/ggml-model-Q4_K_M.gguf"
 sudo wget -O /var/lib/models/minicpm-v-2.6-mmproj-f16.gguf \
   "https://huggingface.co/openbmb/MiniCPM-V-2_6-gguf/resolve/main/mmproj-model-f16.gguf"
+sudo wget -O /var/lib/models/minicpm-v-4.5-Q4_K_M.gguf \
+  "https://huggingface.co/openbmb/MiniCPM-V-4_5-gguf/resolve/main/ggml-model-Q4_K_M.gguf"
+sudo wget -O /var/lib/models/minicpm-v-4.5-mmproj-f16.gguf \
+  "https://huggingface.co/openbmb/MiniCPM-V-4_5-gguf/resolve/main/mmproj-model-f16.gguf"
+sudo wget -O /var/lib/models/NVIDIA-Nemotron-Nano-12B-v2-VL-Q5_K_M.gguf \
+  "https://huggingface.co/Vastined/NVIDIA-Nemotron-Nano-12B-v2-VL-BF16-GGUF/resolve/main/NVIDIA-Nemotron-Nano-12B-v2-VL-Q5_K_M.gguf"
+sudo wget -O /var/lib/models/NVIDIA-Nemotron-Nano-12B-v2-VL-BF16-mmproj.gguf \
+  "https://huggingface.co/Vastined/NVIDIA-Nemotron-Nano-12B-v2-VL-BF16-GGUF/resolve/main/NVIDIA-Nemotron-Nano-12B-v2-VL-BF16-mmproj.gguf"
 ```
 
 **Adding more models:** Edit `modules/llama-swap.nix` and add entries to `settings.models`. llama-swap will automatically swap between them on demand — only one model is loaded at a time (unless a `matrix` is defined).
