@@ -9,8 +9,8 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | Service | Type | Status |
 |---|---|---|
 | [Home Assistant](https://www.home-assistant.io/) | Dedicated HAOS VM | ✅ Running |
-| [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | 🚧 Deployed, not configured |
-| [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | 🚧 Needs Testing |
+| [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | ✅ Functional |
+| [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | ✅ Functional |
 | [IT-Tools](https://github.com/CorentinTh/it-tools) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Jellyfin](https://jellyfin.org/) | NAS | 🔲 Planned |
 | [Frigate](https://frigate.video/) | Docker Compose (`services-stack`) | 🔲 Planned |
@@ -21,21 +21,21 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [ESPHome](https://esphome.io/) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Tududi](https://github.com/chrisvel/tududi) | Docker Compose (`services-stack`) | 🔲 Planned |
-| Cloud Storage (Nextcloud or Seafile) | Docker Compose (`services-stack`) | 🔲 Planned |
-| [Paperless-AI](https://github.com/clusterzx/paperless-ai) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| [Paperless-GPT](https://github.com/icereed/paperless-gpt) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| ~~[Paperless-AI](https://github.com/clusterzx/paperless-ai)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
+| [Paperless-GPT](https://github.com/icereed/paperless-gpt) | Docker Compose (`services-stack`) | ✅ Functional |
 | [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| [Ollama](https://ollama.com/) | Dedicated NixOS VM (`ollama-node`) | 🚧 Deployed |
-| [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service (`gpu-worker`) | 🚧 Config defined |
+| ~~[Ollama](https://ollama.com/)~~ | ~~Dedicated NixOS VM (`ollama-node`)~~ | ❌ Deprecated |
+| [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service (`gpu-worker`) | ✅ Functional |
 | [Speaches](https://github.com/speaches-ai/speaches) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Kestra](https://kestra.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| [nvtop](https://github.com/Syllo/nvtop) | Native NixOS package (`gpu-worker`) | ✅ Deployed |
 
 ### Paperless AI Integrations
 
 > [!NOTE]
-> There are currently two local AI document processors running alongside Paperless-ngx: **Paperless-GPT** and **Paperless-AI**.
-> 
-> **Paperless-GPT** acts as the primary tool for document parsing, tagging, and metadata extraction. **Paperless-AI** will remain active in the stack as a fallback and will be used if the tagging capabilities of the `-gpt` variant do not work sufficiently.
+> **Paperless-GPT** is the sole active AI document processor running alongside Paperless-ngx. It handles document parsing, tagging, and metadata extraction via the `gpu-worker`'s llama-swap backend.
+>
+> **Paperless-AI** has been commented out of the stack — it did not provide enough additional benefit to justify running alongside Paperless-GPT.
 
 See [home-assistant.md](home-assistant.md) for the full Home Assistant ecosystem details.
 

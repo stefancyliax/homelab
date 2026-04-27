@@ -134,6 +134,46 @@ nixos-version --configuration-revision
 
 This returns the `self.rev` (or `self.dirtyRev`) set during the build, allowing you to instantly verify if the running configuration matches the remote repository.
 
+## Single Sign-On (SSO)
+
+> [!NOTE]
+> SSO is not yet implemented. The SSO provider (Authentik, Authelia, or Keycloak) has not been selected. This section tracks the planned enrollment of all services once SSO is deployed.
+
+### SSO Enrollment Matrix
+
+| Service | SSO Support | Enrollment Status | Protocol | Notes |
+|---|---|---|---|---|
+| **Infrastructure** | | | | |
+| Homepage | ✅ Native | 🔲 Planned | OAuth2/OIDC | Proxy auth or OIDC provider |
+| Grafana | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| Prometheus | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
+| Dockhand | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| **Services** | | | | |
+| Paperless-ngx | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via `PAPERLESS_SOCIALACCOUNT_PROVIDERS` |
+| Paperless-GPT | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
+| Open-WebUI | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| n8n | ✅ Native | 🔲 Planned | OAuth2/OIDC | Enterprise SSO or OIDC |
+| NocoDB | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| Stirling PDF | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in SSO support |
+| Grimmory | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| NextExplorer | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| Kestra | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| Speaches | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
+| Jellyfin | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via SSO plugin |
+| Frigate | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
+| IT-Tools | ❌ None | ⏭️ Skip | — | Read-only tool, no login needed |
+| Tududi | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| ESPHome | ✅ Native | 🔲 Planned | Reverse proxy | Basic auth or proxy |
+| **Dedicated VMs / Nodes** | | | | |
+| Home Assistant | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via auth provider integration |
+
+### Implementation Notes
+
+- Services marked **Reverse proxy** will need an authenticating reverse proxy (e.g., Traefik + ForwardAuth, or Caddy + auth middleware) placed in front of them.
+- Services marked **Skip** are internal/API-only and don't require user-facing SSO.
+- The SSO provider will be deployed on the `infra-stack` alongside the ingress layer.
+- See the **Research & Decisions** section in the [README](../README.md) for the SSO provider evaluation status.
+
 ## Deployment Monitoring
 
 Monitoring the health and status of deployments is planned using Prometheus and Grafana.

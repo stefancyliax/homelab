@@ -22,7 +22,7 @@ The Proxmox host runs all core virtual machines. See [proxmox-setup.md](proxmox-
 | GPU | Nvidia RTX 5060 Ti 16 GB |
 | OS | NixOS (managed via Comin) |
 
-A dedicated physical workstation for AI inference and daily use. Not always online — powers on when needed. See [gpu-worker.md](gpu-worker.md) for the full provisioning guide.
+A dedicated physical node for AI inference. Not always online — powers on when needed. See [gpu-worker.md](gpu-worker.md) for the full provisioning guide.
 
 ### NAS / Storage Node
 
@@ -89,15 +89,12 @@ Executes GitHub Actions pipelines. When code is pushed to `main`, it triggers `c
 
 Dedicated Home Assistant Operating System instance for smart home control. Attached to the IoT VLAN. See [home-assistant.md](home-assistant.md).
 
-#### Ollama Node (NixOS VM)
+#### ~~Ollama Node (NixOS VM)~~ — Deprecated
 
-Dedicated LLM inference node running Ollama natively via the NixOS `services.ollama` module. IP: `10.1.23.17`.
+> [!WARNING]
+> The Ollama Node has been deprecated. It proved too slow for practical LLM inference. All OCR and tagging tasks have been migrated to the GPU Worker's llama-swap backend.
 
-| Service | Type | Status |
-|---|---|---|
-| [Ollama](https://ollama.com/) | Native NixOS service | 🚧 Config defined |
-
-[Open-WebUI](https://github.com/open-webui/open-webui) runs on the Services Node (via Docker Compose) and connects to this node's Ollama API.
+[Open-WebUI](https://github.com/open-webui/open-webui) runs on the Services Node (via Docker Compose) and now connects to the GPU Worker's llama-swap API.
 
 #### GPU Worker AI Backend
 
@@ -105,7 +102,7 @@ The GPU Worker runs [llama-swap](https://github.com/mostlygeek/llama-swap) as a 
 
 | Service | Type | Status |
 |---|---|---|
-| [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service | 🚧 Config defined |
+| [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service | ✅ Functional |
 
 ## Deployment Strategy
 

@@ -1,8 +1,8 @@
 # GPU Worker
 
-This document outlines the setup and provisioning of the dedicated AI/GPU workstation. This node is a physical machine (not a Proxmox VM) and is not always online to save power.
+This document outlines the setup and provisioning of the dedicated AI worker node. This node is a physical machine (not a Proxmox VM) and is not always online to save power. It serves exclusively as an AI inference backend — no desktop environment is installed.
 
-**Current status:** 🚧 Config defined, not yet provisioned.
+**Current status:** ✅ Functional.
 
 ## Hardware
 
@@ -28,11 +28,8 @@ Proprietary Nvidia drivers are declared in `nodes/gpu-worker/configuration.nix`:
 
 The Docker engine is configured with `nvidia-container-toolkit` passthrough (`hardware.nvidia-container-toolkit.enable = true`) so containerized AI workloads can access the GPU natively.
 
-### Desktop Environment
-
-This node doubles as a daily workstation. A desktop environment needs to be selected and provisioned via NixOS (e.g., KDE Plasma, GNOME, or Hyprland).
-
-**Status:** 🔲 Not yet configured — CLI-only for now.
+> [!NOTE]
+> This node was originally considered as a dual-purpose workstation/AI worker, but the decision was made to keep it as a dedicated AI inference node only. No desktop environment is installed.
 
 ## Application Stack
 
@@ -108,17 +105,9 @@ sudo wget -O /var/lib/models/NVIDIA-Nemotron-Nano-12B-v2-VL-BF16-mmproj.gguf \
 
 **Integration:** Open-WebUI and other services on the Services Node can connect to this instance's API at `http://<gpu-worker-ip>:8080`.
 
-### Workstation Tools
+### System Tools
 
-Since this node is also a workstation, the following should be provisioned:
-
-**User Management:** 2 active user accounts.
-
-**Applications (require desktop environment):**
-- AI & Creative: ComfyUI, Bambu Studio, LLM Studio
-- General: Chrome, Spotify, Obsidian, Bitwarden, Signal, Steam
-
-**CLI & Development (✅ configured):**
+The following CLI tools are provisioned on the GPU Worker for administration and diagnostics:
 
 | Tool | Source | Notes |
 |---|---|---|
@@ -130,12 +119,6 @@ Since this node is also a workstation, the following should be provisioned:
 | `lazydocker` | `configuration.nix` | Docker TUI |
 | `nvtop` | `configuration.nix` | GPU monitoring TUI |
 | `pciutils` | `configuration.nix` | `lspci` for hardware diagnostics |
-
-**Not yet packaged in nixpkgs / require further setup:**
-- `ghostty` — terminal emulator (may need overlay or custom derivation)
-- `walker` — application launcher (needs desktop environment)
-- `gemini-cli` — Google AI CLI
-- `lazyssh`, `lazyjournal` — newer lazy* tools, check nixpkgs availability
 
 ## Wake-on-LAN
 
