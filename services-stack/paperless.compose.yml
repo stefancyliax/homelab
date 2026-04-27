@@ -93,6 +93,7 @@ services:
       AUTO_OCR_TAG: "#auto-ocr"
       PDF_OCR_TAGGING: true
       PDF_OCR_COMPLETE_TAG: "#gpt-processed"
+      OCR_LIMIT_PAGES: 12
 
 
     ports:
