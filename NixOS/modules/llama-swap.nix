@@ -42,7 +42,7 @@ in
           ttl = 300;
         };
         "gemma4" = {
-          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-E4B-it-Q4_K_M.gguf --mmproj /var/lib/models/mmproj-gemma-4-E4B-F16.gguf --n-gpu-layers 99 --ctx-size 32768 --image-min-tokens 1024 --image-max-tokens 2240";
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-E4B-it-Q4_K_M.gguf --mmproj /var/lib/models/mmproj-gemma-4-E4B-F16.gguf --n-gpu-layers 99 --ctx-size 51200 --image-min-tokens 1024 --image-max-tokens 2240";
           aliases = [
             "gemma4-e4b"
           ];
