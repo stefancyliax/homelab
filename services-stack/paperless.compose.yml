@@ -87,7 +87,7 @@ services:
       LLM_LANGUAGE: "German"
       OCR_PROVIDER: "llm"
       VISION_LLM_PROVIDER: "openai"
-      VISION_LLM_MODEL: "minicpm"
+      VISION_LLM_MODEL: "minicpm45"
       MANUAL_TAG: "#manual-tag"
       AUTO_TAG: "#auto-process"
       AUTO_OCR_TAG: "#auto-ocr"
