@@ -58,7 +58,25 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=homelab
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=$INFLUXDB_ADMIN_TOKEN
 
+  ntfy:
+    image: binwiederhier/ntfy
+    container_name: ntfy
+    restart: unless-stopped
+    command: serve
+    ports:
+      - "2586:80"
+    volumes:
+      - ./ntfy:/etc/ntfy:ro
+      - ntfy_cache:/var/cache/ntfy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--tries=1", "http://localhost:80/v1/health", "-O", "-"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
 volumes:
   prometheus_data:
   grafana_data:
   influxdb_data:
+  ntfy_cache:

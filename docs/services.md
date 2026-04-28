@@ -9,6 +9,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | Service | Type | Status |
 |---|---|---|
 | [Home Assistant](https://www.home-assistant.io/) | Dedicated HAOS VM | ✅ Running |
+| [ntfy](https://ntfy.sh/) | Docker Compose (`infra-stack`) | 🚧 Deployed |
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | ✅ Functional |
 | [IT-Tools](https://github.com/CorentinTh/it-tools) | Docker Compose (`services-stack`) | 🔲 Planned |

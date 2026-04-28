@@ -1,0 +1,26 @@
+# ntfy server configuration
+# See https://docs.ntfy.sh/config/ for all options
+
+base-url: "http://10.1.23.184:2586"
+listen-http: ":80"
+
+# Message cache — persist across restarts, retain for 72 hours
+cache-file: "/var/cache/ntfy/cache.db"
+cache-duration: "72h"
+
+# Attachments — allow services to attach logs/screenshots to alerts
+attachment-cache-dir: "/var/cache/ntfy/attachments"
+attachment-total-size-limit: "1G"
+attachment-file-size-limit: "50M"
+attachment-expiry-duration: "72h"
+
+# Access control — private instance, deny by default
+auth-file: "/var/cache/ntfy/auth.db"
+auth-default-access: "deny-all"
+
+# iOS push relay via official ntfy.sh
+upstream-base-url: "https://ntfy.sh"
+
+# Logging
+log-level: "info"
+log-format: "json"

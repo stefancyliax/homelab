@@ -54,7 +54,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **NAS OS Choice:** Decide on the operating system for the NAS (ZimaOS, Unraid, or managed NixOS).
 - [ ] **Single Sign-On (SSO):** Evaluate SSO solutions (Authentik, Authelia, Keycloak) for centralized login across services.
 - [x] **Cloud Storage Choice:** Decided to keep NextExplorer for file storage. Nextcloud and Seafile will not be deployed.
-- [ ] **Notifications:** Research the best way to handle cluster-wide push notifications (e.g., NTFY, Gotify, or Home Assistant) for backup reports, Grafana alerts, and container failures.
+- [x] **Notifications:** Decided on self-hosted [ntfy](https://ntfy.sh/). Gotify lacks UnifiedPush and requires WebSocket clients; HA notifications are not cluster-aware. ntfy is deployed in the `infra-stack`. See [monitoring.md](docs/monitoring.md).
 - [x] **Dozzle:** Evaluated and dropped — too little functionality to justify deployment.
 - [ ] **Nemoclaw:** Research Nemoclaw and evaluate its potential use-case in the homelab.
 - [x] **GLM-OCR VM Migration:** Ollama node deprecated — too slow for inference. GPU Worker now handles all OCR and tagging tasks via llama-swap.
@@ -75,6 +75,12 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.
 - [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, n8n, IT-Tools, etc.). See [services.md](docs/services.md).
 - [ ] **Tududi Deployment:** Write the Docker Compose definitions to deploy the [Tududi](https://github.com/chrisvel/tududi) task management service to the `services-stack`.
+- [ ] **ntfy Service Integrations:** Connect services to the self-hosted ntfy instance:
+    - [ ] Grafana Webhook contact point with custom JSON payload template.
+    - [ ] ZeroByte post-backup hook script.
+    - [ ] Comin systemd `OnSuccess`/`OnFailure` notification units.
+    - [ ] n8n / Kestra workflow failure notifications.
+    - [ ] Home Assistant ntfy notify integration.
 - [ ] **Dashboard APIs:** Connect Homepage widgets to live data sources:
     - [ ] Proxmox & PBS API tokens for hypervisor metrics.
     - [ ] Home Assistant long-lived access token for entity telemetry.

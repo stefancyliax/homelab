@@ -71,3 +71,30 @@ Use Grafana's declarative provisioning YAMLs to pre-configure:
 ### 5. Connect Home Assistant
 
 Configure Home Assistant's `recorder` integration to push sensor data to InfluxDB for long-term storage and Grafana visualization.
+
+## Notifications
+
+Cluster-wide push notifications are handled by a self-hosted [ntfy](https://ntfy.sh/) instance running in the `infra-stack`. ntfy provides a simple HTTP-based pub-sub API — any service can send a notification with a single `curl` call, and subscribers receive instant push notifications on Android, iOS, or the web UI.
+
+**Why self-hosted instead of ntfy.sh?** The public ntfy.sh service imposes a 250 messages/day cap, which is easily exceeded by Grafana alerts, document consumption events, and workflow completions combined. Self-hosting removes all rate limits and keeps notification payloads entirely on the LAN.
+
+### Topic Convention
+
+| Topic | Source | Description |
+|---|---|---|
+| `homelab-alerts` | Grafana | Infrastructure alerts (CPU, disk, container health) |
+| `homelab-deployments` | Comin / Dockhand / GitHub Actions | Deployment status events |
+| `homelab-backups` | ZeroByte | Backup success/failure reports |
+| `homelab-documents` | Paperless-ngx (via n8n) | New document consumption events |
+| `homelab-workflows` | n8n / Kestra | Workflow completion/failure events |
+| `homelab-security` | Frigate / fail2ban | Motion detection, intrusion attempts |
+| `homelab-system` | General | Container restarts, system events |
+
+### Integration Points
+
+- **Grafana → ntfy:** Configured as a Webhook contact point with a custom JSON payload template targeting the `homelab-alerts` topic.
+- **n8n / Kestra → ntfy:** Native HTTP request nodes publishing to the appropriate topic.
+- **ZeroByte → ntfy:** Post-backup hook script using `curl` to publish results.
+- **Comin → ntfy:** Systemd `OnSuccess`/`OnFailure` units triggering `curl` to the `homelab-deployments` topic.
+- **Home Assistant → ntfy:** REST-based notify integration or the native ntfy HA integration.
+
