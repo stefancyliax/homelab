@@ -96,6 +96,6 @@ Cluster-wide push notifications are handled by a self-hosted [ntfy](https://ntfy
 - **Grafana → ntfy:** Configured as a Webhook contact point with a custom JSON payload template targeting the `homelab-alerts` topic.
 - **n8n / Kestra → ntfy:** Native HTTP request nodes publishing to the appropriate topic.
 - **ZeroByte → ntfy:** Post-backup hook script using `curl` to publish results.
-- **Comin → ntfy:** Systemd `OnSuccess`/`OnFailure` units triggering `curl` to the `homelab-deployments` topic.
+- **Comin → ntfy:** Systemd `OnSuccess`/`OnFailure` hooks on the `comin.service` unit, configured in `modules/comin.nix`. Reports deployment success/failure with the node hostname.
 - **Home Assistant → ntfy:** REST-based notify integration or the native ntfy HA integration.
 
