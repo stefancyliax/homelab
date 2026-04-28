@@ -40,6 +40,7 @@
     fzf
     yazi
     btop
+    tree
   ];
 
   # User Configuration ("stefan")
