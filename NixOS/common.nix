@@ -39,6 +39,7 @@
     docker-compose
     yazi
     btop
+    exa
   ];
 
   # User Configuration ("stefan")
