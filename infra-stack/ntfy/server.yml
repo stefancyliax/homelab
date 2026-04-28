@@ -14,9 +14,8 @@ attachment-total-size-limit: "1G"
 attachment-file-size-limit: "50M"
 attachment-expiry-duration: "72h"
 
-# Access control — private instance, deny by default
-auth-file: "/var/cache/ntfy/auth.db"
-auth-default-access: "deny-all"
+# Access control — open instance, no auth required (LAN-only, no WAN exposure)
+auth-default-access: "read-write"
 
 # iOS push relay via official ntfy.sh
 upstream-base-url: "https://ntfy.sh"

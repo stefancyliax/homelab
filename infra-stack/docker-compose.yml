@@ -63,6 +63,7 @@ services:
     container_name: ntfy
     restart: unless-stopped
     command: serve
+    init: true
     ports:
       - "2586:80"
     volumes:
