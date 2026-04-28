@@ -11,41 +11,25 @@
       branches.main.name = "main";
       auth.access_token_path = config.age.secrets."github-pat".path;
     }];
-  };
-
-  # ntfy notifications for Comin deployments
-  systemd.services."ntfy-comin-success" = {
-    description = "Notify ntfy on successful Comin deployment";
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = ''
+    postDeploymentCommand = toString (pkgs.writeShellScript "comin-notify" ''
+      if [ "$COMIN_STATUS" = "done" ]; then
         ${pkgs.curl}/bin/curl -s \
           -H "Title: ✅ Deployment succeeded" \
           -H "Tags: white_check_mark" \
-          -d "Node: ${config.networking.hostName}" \
+          -d "Node: $COMIN_HOSTNAME
+      Commit: $COMIN_GIT_MSG ($COMIN_GIT_SHA)" \
           http://10.1.23.184:2586/homelab-deployments
-      '';
-    };
-  };
-
-  systemd.services."ntfy-comin-failure" = {
-    description = "Notify ntfy on failed Comin deployment";
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = ''
+      else
         ${pkgs.curl}/bin/curl -s \
           -H "Title: ❌ Deployment failed" \
           -H "Tags: x" \
           -H "Priority: high" \
-          -d "Node: ${config.networking.hostName}" \
+          -d "Node: $COMIN_HOSTNAME
+      Commit: $COMIN_GIT_MSG ($COMIN_GIT_SHA)
+      Error: $COMIN_ERROR_MSG" \
           http://10.1.23.184:2586/homelab-deployments
-      '';
-    };
-  };
-
-  systemd.services.comin.unitConfig = {
-    OnSuccess = [ "ntfy-comin-success.service" ];
-    OnFailure = [ "ntfy-comin-failure.service" ];
+      fi
+    '');
   };
 
   # Decrypt the GitHub PAT using agenix

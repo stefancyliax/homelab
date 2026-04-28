@@ -39,7 +39,6 @@
     docker-compose
     yazi
     btop
-    python
   ];
 
   # User Configuration ("stefan")
