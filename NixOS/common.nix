@@ -37,10 +37,8 @@
     curl
     wget
     docker-compose
-    fzf
     yazi
     btop
-    tree
   ];
 
   # User Configuration ("stefan")
