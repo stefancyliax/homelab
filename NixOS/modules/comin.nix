@@ -12,23 +12,13 @@
       auth.access_token_path = config.age.secrets."github-pat".path;
     }];
     postDeploymentCommand = toString (pkgs.writeShellScript "comin-notify" ''
-      if [ "$COMIN_STATUS" = "done" ]; then
         ${pkgs.curl}/bin/curl -s \
-          -H "Title: ✅ Deployment succeeded" \
+          -H "Title: Deployment status" \
           -H "Tags: white_check_mark" \
-          -d "Node: $COMIN_HOSTNAME
-      Commit: $COMIN_GIT_MSG ($COMIN_GIT_SHA)" \
+          -d "Node: $COMIN_HOSTNAME 
+        Commit: $COMIN_GIT_MSG ($COMIN_GIT_REF) 
+        Error: $COMIN_ERROR_MSG" \
           http://10.1.23.184:2586/homelab-deployments
-      else
-        ${pkgs.curl}/bin/curl -s \
-          -H "Title: ❌ Deployment failed" \
-          -H "Tags: x" \
-          -H "Priority: high" \
-          -d "Node: $COMIN_HOSTNAME
-      Commit: $COMIN_GIT_MSG ($COMIN_GIT_SHA)
-      Error: $COMIN_ERROR_MSG" \
-          http://10.1.23.184:2586/homelab-deployments
-      fi
     '');
   };
 
