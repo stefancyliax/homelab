@@ -40,6 +40,7 @@
     yazi
     btop
     tldr
+    python
   ];
 
   # User Configuration ("stefan")
