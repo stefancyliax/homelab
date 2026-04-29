@@ -18,7 +18,7 @@ jobs:
       - name: Run nix flake check
         working-directory: ./NixOS
         # nix flake check evaluates all flake outputs to catch syntax errors and missing packages
-        run: nix flake check
+        run: nix flake check --extra-experimental-features "nix-command flakes"
 
       - name: Notify ntfy on failure
         if: failure()
