@@ -15,6 +15,10 @@
         href: http://10.1.23.184:3000
         icon: docker
         description: Deployment Orchestrator
+    - ntfy:
+        href: http://10.1.23.184:2586
+        icon: ntfy
+        description: Notification Server
     - ZeroByte:
         href: http://10.1.23.224:4096
         icon: network
