@@ -14,9 +14,10 @@
     postDeploymentCommand = toString (pkgs.writeShellScript "comin-notify" ''
         ${pkgs.curl}/bin/curl -s \
           -H "Title: Deployment status" \
-          -H "Tags: white_check_mark" \
-          -d "Node: $COMIN_HOSTNAME 
-        Commit: $COMIN_GIT_MSG ($COMIN_GIT_REF) 
+          -H "Tags: ship" \
+          -d "Node: $COMIN_HOSTNAME
+        Status: $COMIN_STATUS 
+        Commit: $COMIN_GIT_MSG ($COMIN_GIT_SHA) 
         Error: $COMIN_ERROR_MSG" \
           http://10.1.23.184:2586/homelab-deployments
     '');
