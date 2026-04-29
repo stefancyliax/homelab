@@ -39,6 +39,8 @@
     docker-compose
     yazi
     btop
+    sed
+    awk
   ];
 
   # User Configuration ("stefan")
