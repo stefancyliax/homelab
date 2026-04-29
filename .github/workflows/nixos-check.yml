@@ -1,0 +1,33 @@
+name: Check NixOS Configuration
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'NixOS/**'
+  pull_request:
+    paths:
+      - 'NixOS/**'
+
+jobs:
+  check:
+    runs-on: [ self-hosted, nixos ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run nix flake check
+        working-directory: ./NixOS
+        # nix flake check evaluates all flake outputs to catch syntax errors and missing packages
+        run: nix flake check
+
+      - name: Notify ntfy on failure
+        if: failure()
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=format:"%s")
+          curl -s \
+            -H "Title: ❌ Nix Build failed" \
+            -H "Tags: x" \
+            -H "Priority: high" \
+            -d "Commit: $COMMIT_MSG (${{ github.sha }})
+          Error: 'nix flake check' failed during evaluation. Check GitHub Actions logs for details." \
+            http://10.1.23.184:2586/homelab-deployments
