@@ -13,7 +13,7 @@ jobs:
     runs-on: [ self-hosted, nixos ]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run nix flake check
         working-directory: ./NixOS
