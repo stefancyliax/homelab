@@ -60,6 +60,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **GLM-OCR VM Migration:** Ollama node deprecated — too slow for inference. GPU Worker now handles all OCR and tagging tasks via llama-swap.
 ### Implementation
 
+- [ ] **GitHub Runner:** Provision the GitHub Actions runner declaratively via NixOS and manage it via Comin.
 - [ ] **Home Assistant Migration:** Migrate configuration and data from the legacy HA instance to the new HAOS VM.
 - [x] **Storage Configuration:** One 512 GB SSD is used for application data in ZFS, the other is reserved for Frigate.
 - [x] **GPU Worker Setup:** Provisioned with NixOS, Nvidia drivers, CUDA, and llama-swap. Functional as a dedicated AI worker. See [gpu-worker.md](docs/gpu-worker.md).
