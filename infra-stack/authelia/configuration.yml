@@ -2,8 +2,7 @@ theme: auto
 default_2fa_method: totp
 
 server:
-  host: 0.0.0.0
-  port: 9091
+  address: "tcp://0.0.0.0:9091"
 
 log:
   level: info
@@ -23,12 +22,19 @@ access_control:
 
 session:
   name: authelia_session
-  domain: stefancyliax.de
   secret: unsecure_session_secret # WARNING: Change this in production
+  cookies:
+    - domain: "stefancyliax.de"
+      authelia_url: "https://auth.home.stefancyliax.de"
 
 storage:
+  encryption_key: "unsecure_encryption_key_change_in_production" # MUST BE >20 CHARS
   local:
     path: /config/db.sqlite3
+
+identity_validation:
+  reset_password:
+    jwt_secret: "unsecure_jwt_secret_change_in_production"
 
 notifier:
   filesystem:
