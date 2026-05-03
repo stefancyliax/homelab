@@ -15,10 +15,10 @@ authentication_backend:
     path: /config/users_database.yml
 
 access_control:
-  default_policy: two_factor
+  default_policy: one_factor
   rules:
     - domain: "*.home.stefancyliax.de"
-      policy: two_factor
+      policy: one_factor
 
 session:
   name: authelia_session
