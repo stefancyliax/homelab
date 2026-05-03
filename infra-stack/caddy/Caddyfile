@@ -22,6 +22,32 @@
 		reverse_proxy homepage:3000
 	}
 
+	# Prometheus (Protected by Authelia)
+	@prometheus host prometheus.home.stefancyliax.de
+	handle @prometheus {
+		forward_auth authelia:9091 {
+			uri /api/verify?rd=https://auth.home.stefancyliax.de/
+			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+		}
+		reverse_proxy prometheus:9090
+	}
+
+	# Grafana (Protected by Authelia)
+	@grafana host grafana.home.stefancyliax.de
+	handle @grafana {
+		forward_auth authelia:9091 {
+			uri /api/verify?rd=https://auth.home.stefancyliax.de/
+			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+		}
+		reverse_proxy grafana:3000
+	}
+
+	# Ntfy (Direct Proxy, Unprotected)
+	@ntfy host ntfy.home.stefancyliax.de
+	handle @ntfy {
+		reverse_proxy ntfy:80
+	}
+
 	# Fallback for undefined subdomains
 	handle {
 		respond "Service Not Found" 404

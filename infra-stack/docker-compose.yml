@@ -8,8 +8,8 @@ services:
     restart: unless-stopped
     environment:
       - HOMEPAGE_ALLOWED_HOSTS=10.1.23.184,homepage.home.stefancyliax.de
-    ports:
-      - 3002:3000
+    # ports:
+    #   - 3002:3000
     volumes:
       - ./homepage:/app/config # Binds the local declarative YAML files
       - /var/run/docker.sock:/var/run/docker.sock:ro # Allows native Docker stats widgets later
@@ -18,8 +18,8 @@ services:
     image: prom/prometheus:v3
     container_name: prometheus
     restart: unless-stopped
-    ports:
-      - 9090:9090
+    # ports:
+    #   - 9090:9090
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
@@ -31,14 +31,19 @@ services:
     image: grafana/grafana-oss:latest
     container_name: grafana
     restart: unless-stopped
-    ports:
-      - 3001:3000
+    # ports:
+    #   - 3001:3000
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin # Default password, user can change later
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_PROXY_ENABLED=true
+      - GF_AUTH_PROXY_HEADER_NAME=Remote-User
+      - GF_AUTH_PROXY_HEADER_PROPERTY=username
+      - GF_AUTH_PROXY_AUTO_SIGN_UP=true
+      - GF_AUTH_PROXY_HEADERS=Email:Remote-Email,Name:Remote-Name
       - INFLUXDB_ADMIN_TOKEN=$INFLUXDB_ADMIN_TOKEN
 
   influxdb:
