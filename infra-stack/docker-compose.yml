@@ -7,7 +7,7 @@ services:
     container_name: homepage
     restart: unless-stopped
     environment:
-      - HOMEPAGE_ALLOWED_HOSTS=10.1.23.184:3002,10.1.23.184
+      - HOMEPAGE_ALLOWED_HOSTS=10.1.23.184,homepage.home.stefancyliax.de
     ports:
       - 3002:3000
     volumes:
