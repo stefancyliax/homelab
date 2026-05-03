@@ -1,0 +1,35 @@
+theme: auto
+default_2fa_method: totp
+
+server:
+  host: 0.0.0.0
+  port: 9091
+
+log:
+  level: info
+
+totp:
+  issuer: authelia.com
+
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+
+access_control:
+  default_policy: two_factor
+  rules:
+    - domain: "*.home.stefancyliax.de"
+      policy: two_factor
+
+session:
+  name: authelia_session
+  domain: stefancyliax.de
+  secret: unsecure_session_secret # WARNING: Change this in production
+
+storage:
+  local:
+    path: /config/db.sqlite3
+
+notifier:
+  filesystem:
+    filename: /config/notification.txt

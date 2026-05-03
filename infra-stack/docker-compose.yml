@@ -58,6 +58,30 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=homelab
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=$INFLUXDB_ADMIN_TOKEN
 
+  authelia:
+    image: authelia/authelia
+    container_name: authelia
+    restart: unless-stopped
+    volumes:
+      - ./authelia:/config
+    environment:
+      - TZ=Europe/Berlin
+
+  caddy:
+    build: ./caddy
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - PORKBUN_API_KEY=$PORKBUN_API_KEY
+      - PORKBUN_API_SECRET_KEY=$PORKBUN_API_SECRET_KEY
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
   ntfy:
     image: binwiederhier/ntfy
     container_name: ntfy
@@ -81,3 +105,5 @@ volumes:
   grafana_data:
   influxdb_data:
   ntfy_cache:
+  caddy_data:
+  caddy_config:

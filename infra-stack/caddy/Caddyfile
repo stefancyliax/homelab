@@ -1,0 +1,39 @@
+{
+	# Global options
+	# email your@email.com # Recommended: Uncomment and add your email for Let's Encrypt expiration notices
+}
+
+*.home.stefancyliax.de {
+	tls {
+		dns porkbun {
+			api_key {$PORKBUN_API_KEY}
+			api_secret_key {$PORKBUN_API_SECRET_KEY}
+		}
+	}
+
+	# Homepage (Protected by Authelia)
+	@homepage host homepage.home.stefancyliax.de
+	handle @homepage {
+		forward_auth authelia:9091 {
+			uri /api/verify?rd=https://auth.home.stefancyliax.de/
+			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+		}
+		reverse_proxy homepage:3000
+	}
+
+	# Fallback for undefined subdomains
+	handle {
+		respond "Service Not Found" 404
+	}
+}
+
+# Authelia Login Portal
+auth.home.stefancyliax.de {
+	tls {
+		dns porkbun {
+			api_key {$PORKBUN_API_KEY}
+			api_secret_key {$PORKBUN_API_SECRET_KEY}
+		}
+	}
+	reverse_proxy authelia:9091
+}
