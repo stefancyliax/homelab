@@ -39,3 +39,21 @@ identity_validation:
 notifier:
   filesystem:
     filename: /config/notification.txt
+
+identity_providers:
+  oidc:
+    ## HMAC and RSA keys are injected securely via docker-compose environment variables and file mounts.
+    clients:
+      - client_id: grimmory
+        client_name: Grimmory
+        client_secret: "$pbkdf2-sha512$310000$RdVfdm4XeaexvvEaPKeVpg$H3kO5Xm.u2vIIBVafScIsFEyZxP5tvoz44zUqkXiKtKDYtWNBDEjKLhMOh68HdidGoitFVjoFUmVvfUy3x4nVA" 
+        public: false
+        authorization_policy: one_factor
+        redirect_uris:
+          - https://grimmory.home.stefancyliax.de/api/auth/callback/openid
+          - https://grimmory.home.stefancyliax.de/login/oauth2/code/oidc
+        scopes:
+          - openid
+          - profile
+          - email
+        userinfo_signed_response_alg: none

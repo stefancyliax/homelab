@@ -10,6 +10,7 @@
     volumes = [
       "/var/run/docker.sock:/var/run/docker.sock"
       "dockhand_data:/app/data"
+      "/run/agenix:/run/agenix:ro" # Allows docker-compose inside dockhand to read the secrets
     ];
   };
 }

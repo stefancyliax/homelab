@@ -111,6 +111,9 @@ services:
       - DATABASE_USERNAME=grimmory
       - DATABASE_PASSWORD=${GRIMMORY_DB_PASSWORD}
       - DISK_TYPE=LOCAL
+      - OIDC_ISSUER_URI=https://auth.home.stefancyliax.de
+      - OIDC_CLIENT_ID=grimmory
+      - OIDC_CLIENT_SECRET=${GRIMMORY_OIDC_CLIENT_SECRET}
     volumes:
       - grimmory_data:/app/data
       - /mnt/data/grimmory/books:/books

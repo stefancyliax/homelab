@@ -21,4 +21,7 @@
     "net.ipv4.ip_forward" = 1;
     "net.ipv6.conf.all.forwarding" = 1;
   };
+
+  # Decrypt the environment variables for the infra-stack
+  age.secrets."infra-env".file = ../../secrets/infra-env.age;
 }

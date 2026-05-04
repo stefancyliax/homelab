@@ -14,10 +14,13 @@ let
   systems = [ infra-node services-node another-node comin-test gpu-worker ollama-node]; 
 in
 {
-  # Example: The hawser token can be decrypted by Stefan and (eventually) the nodes that run Hawser.
+  # How this works: The hawser token can be decrypted by Stefan and (eventually) the nodes that run Hawser.
   "secrets/hawser-token.age".publicKeys = users ++ systems;
   "secrets/rclone-conf.age".publicKeys = users ++ [ services-node ];
   
   # Comin deploy key, readable by the user and all systems that might run Comin
   "secrets/github-pat.age".publicKeys = users ++ systems;
+
+  # OIDC Secrets
+  "secrets/infra-env.age".publicKeys = users ++ [ infra-node ];
 }

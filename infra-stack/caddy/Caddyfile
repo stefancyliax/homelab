@@ -48,6 +48,13 @@
 		reverse_proxy ntfy:80
 	}
 
+	# Grimmory (OIDC SSO handled by the application)
+	@grimmory host grimmory.home.stefancyliax.de
+	handle @grimmory {
+		# Grimmory runs on the services-node
+		reverse_proxy 10.1.23.224:6060
+	}
+
 	# Fallback for undefined subdomains
 	handle {
 		respond "Service Not Found" 404
