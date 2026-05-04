@@ -13,5 +13,13 @@ jobs:
       - name: Trigger Dockhand Webhook
         # Uses curl directly from the self-hosted runner to ping the internal IP
         run: |
-          curl -sf "http://10.1.23.184:3000/api/git/stacks/1/webhook?secret=${{ secrets.INFRA_STACK_WEBHOOK }}" \
-            -H "Content-Type: application/json"
+          for i in {1..12}; do
+            if curl -sf "http://10.1.23.184:3000/api/git/stacks/1/webhook?secret=${{ secrets.INFRA_STACK_WEBHOOK }}" -H "Content-Type: application/json"; then
+              echo "Webhook triggered successfully!"
+              exit 0
+            fi
+            echo "Dockhand unreachable (likely restarting). Retrying in 5 seconds... ($i/12)"
+            sleep 10
+          done
+          echo "Webhook failed after multiple retries."
+          exit 1
