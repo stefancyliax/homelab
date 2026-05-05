@@ -42,13 +42,13 @@ notifier:
 
 identity_providers:
   oidc:
-    hmac_secret: '{{ secret "/config/secrets/oidc_hmac" | mindent 0 | trimAll "\n" }}'
+    hmac_secret: '{{ secret "/config/secrets/oidc_hmac" | trim }}'
     jwks:
       - key_id: main
         algorithm: RS256
         use: sig
         key: |
-          {{ secret "/config/secrets/oidc_rsa.pem" | mindent 10 }}
+          {{ secret "/config/secrets/oidc_rsa.pem" | mindent 10 " " }}
     clients:
       - client_id: YDpnxyPRS3R_NeMMX6FE.zXC5ZBHTwruQWGYMqguJMgV93WmTRADtUZ2cRxk2EcugIHqbkQi
         client_name: Grimmory
