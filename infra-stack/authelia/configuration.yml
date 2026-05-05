@@ -42,19 +42,27 @@ notifier:
 
 identity_providers:
   oidc:
+    hmac_secret: '{{ secret "/config/secrets/oidc_hmac" | mindent 0 | trimAll "\n" }}'
+    jwks:
+      - key_id: main
+        algorithm: RS256
+        use: sig
+        key: |
+          {{ secret "/config/secrets/oidc_rsa.pem" | mindent 10 }}
     clients:
       - client_id: YDpnxyPRS3R_NeMMX6FE.zXC5ZBHTwruQWGYMqguJMgV93WmTRADtUZ2cRxk2EcugIHqbkQi
         client_name: Grimmory
-        client_secret: $pbkdf2-sha512$310000$hpE9VPu3UvXlz44R/nvKnw$Pqj4WCVMny84.baYiVxZsII012rKTSKsIyPc/jOGAAfA/MTeIff6efCcG1fsiSBlb28Zr5b6mTp5bK.DbwIJag
+        client_secret: '$pbkdf2-sha512$310000$hpE9VPu3UvXlz44R/nvKnw$Pqj4WCVMny84.baYiVxZsII012rKTSKsIyPc/jOGAAfA/MTeIff6efCcG1fsiSBlb28Zr5b6mTp5bK.DbwIJag'
         public: false
         authorization_policy: one_factor
         require_pkce: true
         pkce_challenge_method: S256
+        response_types:
+          - code
         scopes:
           - openid
           - profile
           - email
           - groups
-          - offline_access
         redirect_uris:
           - https://grimmory.home.stefancyliax.de/oauth2-callback

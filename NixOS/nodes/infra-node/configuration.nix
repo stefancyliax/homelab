@@ -21,4 +21,8 @@
     "net.ipv4.ip_forward" = 1;
     "net.ipv6.conf.all.forwarding" = 1;
   };
+
+  # Decrypt OIDC secrets for Authelia (mounted into the container via docker-compose)
+  age.secrets."authelia-oidc-hmac".file = ../../secrets/authelia-oidc-hmac.age;
+  age.secrets."authelia-oidc-rsa".file = ../../secrets/authelia-oidc-rsa.age;
 }

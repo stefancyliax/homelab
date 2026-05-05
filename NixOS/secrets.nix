@@ -21,6 +21,7 @@ in
   # Comin deploy key, readable by the user and all systems that might run Comin
   "secrets/github-pat.age".publicKeys = users ++ systems;
 
-  # OIDC Secrets
-  "secrets/infra-env.age".publicKeys = users ++ [ infra-node ];
+  # OIDC Secrets (mounted into Authelia container as files)
+  "secrets/authelia-oidc-hmac.age".publicKeys = users ++ [ infra-node ];
+  "secrets/authelia-oidc-rsa.age".publicKeys = users ++ [ infra-node ];
 }

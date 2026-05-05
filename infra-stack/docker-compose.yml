@@ -69,8 +69,11 @@ services:
     restart: unless-stopped
     volumes:
       - ./authelia:/config
+      - /run/agenix/authelia-oidc-hmac:/config/secrets/oidc_hmac:ro
+      - /run/agenix/authelia-oidc-rsa:/config/secrets/oidc_rsa.pem:ro
     environment:
       - TZ=Europe/Berlin
+      - X_AUTHELIA_CONFIG_FILTERS=template
 
   caddy:
     build: ./caddy
