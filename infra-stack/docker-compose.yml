@@ -69,8 +69,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./authelia:/config
-    env_file:
-      - /run/agenix/infra-env
     environment:
       - TZ=Europe/Berlin
 

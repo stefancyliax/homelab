@@ -42,18 +42,19 @@ notifier:
 
 identity_providers:
   oidc:
-    ## HMAC and RSA keys are injected securely via docker-compose environment variables and file mounts.
     clients:
-      - client_id: grimmory
+      - client_id: YDpnxyPRS3R_NeMMX6FE.zXC5ZBHTwruQWGYMqguJMgV93WmTRADtUZ2cRxk2EcugIHqbkQi
         client_name: Grimmory
-        client_secret: "$pbkdf2-sha512$310000$RdVfdm4XeaexvvEaPKeVpg$H3kO5Xm.u2vIIBVafScIsFEyZxP5tvoz44zUqkXiKtKDYtWNBDEjKLhMOh68HdidGoitFVjoFUmVvfUy3x4nVA" 
+        client_secret: $pbkdf2-sha512$310000$hpE9VPu3UvXlz44R/nvKnw$Pqj4WCVMny84.baYiVxZsII012rKTSKsIyPc/jOGAAfA/MTeIff6efCcG1fsiSBlb28Zr5b6mTp5bK.DbwIJag
         public: false
         authorization_policy: one_factor
-        redirect_uris:
-          - https://grimmory.home.stefancyliax.de/api/auth/callback/openid
-          - https://grimmory.home.stefancyliax.de/login/oauth2/code/oidc
+        require_pkce: true
+        pkce_challenge_method: S256
         scopes:
           - openid
           - profile
           - email
-        userinfo_signed_response_alg: none
+          - groups
+          - offline_access
+        redirect_uris:
+          - https://grimmory.home.stefancyliax.de/oauth2-callback
