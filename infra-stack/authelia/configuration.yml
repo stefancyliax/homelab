@@ -63,5 +63,6 @@ identity_providers:
           - profile
           - email
           - groups
+          - offline_access
         redirect_uris:
           - https://grimmory.home.stefancyliax.de/oauth2-callback
