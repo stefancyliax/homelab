@@ -53,6 +53,7 @@ identity_providers:
         client_name: Grimmory
         client_secret: '$pbkdf2-sha512$310000$hpE9VPu3UvXlz44R/nvKnw$Pqj4WCVMny84.baYiVxZsII012rKTSKsIyPc/jOGAAfA/MTeIff6efCcG1fsiSBlb28Zr5b6mTp5bK.DbwIJag'
         public: false
+        token_endpoint_auth_method: client_secret_post
         authorization_policy: one_factor
         require_pkce: true
         pkce_challenge_method: S256
