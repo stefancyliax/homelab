@@ -47,8 +47,7 @@ identity_providers:
       - key_id: main
         algorithm: RS256
         use: sig
-        key: |
-          {{ secret "/config/secrets/oidc_rsa.pem" | mindent 10 " " }}
+        key: {{ secret "/config/secrets/oidc_rsa.pem" | mindent 10 "|" | msquote }}
     clients:
       - client_id: YDpnxyPRS3R_NeMMX6FE.zXC5ZBHTwruQWGYMqguJMgV93WmTRADtUZ2cRxk2EcugIHqbkQi
         client_name: Grimmory
