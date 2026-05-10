@@ -4,7 +4,7 @@
 
 - Infrastructure:
     - Proxmox:
-        href: https://10.1.23.4:8006
+        href: https://proxmox.home.stefancyliax.de
         icon: proxmox
         description: Virtualization Hypervisor
     - Unraid:
@@ -12,7 +12,7 @@
         icon: unraid
         description: Storage NAS
     - Dockhand:
-        href: http://10.1.23.184:3000
+        href: https://dockhand.home.stefancyliax.de
         icon: docker
         description: Deployment Orchestrator
     - ntfy:
@@ -61,7 +61,7 @@
         icon: paperless-ngx
         description: Document LLM Assistant
     - Grimmory:
-        href: http://10.1.23.224:6060
+        href: https://grimmory.home.stefancyliax.de/
         icon: booklore
         description: Digital Library Manager
     - NextExplorer:
@@ -104,3 +104,17 @@
         href: http://10.1.23.184:8086
         icon: influxdb
         description: Long-term Database
+
+- Fallback:
+    - Proxmox:
+        href: https://10.1.23.4:8006
+        icon: proxmox
+        description: Virtualization Hypervisor
+    - Unraid:
+        href: http://10.1.23.5
+        icon: unraid
+        description: Storage NAS
+    - Dockhand:
+        href: http://10.1.23.184:3000
+        icon: docker
+        description: Deployment Orchestrator

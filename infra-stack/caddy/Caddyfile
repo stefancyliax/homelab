@@ -51,8 +51,23 @@
 	# Grimmory (OIDC SSO handled by the application)
 	@grimmory host grimmory.home.stefancyliax.de
 	handle @grimmory {
-		# Grimmory runs on the services-node
 		reverse_proxy 10.1.23.224:6060
+	}
+
+	# Proxmox (OIDC SSO handled by Proxmox's built-in OpenID Connect realm)
+	@proxmox host proxmox.home.stefancyliax.de
+	handle @proxmox {
+		reverse_proxy https://10.1.23.4:8006 {
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	# Dockhand (OIDC SSO handled by the application)
+	@dockhand host dockhand.home.stefancyliax.de
+	handle @dockhand {
+		reverse_proxy 10.1.23.184:3000
 	}
 
 	# Fallback for undefined subdomains

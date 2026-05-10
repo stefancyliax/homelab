@@ -255,7 +255,7 @@ Mark the service as enrolled in the table below.
 | Homepage | ✅ Native | 🔲 Planned | OAuth2/OIDC | Proxy auth or OIDC provider |
 | Grafana | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | Prometheus | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
-| Dockhand | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| Dockhand | ✅ Native | 🚧 In Progress | OAuth2/OIDC | Built-in OIDC support |
 | **Services** | | | | |
 | Paperless-ngx | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via `PAPERLESS_SOCIALACCOUNT_PROVIDERS` |
 | Paperless-GPT | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
@@ -274,7 +274,7 @@ Mark the service as enrolled in the table below.
 | ESPHome | ✅ Native | 🔲 Planned | Reverse proxy | Basic auth or proxy |
 | **Dedicated VMs / Nodes** | | | | |
 | Home Assistant | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via auth provider integration |
-| Proxmox VE | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OpenID Connect realm |
+| Proxmox VE | ✅ Native | 🚧 In Progress | OAuth2/OIDC | Built-in OpenID Connect realm |
 
 ### Implementation Notes
 

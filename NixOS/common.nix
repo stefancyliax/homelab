@@ -39,7 +39,7 @@
     docker-compose
     yazi
     btop
-    # tldr
+    tldr
   ];
 
   # User Configuration ("stefan")
