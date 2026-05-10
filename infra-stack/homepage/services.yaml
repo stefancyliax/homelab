@@ -16,7 +16,7 @@
         icon: docker
         description: Deployment Orchestrator
     - ntfy:
-        href: http://10.1.23.184:2586
+        href: https://ntfy.home.stefancyliax.de
         icon: ntfy
         description: Notification Server
     - ZeroByte:
