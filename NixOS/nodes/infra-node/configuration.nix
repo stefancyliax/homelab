@@ -13,6 +13,9 @@
 
   networking.hostName = "infra-node";
 
+  # Open HTTP/HTTPS for Caddy (needed for container-to-host traffic, e.g., Dockhand → Authelia OIDC)
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
+
   # Enable Tailscale
   services.tailscale.enable = true;
 
