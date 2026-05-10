@@ -72,10 +72,9 @@ identity_providers:
         client_name: Proxmox VE
         client_secret: '$pbkdf2-sha512$310000$hXdBhS6tujkUA2L0j9l.xA$kA1mN2wwrXJuV85DBhjaizh0VO6tNeWqaEY7nc219E9qXCYL5RwxyJv8SbRyWXvGUmoBBc/dCL3CgFLGqTX8eg'
         public: false
-        token_endpoint_auth_method: client_secret_post
+        token_endpoint_auth_method: client_secret_basic
         authorization_policy: one_factor
-        require_pkce: true
-        pkce_challenge_method: S256
+        require_pkce: false
         response_types:
           - code
         scopes:
