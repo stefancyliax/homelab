@@ -1,0 +1,19 @@
+# Authelia user database
+# Passwords are hashed with Argon2id. Generate a hash with:
+#   docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'YOUR_PASSWORD'
+
+users:
+  stefan:
+    displayname: "Stefan"
+    password: "$argon2id$v=19$m=65536,t=3,p=4$6hdV1bYB0JEeqzT11w4Ciw$/HoXW7CasEdtqJ5xVniUB449CwZ++QQcI5YWLTT6QJ4"
+    email: stefan@stefancyliax.de
+    groups:
+      - admins
+      - users
+
+  karina:
+    displayname: "Karina"
+    password: "$argon2id$v=19$m=65536,t=3,p=4$uX+LD8vUyqN5KPvqAqYewA$/QLsPCSj4hpSAvRaF62eJ7DzKAAux86IurxwZSsPchk"
+    email: karina@stefancyliax.de
+    groups:
+      - users
