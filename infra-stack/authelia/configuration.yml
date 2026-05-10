@@ -51,7 +51,7 @@ identity_providers:
     clients:
       - client_id: grimmory
         client_name: Grimmory
-        client_secret: '$pbkdf2-sha512$310000$hpE9VPu3UvXlz44R/nvKnw$Pqj4WCVMny84.baYiVxZsII012rKTSKsIyPc/jOGAAfA/MTeIff6efCcG1fsiSBlb28Zr5b6mTp5bK.DbwIJag'
+        client_secret: '$pbkdf2-sha512$310000$9.wQl3nXxoQLzP8IcpMiSA$fiS5wjDeI.6E2KbjW9aCAhLGjl6gwpVi1iDe0iO1GE8.6DHBhX11rnzifWmzV1EGdbWkosxO2WscfYVj.Z49Hg'
         public: false
         token_endpoint_auth_method: client_secret_post
         authorization_policy: one_factor
