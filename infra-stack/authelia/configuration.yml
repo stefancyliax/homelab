@@ -49,7 +49,7 @@ identity_providers:
         use: sig
         key: {{ secret "/config/secrets/oidc_rsa.pem" | mindent 10 "|" | msquote }}
     clients:
-      - client_id: YDpnxyPRS3R_NeMMX6FE.zXC5ZBHTwruQWGYMqguJMgV93WmTRADtUZ2cRxk2EcugIHqbkQi
+      - client_id: grimmory
         client_name: Grimmory
         client_secret: '$pbkdf2-sha512$310000$hpE9VPu3UvXlz44R/nvKnw$Pqj4WCVMny84.baYiVxZsII012rKTSKsIyPc/jOGAAfA/MTeIff6efCcG1fsiSBlb28Zr5b6mTp5bK.DbwIJag'
         public: false

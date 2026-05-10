@@ -136,8 +136,93 @@ This returns the `self.rev` (or `self.dirtyRev`) set during the build, allowing 
 
 ## Single Sign-On (SSO)
 
-> [!NOTE]
-> SSO is not yet implemented. The SSO provider (Authentik, Authelia, or Keycloak) has not been selected. This section tracks the planned enrollment of all services once SSO is deployed.
+Authelia is deployed as the SSO provider on the `infra-stack`, providing OpenID Connect 1.0 (OIDC) identity services for all homelab applications.
+
+### Architecture
+
+- **Identity Provider:** [Authelia](https://www.authelia.com/) (running as a Docker container on `infra-node`)
+- **User Database:** File-based (`users_database.yml`) with Argon2id password hashing
+- **OIDC Keys:** RSA 2048-bit private key + HMAC secret, managed via Agenix and mounted into the container at runtime
+- **Reverse Proxy:** Caddy handles TLS termination and routes traffic to both Authelia and OIDC-enabled services
+
+### Secret Management
+
+OIDC cryptographic secrets are managed via Agenix and never stored in plaintext in the repository.
+
+| Secret | Agenix Path | Container Mount | Purpose |
+|---|---|---|---|
+| HMAC Secret | `/run/agenix/authelia-oidc-hmac` | `/config/secrets/oidc_hmac` | Signs JWTs and session data |
+| RSA Private Key | `/run/agenix/authelia-oidc-rsa` | `/config/secrets/oidc_rsa.pem` | Signs OIDC ID tokens (JWKS) |
+
+These are decrypted by NixOS on boot (`infra-node/configuration.nix`) and mounted read-only into the Authelia container via `docker-compose.yml`.
+
+### Onboarding a New OIDC Client
+
+Follow these steps to enroll a new service into SSO:
+
+#### 1. Generate the Client ID and Secret
+
+Each OIDC client needs a unique `client_id` and `client_secret` pair. Use the Authelia CLI to generate both.
+
+**Choose the `client_id`:**
+
+Use the service name in lowercase as the `client_id` (e.g., `grimmory`, `grafana`, `proxmox`). The client ID is a public identifier — not a secret — so there's no security benefit to randomizing it.
+
+**Generate the `client_secret`:**
+
+Run the same command again to generate a separate secret:
+
+```bash
+docker run --rm authelia/authelia:latest authelia crypto hash generate pbkdf2 \
+  --variant sha512 --random --random.length 72 --random.charset rfc3986
+```
+
+This outputs two values:
+- **Random Password:** The plain-text client secret → give this to the application
+- **Digest:** The PBKDF2 hash → put this in `configuration.yml` as `client_secret`
+
+> [!IMPORTANT]
+> Save the plain-text **Random Password** immediately — it cannot be recovered from the hash. The application needs this value to authenticate with Authelia.
+
+#### 2. Add the Client to Authelia
+
+Add a new entry under `identity_providers.oidc.clients` in `infra-stack/authelia/configuration.yml`:
+
+```yaml
+      - client_id: '<client_id>'
+        client_name: '<Human Readable Name>'
+        client_secret: '<pbkdf2_hash_from_step_1>'
+        public: false
+        token_endpoint_auth_method: client_secret_post  # or client_secret_basic, check the app's docs
+        authorization_policy: one_factor
+        require_pkce: true
+        pkce_challenge_method: S256
+        response_types:
+          - code
+        scopes:
+          - openid
+          - profile
+          - email
+          - groups
+        redirect_uris:
+          - https://<service>.home.stefancyliax.de/<callback_path>
+```
+
+> [!TIP]
+> Check the application's OIDC documentation for the correct `redirect_uris` callback path and whether it uses `client_secret_post` or `client_secret_basic`.
+
+#### 3. Configure the Application
+
+In the application's configuration (usually environment variables), set:
+- **Issuer / Provider URL:** `https://auth.home.stefancyliax.de`
+- **Client ID:** The `client_id` from step 2
+- **Client Secret:** The **plain-text** secret from step 1 (not the hash)
+- **Scopes:** `openid profile email groups`
+- **Redirect URI:** Must exactly match what's in `configuration.yml`
+
+#### 4. Update the Enrollment Matrix
+
+Mark the service as enrolled in the table below.
 
 ### SSO Enrollment Matrix
 
@@ -155,7 +240,7 @@ This returns the `self.rev` (or `self.dirtyRev`) set during the build, allowing 
 | n8n | ✅ Native | 🔲 Planned | OAuth2/OIDC | Enterprise SSO or OIDC |
 | NocoDB | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | Stirling PDF | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in SSO support |
-| Grimmory | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| Grimmory | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | NextExplorer | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | Kestra | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | Speaches | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
@@ -166,13 +251,14 @@ This returns the `self.rev` (or `self.dirtyRev`) set during the build, allowing 
 | ESPHome | ✅ Native | 🔲 Planned | Reverse proxy | Basic auth or proxy |
 | **Dedicated VMs / Nodes** | | | | |
 | Home Assistant | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via auth provider integration |
+| Proxmox VE | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OpenID Connect realm |
 
 ### Implementation Notes
 
-- Services marked **Reverse proxy** will need an authenticating reverse proxy (e.g., Traefik + ForwardAuth, or Caddy + auth middleware) placed in front of them.
+- Services marked **Reverse proxy** will need Caddy's `forward_auth` middleware placed in front of them.
 - Services marked **Skip** are internal/API-only and don't require user-facing SSO.
-- The SSO provider will be deployed on the `infra-stack` alongside the ingress layer.
-- See the **Research & Decisions** section in the [README](../README.md) for the SSO provider evaluation status.
+- The OIDC JWKS keys and HMAC secret are shared across all clients — you do **not** need to generate new keys per service.
+- Only the `client_id` / `client_secret` pair is unique per service.
 
 ## Deployment Monitoring
 
