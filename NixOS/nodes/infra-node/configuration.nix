@@ -25,4 +25,9 @@
   # Decrypt OIDC secrets for Authelia (mounted into the container via docker-compose)
   age.secrets."authelia-oidc-hmac" = { file = ../../secrets/authelia-oidc-hmac.age; mode = "0444"; };
   age.secrets."authelia-oidc-rsa" = { file = ../../secrets/authelia-oidc-rsa.age; mode = "0444"; };
+
+  # Decrypt Authelia core secrets (session, storage encryption, JWT)
+  age.secrets."authelia-session-secret" = { file = ../../secrets/authelia-session-secret.age; mode = "0444"; };
+  age.secrets."authelia-storage-key" = { file = ../../secrets/authelia-storage-key.age; mode = "0444"; };
+  age.secrets."authelia-jwt-secret" = { file = ../../secrets/authelia-jwt-secret.age; mode = "0444"; };
 }

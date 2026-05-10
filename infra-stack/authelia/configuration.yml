@@ -22,19 +22,19 @@ access_control:
 
 session:
   name: authelia_session
-  secret: unsecure_session_secret # WARNING: Change this in production
+  secret: '{{ secret "/config/secrets/session_secret" | trim }}'
   cookies:
     - domain: "stefancyliax.de"
       authelia_url: "https://auth.home.stefancyliax.de"
 
 storage:
-  encryption_key: "unsecure_encryption_key_change_in_production" # MUST BE >20 CHARS
+  encryption_key: '{{ secret "/config/secrets/storage_key" | trim }}'
   local:
     path: /config/db.sqlite3
 
 identity_validation:
   reset_password:
-    jwt_secret: "unsecure_jwt_secret_change_in_production"
+    jwt_secret: '{{ secret "/config/secrets/jwt_secret" | trim }}'
 
 notifier:
   filesystem:
