@@ -53,6 +53,29 @@ We are actively transitioning the entire cluster away from Colmena towards Comin
 - **`secrets/*.age`**: The encrypted secret payloads (e.g., `hawser-token.age`).
 - Secrets are referenced in NixOS configs via `age.secrets.<name>.file` and made available as files on the target system.
 
+#### Creating or Editing Secrets
+
+Agenix is not installed globally — run it via `nix run` from the `NixOS/` directory:
+
+```bash
+cd NixOS
+
+# Create or edit a secret (opens $EDITOR, paste the secret value, save and exit)
+nix run github:ryantm/agenix -- -e secrets/<secret-name>.age
+
+# Re-key all secrets (needed after adding a new host key to secrets.nix)
+nix run github:ryantm/agenix -- -r
+```
+
+> [!IMPORTANT]
+> You must add the secret entry to `secrets.nix` **before** running `agenix -e`. Agenix reads `secrets.nix` to determine which SSH public keys to encrypt the secret for.
+
+To generate a random secret and encrypt it in one step:
+
+```bash
+openssl rand -hex 32 | nix run github:ryantm/agenix -- -e secrets/<secret-name>.age
+```
+
 ### VM Templating & Cloning
 
 When cloning a baseline NixOS VM into a Proxmox template, hardware-tied state must be wiped to avoid conflicts (Tailscale IP allocation, Agenix decryption, etc.):

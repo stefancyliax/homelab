@@ -24,4 +24,7 @@ in
   # OIDC Secrets (mounted into Authelia container as files)
   "secrets/authelia-oidc-hmac.age".publicKeys = users ++ [ infra-node ];
   "secrets/authelia-oidc-rsa.age".publicKeys = users ++ [ infra-node ];
+  "secrets/authelia-session-secret.age".publicKeys = users ++ [ infra-node ];
+  "secrets/authelia-storage-key.age".publicKeys = users ++ [ infra-node ];
+  "secrets/authelia-jwt-secret.age".publicKeys = users ++ [ infra-node ];
 }

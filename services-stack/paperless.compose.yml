@@ -14,7 +14,7 @@ services:
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
-      POSTGRES_PASSWORD: paperless
+      POSTGRES_PASSWORD: ${PAPERLESS_DB_PASSWORD}
   paperless-ngx:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     container_name: paperless-ngx
@@ -34,6 +34,7 @@ services:
     environment:
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_DBHOST: db
+      PAPERLESS_DBPASS: ${PAPERLESS_DB_PASSWORD}
       PAPERLESS_TIKA_ENABLED: 1
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
