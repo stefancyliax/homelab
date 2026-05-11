@@ -76,6 +76,10 @@
         href: http://10.1.23.224:8084
         icon: pdf
         description: PDF Manipulation Tools
+    - Grimoire:
+        href: https://grimoire.home.stefancyliax.de
+        icon: bookmark
+        description: Bookmark Manager
 
 - AI & ML:
     - Ollama:

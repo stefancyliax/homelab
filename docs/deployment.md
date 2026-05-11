@@ -252,7 +252,7 @@ Mark the service as enrolled in the table below.
 | Service | SSO Support | Enrollment Status | Protocol | Notes |
 |---|---|---|---|---|
 | **Infrastructure** | | | | |
-| Homepage | ✅ Native | 🔲 Planned | OAuth2/OIDC | Proxy auth or OIDC provider |
+| Homepage | ✅ Native | ⏭️ Skip | — | Read-only dashboard, no login needed |
 | Grafana | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | Prometheus | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
 | Dockhand | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |

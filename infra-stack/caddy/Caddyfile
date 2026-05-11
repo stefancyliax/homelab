@@ -70,6 +70,12 @@
 		reverse_proxy 10.1.23.184:3000
 	}
 
+	# Grimoire (Bookmark Manager)
+	@grimoire host grimoire.home.stefancyliax.de
+	handle @grimoire {
+		reverse_proxy 10.1.23.224:5173
+	}
+
 	# Fallback for undefined subdomains
 	handle {
 		respond "Service Not Found" 404
