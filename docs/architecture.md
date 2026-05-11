@@ -42,7 +42,23 @@ Will serve as local backup target and media storage.
 | IoT Isolation | Dedicated VLAN for IoT devices |
 | Remote Access | Tailscale (MagicDNS for device name resolution) |
 | Public Exposure | **None** — nothing is forwarded from the WAN router |
-| SSL Certificates | TBD — researching Tailscale's built-in SSL capabilities |
+| SSL Certificates | Caddy with automatic ACME via Porkbun DNS challenge |
+
+### DNS Configuration
+
+All services are accessed via `*.home.stefancyliax.de` subdomains. DNS is configured at two levels:
+
+| Level | Record | Target | Purpose |
+|---|---|---|---|
+| **Porkbun (Public DNS)** | `*.home.stefancyliax.de` → A record | `10.1.23.184` | Ensures all clients (LAN, Tailscale, any DNS resolver) resolve to the infra-node |
+| **Unifi (Local DNS)** | `*.home.stefancyliax.de` → A record | `10.1.23.184` | Local override (optional, but provides faster resolution on LAN) |
+
+> [!NOTE]
+> The public A record points to a private RFC 1918 IP. This is intentional — the address is only reachable on the LAN or via Tailscale. External users get a valid DNS response but cannot connect.
+
+### SSL / TLS
+
+Caddy runs on the `infra-node` and automatically provisions wildcard TLS certificates for `*.home.stefancyliax.de` using the Porkbun DNS-01 ACME challenge. All service subdomains get trusted HTTPS without manual certificate management.
 
 ### Tailscale Configuration
 
@@ -53,10 +69,11 @@ The `infra-node` acts as a Tailscale Subnet Router, allowing remote devices to a
 2. **Apply Configuration:** Commit and push so Comin deploys the configuration onto the node.
 3. **Advertise Routes:** SSH into the `infra-node` and run:
    ```bash
-   sudo tailscale up --advertise-routes=192.168.1.0/24
+   sudo tailscale up --advertise-routes=10.1.23.0/24
    ```
-   *(Update the IP range to match your local LAN subnet)*
 4. **Approve in Dashboard:** Go to the Tailscale admin console, locate `infra-node`, select "Edit route settings", and toggle the subnet routes switch to "on".
+
+Remote clients with Tailscale can then access all `*.home.stefancyliax.de` services — DNS resolves to `10.1.23.184` (via the public A record), and traffic reaches the infra-node through the Tailscale subnet route.
 
 ## Virtual Machine Landscape
 
