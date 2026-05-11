@@ -206,7 +206,26 @@ services:
     volumes:
       - stirlingpdf_data:/configs
 
+  grimoire:
+    image: goniszewski/grimoire:latest # or change from 'latest' to 'preview' to use the latest preview version
+    container_name: grimoire
+    restart: unless-stopped
+    environment:
+      - PORT=5173
+      - PUBLIC_HTTPS_ONLY=false
+      - PUBLIC_SIGNUP_DISABLED=false
+    volumes:
+      - grimoire_data:/app/data/
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:$PORT/api/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "5173:5173"
+
 volumes:
+  grimoire_data:
   zerobyte_data:
   open-webui_data:
   n8n_data:
