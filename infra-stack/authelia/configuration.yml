@@ -119,3 +119,4 @@ identity_providers:
           - groups
         redirect_uris:
           - https://paperless.home.stefancyliax.de/accounts/oidc/authelia/login/callback/
+          - http://10.1.23.224:8008/accounts/oidc/authelia/login/callback/
