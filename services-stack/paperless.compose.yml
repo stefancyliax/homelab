@@ -44,6 +44,26 @@ services:
       PAPERLESS_CONSUMER_IGNORE_PATTERN: ".*DS_Store"
       USERMAP_UID: 1000
       USERMAP_GID: 100
+      PAPERLESS_URL: https://paperless.home.stefancyliax.de
+      PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: >
+        {
+          "openid_connect": {
+            "APPS": [
+              {
+                "provider_id": "authelia",
+                "name": "Authelia SSO",
+                "client_id": "paperless",
+                "secret": "${PAPERLESS_CLIENT_SECRET}",
+                "settings": {
+                  "server_url": "https://auth.home.stefancyliax.de/.well-known/openid-configuration"
+                }
+              }
+            ]
+          }
+        }
+      PAPERLESS_SOCIAL_AUTO_SIGNUP: "true"
+      PAPERLESS_REDIRECT_LOGIN_TO_SSO: "true"
 
   gotenberg:
     image: docker.io/gotenberg/gotenberg:8.25

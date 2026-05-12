@@ -76,6 +76,12 @@
 		reverse_proxy 10.1.23.224:5173
 	}
 
+	# Paperless-ngx (OIDC SSO handled by the application)
+	@paperless host paperless.home.stefancyliax.de
+	handle @paperless {
+		reverse_proxy 10.1.23.224:8008
+	}
+
 	# Fallback for undefined subdomains
 	handle {
 		respond "Service Not Found" 404

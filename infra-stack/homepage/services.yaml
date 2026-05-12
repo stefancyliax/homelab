@@ -49,7 +49,7 @@
         icon: nocodb
         description: Database Platform
     - Paperless-ngx:
-        href: http://10.1.23.224:8008
+        href: https://paperless.home.stefancyliax.de
         icon: paperless-ngx
         description: Document Management
     - Paperless-AI:
