@@ -107,7 +107,7 @@ identity_providers:
         client_name: Paperless-ngx
         client_secret: '$pbkdf2-sha512$310000$QoRf4JE5SDGVNs0EzJ9RCw$Y1CC8p0U6g19AXOs8qK8iQQB2rqCjo3tja0c4Arbc0IYWvEUjIqCgAVk9Yb/wqoGTt3J3bwO.ePJeiMQb2VE7Q'
         public: false
-        token_endpoint_auth_method: client_secret_post
+        token_endpoint_auth_method: client_secret_basic
         authorization_policy: one_factor
         require_pkce: false
         response_types:
