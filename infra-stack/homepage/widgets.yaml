@@ -12,7 +12,7 @@
 # Natively reads from the /var/run/docker.sock we explicitly mapped!
 # This will display total running containers, offline containers, and memory usage for the 'infra-node' immediately on boot.
 - docker:
-    url: /var/run/docker.sock
+    url: unix:///var/run/docker.sock
 
 # TODO: Proxmox Metrics (Requires generating an API Token in Proxmox)
 # - proxmox:
