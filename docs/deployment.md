@@ -257,7 +257,7 @@ Mark the service as enrolled in the table below.
 | Prometheus | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
 | Dockhand | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | **Services** | | | | |
-| Paperless-ngx | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via `PAPERLESS_SOCIALACCOUNT_PROVIDERS` |
+| Paperless-ngx | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Via `allauth.socialaccount.providers.openid_connect`, `client_secret_basic`, no PKCE |
 | Paperless-GPT | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
 | Open-WebUI | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | n8n | ✅ Native | 🔲 Planned | OAuth2/OIDC | Enterprise SSO or OIDC |
