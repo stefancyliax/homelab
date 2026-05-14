@@ -8,6 +8,7 @@ services:
     restart: unless-stopped
     environment:
       - HOMEPAGE_ALLOWED_HOSTS=10.1.23.184,homepage.home.stefancyliax.de
+      - HOMEPAGE_VAR_PROXMOX_TOKEN_SECRET=$PROXMOX_API_SECRET
     # ports:
     #   - 3002:3000
     volumes:

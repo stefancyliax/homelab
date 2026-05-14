@@ -1,8 +1,0 @@
----
-# For configuration options and examples, please see:
-# https://gethomepage.dev/latest/configs/docker/
-
-# This configuration connects Homepage to the local Docker socket.
-# It enables the container stats and automatic service discovery features.
-infra-node:
-  socket: /var/run/docker.sock

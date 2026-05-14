@@ -84,7 +84,8 @@ For full hardware specs, networking, and service placement details, see [docs/ar
     - [ ] n8n / Kestra workflow failure notifications.
     - [ ] Home Assistant ntfy notify integration.
 - [ ] **Dashboard APIs:** Connect Homepage widgets to live data sources:
-    - [ ] Proxmox & PBS API tokens for hypervisor metrics.
+    - [x] Proxmox API token for hypervisor metrics.
+    - [ ] PBS API tokens for backup metrics.
     - [ ] Home Assistant long-lived access token for entity telemetry.
     - [ ] Paperless-ngx API token for inbox count badges.
     - [ ] Grafana & SSO metrics via the Homepage REST parser.
