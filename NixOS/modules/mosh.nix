@@ -17,6 +17,6 @@
   users.users.stefan.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDbJ+tGvo+JKbYhSNK3YuvvBiCrbLC6fxq2YgTobErHj" #Terminus
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFsYrDhPCHMHkS/e69ItNP+6fWZGCGThiNaBv70V6sYb" #Tempest
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMr58Q4LzAHLuM/fH301PRQDKOBNegXqJyGg9iNKJ6iM FOS Terminal" #FOS Terminal
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFfV/NGaunHN0Smg77mEkXPVFl0vv49T6cTzNLC1gDIj FOS Terminal"
   ];
 }
