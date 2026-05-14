@@ -4,6 +4,7 @@
   imports = [
     ../../common.nix
     ./hardware-configuration.nix
+    ../../modules/mosh.nix
   ];
 
   # Bootloader
