@@ -33,4 +33,8 @@
   age.secrets."authelia-session-secret" = { file = ../../secrets/authelia-session-secret.age; mode = "0444"; };
   age.secrets."authelia-storage-key" = { file = ../../secrets/authelia-storage-key.age; mode = "0444"; };
   age.secrets."authelia-jwt-secret" = { file = ../../secrets/authelia-jwt-secret.age; mode = "0444"; };
+
+  environment.systemPackages = with pkgs; [
+    wakeonlan
+  ];
 }

@@ -53,6 +53,7 @@
     tree
     lazydocker
     btop
+    ethtool
 
     # GPU diagnostics
     pciutils         # lspci
@@ -61,4 +62,12 @@
 
   # Allow unfree packages (required for Nvidia drivers)
   nixpkgs.config.allowUnfree = true;
+
+  # ---------------------------------------------------------------------------
+  # Wake-on-LAN Support
+  # ---------------------------------------------------------------------------
+  # Ensure WOL is enabled on the ethernet interface (assuming enp* or eth*)
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="net", KERNEL=="e*", RUN+="${pkgs.ethtool}/bin/ethtool -s %k wol g"
+  '';
 }
