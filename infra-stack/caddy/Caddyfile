@@ -67,7 +67,7 @@
 	# Dockhand (OIDC SSO handled by the application)
 	@dockhand host dockhand.home.stefancyliax.de
 	handle @dockhand {
-		reverse_proxy 10.1.23.184:3000
+		reverse_proxy dockhand:3000
 	}
 
 	# Grimoire (Bookmark Manager)
