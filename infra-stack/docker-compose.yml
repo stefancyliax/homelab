@@ -118,3 +118,8 @@ volumes:
   ntfy_cache:
   caddy_data:
   caddy_config:
+
+networks:
+  default:
+    name: infra_net
+    external: true
