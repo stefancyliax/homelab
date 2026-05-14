@@ -76,6 +76,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.
 - [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, n8n, IT-Tools, etc.). See [services.md](docs/services.md).
 - [ ] **Tududi Deployment:** Write the Docker Compose definitions to deploy the [Tududi](https://github.com/chrisvel/tududi) task management service to the `services-stack`.
+- [ ] **BamBuddy Deployment:** Write the Docker Compose definitions to deploy the [BamBuddy](https://bambuddy.cool/index.html) service to the `services-stack`.
 - [ ] **ntfy Service Integrations:** Connect services to the self-hosted ntfy instance:
     - [ ] Grafana Webhook contact point with custom JSON payload template.
     - [ ] ZeroByte post-backup hook script.
