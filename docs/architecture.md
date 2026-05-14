@@ -114,6 +114,17 @@ Dedicated Home Assistant Operating System instance for smart home control. Attac
 
 [Open-WebUI](https://github.com/open-webui/open-webui) runs on the Services Node (via Docker Compose) and now connects to the GPU Worker's llama-swap API.
 
+#### Hermes Node (NixOS VM)
+
+A lightweight VM providing persistent remote access to the Hermes AI coding agent.
+Accessible via SSH/Mosh from any device (laptop, phone). Uses tmux for session
+persistence. Hermes connects to the GPU-Worker's llama-swap API for LLM inference.
+
+| Service | Type | Status |
+|---|---|---|
+| Hermes Agent | CLI tool (user-installed) | ✅ Running |
+| Mosh + tmux | NixOS modules | ✅ Running |
+
 #### GPU Worker AI Backend
 
 The GPU Worker runs [llama-swap](https://github.com/mostlygeek/llama-swap) as a native NixOS service with CUDA-accelerated `llama-cpp`. It provides an OpenAI-compatible API on port 8080 and manages model hot-swapping on demand. See [gpu-worker.md](gpu-worker.md) for the full configuration.
