@@ -7,11 +7,10 @@ let
   infra-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHjYs+UlG1KAEDQSawTdliumatYyEaCfWBEMr7ksGfMC root@nixos-base";
   services-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINRRVU8zF8sW1JZhed7j4BszcAuUpEalL+nr0ZWOntfA root@nixos-base";
   another-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ7NtsOzf6BjKWZUiNFYONrm16K9GGPrtD/Z30cCqOs+ root@nixos-base";
-  # comin-test = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILVZbdM/BB07b5K277nQtAgRQTpSOJJ2/pqVjd+2laT/ root@nixos-base";
   gpu-worker = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJQLhHjz+3k2fbirx8RX3vVpGzI0To7S1abDf9M22dyk root@nixos-base";
-  # ollama-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII3ZF0NsKBcg4Exzsq4DENHd/Tgt7mGsJHo9VzMkExHn root@nixos-base";
+  hermes-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINUVu4Tgapi7czpPHdL8jnWLXluxqfmJqkzBcs9rYvUE root@nixos-base"; 
   
-  systems = [ infra-node services-node another-node comin-test gpu-worker ollama-node]; 
+  systems = [ infra-node services-node another-node gpu-worker hermes-node ]; 
 in
 {
   # How this works: The hawser token can be decrypted by Stefan and (eventually) the nodes that run Hawser.
