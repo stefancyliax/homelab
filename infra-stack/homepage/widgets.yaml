@@ -10,10 +10,3 @@
       dateStyle: medium
 
 
-
-# TODO: Proxmox Metrics (Requires generating an API Token in Proxmox)
-- proxmox:
-    url: https://10.1.23.4:8006
-    apiTokenId: "root@pam!homepage"
-    apiTokenSecret: "{{HOMEPAGE_VAR_PROXMOX_TOKEN_SECRET}}"
-    node: pve 

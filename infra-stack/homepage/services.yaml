@@ -7,6 +7,11 @@
         href: https://proxmox.home.stefancyliax.de
         icon: proxmox
         description: Virtualization Hypervisor
+        widget:
+          type: proxmox
+          url: https://10.1.23.4:8006
+          username: "root@pam!homepage"
+          password: "{{HOMEPAGE_VAR_PROXMOX_TOKEN_SECRET}}"
     - Unraid:
         href: http://10.1.23.5
         icon: unraid
