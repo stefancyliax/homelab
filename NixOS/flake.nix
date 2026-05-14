@@ -50,6 +50,14 @@
         ];
       };
 
+      "hermes-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/hermes-node/configuration.nix
+          ./modules/hermes.nix
+        ];
+      };
+
       
       "gpu-worker" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";

@@ -34,6 +34,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Local Backups (PBS) | 🔲 Planned | [backup.md](docs/backup.md) |
 | Monitoring (Prometheus/Grafana/InfluxDB) | ✅ Done | [monitoring.md](docs/monitoring.md) |
 | GPU Worker / AI Stack (llama-swap) | ✅ Done | [gpu-worker.md](docs/gpu-worker.md) |
+| Hermes Node (Remote AI Agent) | ✅ Done | [architecture.md](docs/architecture.md) |
 | ~~Ollama Node (LLM Inference)~~ | ❌ Deprecated | GPU Worker handles all inference |
 | Services (Paperless, Jellyfin, etc.) | 🚧 Ongoing | [services.md](docs/services.md) |
 | Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |
@@ -69,6 +70,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Paperless-GPT Native Parsing:** Set up a secondary instance of `paperless-gpt` using `docling` as the backend for non-scanned/digital native documents (e.g., received via email).
 - [x] **Paperless Email Ingress:** Email fetching, accounts, and routing rules configured and functional in Paperless-ngx.
 - [x] **LLM Backend Migration (gpu-worker):** Migrated the `gpu-worker` from `ollama` to `llama-swap` as a native NixOS service with CUDA-accelerated `llama-cpp`. Initial model: Qwen3-VL-8B-Instruct (Q4_K_M). See [gpu-worker.md](docs/gpu-worker.md).
+- [ ] **Tune Hermes GPU Offload:** Tune the `--n-gpu-layers` for the Qwen3.6-35B-A3B model on the GPU worker to maximize VRAM usage while leaving room for context.
 - [x] **LLM Backend Migration (ollama-node):** Deprecated. The `ollama-node` proved too slow for inference. All LLM tasks now handled by the `gpu-worker` via llama-swap.
 - [x] **Vision LLM Tuning:** Vision LLM parameters tuned and finalized.
 - [ ] **ComfyUI Deployment:** Deploy [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on the `gpu-worker` for GPU-accelerated image generation workflows.
@@ -115,6 +117,7 @@ homelab/
 │   │   ├── infra-node/
 │   │   ├── services-node/
 │   │   ├── gpu-worker/
+│   │   ├── hermes-node/        # Hermes AI coding agent
 │   │   └── ollama-node/     # Deprecated
 │   ├── modules/            # Reusable NixOS modules (Dockhand, Hawser, Ollama)
 │   ├── secrets/            # Agenix-encrypted secret files (.age)
