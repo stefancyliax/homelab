@@ -45,6 +45,7 @@ The Docker engine is configured with `nvidia-container-toolkit` passthrough (`ha
 **Current models:** 
 - [Qwen3-VL-8B-Instruct](https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF) (`Q4_K_M` quantization) — a vision-language model supporting both text and image inputs. Ideal for document processing (Paperless-AI/GPT) and general chat via Open-WebUI.
 - [Qwen3.5-9B](https://huggingface.co/unsloth/Qwen3.5-9B-GGUF) (`Q4_K_XL` quantization) — standard text/chat model.
+- [Qwen3.6-35B-A3B](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF) (`UD-Q4_K_M` quantization) — 35B sparse MoE model (3B active params). Uses `-ncmoe 20` to offload routed experts to system RAM, fitting within 16GB VRAM. Requires ≥32GB system RAM.
 - [GLM-OCR](https://huggingface.co/ggml-org/GLM-OCR-GGUF) (`f16` quantization) — an alternative vision model optimized specifically for OCR tasks.
 - [Gemma 4 E4B](https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF) (`Q4_K_M` quantization) — highly efficient text model optimized for edge devices, ideal for fast parallel tagging.
 - [MinerU 2.5 Pro](https://huggingface.co/mradermacher/MinerU2.5-Pro-2604-1.2B-GGUF) (`f16` quantization) — specialized multimodal model for document parsing and structure extraction.
@@ -57,6 +58,7 @@ The Docker engine is configured with `nvidia-container-toolkit` passthrough (`ha
 |---|---|---|---|---|
 | Qwen3-VL-8B | 51,200 tokens | 99 (full) | 300s | `mmproj-Qwen3VL-8B-Instruct-F16.gguf` |
 | Qwen3.5-9B | 51,200 tokens | 99 (full) | 300s | N/A |
+| Qwen3.6-35B-A3B | 32,768 tokens | 99 (full) + `-ncmoe 20` | 300s | N/A |
 | GLM-OCR | 16,384 tokens | 99 (full) | 300s | `mmproj-GLM-OCR-Q8_0.gguf` |
 | Gemma4 E4B | 32,768 tokens | 99 (full) | 300s | `mmproj-gemma-4-E4B-F16.gguf` |
 | MinerU 2.5 | 16,384 tokens | 99 (full) | 300s | `MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf` |
@@ -75,6 +77,8 @@ sudo wget -O /var/lib/models/mmproj-Qwen3VL-8B-Instruct-F16.gguf \
   "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct-GGUF/resolve/main/mmproj-Qwen3VL-8B-Instruct-F16.gguf"
 sudo wget -O /var/lib/models/Qwen3.5-9B-UD-Q4_K_XL.gguf \
   "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-UD-Q4_K_XL.gguf"
+sudo wget -O /var/lib/models/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf \
+  "https://huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF/resolve/main/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf"
 sudo wget -O /var/lib/models/GLM-OCR-f16.gguf \
   "https://huggingface.co/ggml-org/GLM-OCR-GGUF/resolve/main/GLM-OCR-f16.gguf"
 sudo wget -O /var/lib/models/mmproj-GLM-OCR-Q8_0.gguf \

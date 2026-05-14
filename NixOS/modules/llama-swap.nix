@@ -34,6 +34,14 @@ in
           ];
           ttl = 300;
         };
+        "qwen3.6-35b" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf --n-gpu-layers 99 --n-cpu-moe 20 --flash-attn --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 32768";
+          aliases = [
+            "qwen3.6"
+            "qwen36"
+          ];
+          ttl = 300;
+        };
         "glm-ocr" = {
           cmd = "${llama-server} --port \${PORT} --model /var/lib/models/GLM-OCR-f16.gguf --mmproj /var/lib/models/mmproj-GLM-OCR-Q8_0.gguf --n-gpu-layers 99 --ctx-size 16384";
           aliases = [
