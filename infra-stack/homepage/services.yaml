@@ -28,19 +28,44 @@
         href: http://10.1.23.224:4096
         icon: network
         description: Secure Backup Framework
-
-- Smart Home:
-    - Home Assistant:
-        href: http://10.1.23.5:8123
-        icon: home-assistant
-        description: Home Automation Hub
     - ESPHome:
         href: http://10.1.107.8:6052
         icon: esphome
         description: Microcontroller Firmware Management
-
+    - Speaches:
+        href: http://10.1.23.224:8003
+        icon: whisper
+        description: Speech-to-Text API
+    - Paperless-AI:
+        href: http://10.1.23.224:8001
+        icon: paperless-ngx
+        description: AI Document Classifier
+    - Paperless-GPT:
+        href: http://10.1.23.224:8002
+        icon: paperless-ngx
+        description: Document LLM Assistant
+    - Grafana old:
+        href: http://10.1.23.5:3000
+        icon: grafana
+        description: Metrics & Visualization
+    - Grafana:
+        href: http://10.1.23.184:3001
+        icon: grafana
+        description: Metrics & Visualization
+    - Prometheus:
+        href: http://10.1.23.184:9090
+        icon: prometheus
+        description: Time-series Metrics
+    - InfluxDB:
+        href: http://10.1.23.184:8086
+        icon: influxdb
+        description: Long-term Database
 
 - Applications:
+    - Home Assistant:
+        href: http://10.1.23.5:8123
+        icon: home-assistant
+        description: Home Automation Hub
     - Open-WebUI:
         href: http://10.1.23.224:3000
         icon: open-webui
@@ -57,14 +82,6 @@
         href: https://paperless.home.stefancyliax.de
         icon: paperless-ngx
         description: Document Management
-    - Paperless-AI:
-        href: http://10.1.23.224:8001
-        icon: paperless-ngx
-        description: AI Document Classifier
-    - Paperless-GPT:
-        href: http://10.1.23.224:8002
-        icon: paperless-ngx
-        description: Document LLM Assistant
     - Grimmory:
         href: https://grimmory.home.stefancyliax.de/
         icon: booklore
@@ -89,34 +106,6 @@
         href: https://tududi.home.stefancyliax.de
         icon: tasks
         description: Task Management
-
-- AI & ML:
-    - Ollama:
-        href: http://10.1.23.17:11434
-        icon: ollama
-        description: LLM Inference Server
-    - Speaches:
-        href: http://10.1.23.224:8003
-        icon: whisper
-        description: Speech-to-Text API
-
-- Monitoring:
-    - Grafana old:
-        href: http://10.1.23.5:3000
-        icon: grafana
-        description: Metrics & Visualization
-    - Grafana:
-        href: http://10.1.23.184:3001
-        icon: grafana
-        description: Metrics & Visualization
-    - Prometheus:
-        href: http://10.1.23.184:9090
-        icon: prometheus
-        description: Time-series Metrics
-    - InfluxDB:
-        href: http://10.1.23.184:8086
-        icon: influxdb
-        description: Long-term Database
 
 - Fallback:
     - Proxmox:
