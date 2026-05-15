@@ -76,6 +76,14 @@
   # Allow the deployment user to push unsigned closures
   nix.settings.trusted-users = [ "root" "stefan" ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.auto-optimise-store = true;
+
+  # Automatic Garbage Collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
 
   system.stateVersion = "25.11"; 
 }
