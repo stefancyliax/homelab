@@ -82,6 +82,12 @@
 		reverse_proxy 10.1.23.224:8008
 	}
 
+	# Tududi (Task Management)
+	@tududi host tududi.home.stefancyliax.de
+	handle @tududi {
+		reverse_proxy 10.1.23.224:3002
+	}
+
 	# Fallback for undefined subdomains
 	handle {
 		respond "Service Not Found" 404

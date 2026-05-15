@@ -85,6 +85,10 @@
         href: https://grimoire.home.stefancyliax.de
         icon: bookmark
         description: Bookmark Manager
+    - Tududi:
+        href: https://tududi.home.stefancyliax.de
+        icon: tasks
+        description: Task Management
 
 - AI & ML:
     - Ollama:
