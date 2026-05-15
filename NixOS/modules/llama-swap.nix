@@ -33,12 +33,19 @@ in
             "chat"
           ];
           ttl = 300;
+         "qwen3.5-9b-hermes" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/Qwen3.5-9B-UD-Q4_K_XL.gguf --flash-attn on --n-gpu-layers 99 --ctx-size 120000";
+          aliases = [
+            "qwen9b-hermes"
+          ];
+          ttl = 300;
+        };
         };
         "qwen3.6-35b" = {
-          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf --n-gpu-layers 99 --n-cpu-moe 20 --flash-attn --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 32768";
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf --n-gpu-layers 99 --n-cpu-moe 20 --no-nmap -reasoning-budget 2048 -t 12 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 120000";
           aliases = [
-            "qwen3.6"
-            "qwen36"
+            "qwen-35b"
+            "qwen35b"
           ];
           ttl = 300;
         };
