@@ -14,7 +14,7 @@
     postDeploymentCommand = toString (pkgs.writeShellScript "comin-notify" ''
       if [ -z "$COMIN_ERROR_MSG" ]; then
         ${pkgs.curl}/bin/curl -s \
-          -H "Title: ✅ Deployment succeeded" \
+          -H "Title: Deployment succeeded" \
           -H "Tags: white_check_mark" \
           -d "Node: $COMIN_HOSTNAME
       Commit: $COMIN_GIT_MSG ($COMIN_GIT_SHA)" \
