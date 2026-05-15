@@ -17,5 +17,7 @@
   # Enable Tailscale for secure access to GPU-Worker
   services.tailscale.enable = true;
 
+  networking.firewall.allowedTCPPorts = [ 9119 ];
+
   nixpkgs.config.allowUnfree = true;
 }
