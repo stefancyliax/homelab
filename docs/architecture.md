@@ -123,6 +123,7 @@ persistence. Hermes connects to the GPU-Worker's llama-swap API for LLM inferenc
 | Service | Type | Status |
 |---|---|---|
 | Hermes Agent | CLI tool (user-installed) | ✅ Running |
+| Dev Tools (Python, Node, etc.) | NixOS packages | ✅ Running |
 | Mosh + tmux | NixOS modules | ✅ Running |
 
 #### GPU Worker AI Backend

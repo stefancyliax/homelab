@@ -20,5 +20,6 @@
     jq
     nodejs      # Hermes runtime dependency
     uv
+    python311
   ];
 }
