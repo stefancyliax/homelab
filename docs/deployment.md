@@ -266,7 +266,7 @@ Mark the service as enrolled in the table below.
 | Grimmory | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | NextExplorer | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | Kestra | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
-| Speaches | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
+| Parakeet | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
 | Jellyfin | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via SSO plugin |
 | Frigate | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
 | IT-Tools | ❌ None | ⏭️ Skip | — | Read-only tool, no login needed |

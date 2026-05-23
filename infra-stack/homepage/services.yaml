@@ -32,10 +32,6 @@
         href: http://10.1.107.8:6052
         icon: esphome
         description: Microcontroller Firmware Management
-    - Speaches:
-        href: http://10.1.23.224:8003
-        icon: whisper
-        description: Speech-to-Text API
     - Paperless-AI:
         href: http://10.1.23.224:8001
         icon: paperless-ngx

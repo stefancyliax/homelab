@@ -74,25 +74,18 @@ services:
       - NODE_ENV=production
       - PUBLIC_URL=http://10.1.23.224:3001
 
-  speaches:
-    image: ghcr.io/speaches-ai/speaches:latest-cpu
-    container_name: speaches
-    volumes:
-      - hf-hub-cache:/home/ubuntu/.cache/huggingface/hub
+  parakeet:
+    image: ghcr.io/achetronic/parakeet:latest
+    container_name: parakeet
     restart: unless-stopped
-    environment:
-      - TRANSCRIPTION_MODEL_ID=istupakov/parakeet-tdt-0.6b-v3-onnx
-      - SPEACHES_BASE_URL=http://10.1.23.224:8000
-      - CHAT_COMPLETION_BASE_URL=""
-      # - SPEACHES_LOOPBACK_HOST_URL=http://127.0.0.1:8000
     ports:
-      - 8000:8000
+      - 8000:5092
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://0.0.0.0:8000/health"] # TODO: won't work if a user changes the port
+      test: ["CMD", "curl", "--fail", "http://0.0.0.0:5092/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 5s
+      start_period: 30s
 
   grimmory:
     image: grimmory/grimmory:latest
