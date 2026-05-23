@@ -81,7 +81,7 @@ services:
       - hf-hub-cache:/home/ubuntu/.cache/huggingface/hub
     restart: unless-stopped
     environment:
-      - TRANSCRIPTION_MODEL_ID=Systran/faster-distil-whisper-base
+      - TRANSCRIPTION_MODEL_ID=istupakov/parakeet-tdt-0.6b-v3-onnx
       - SPEACHES_BASE_URL=http://10.1.23.224:8000
       - CHAT_COMPLETION_BASE_URL=""
       # - SPEACHES_LOOPBACK_HOST_URL=http://127.0.0.1:8000

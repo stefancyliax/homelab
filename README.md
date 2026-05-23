@@ -105,6 +105,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **VM Firmware Decision:** Existing VMs stay on SeaBIOS; new VMs use OVMF/UEFI.
 - [x] **Offline Node Strategy:** Solved via Comin for pull-based deployments on intermittent nodes.
 - [x] **Homepage Dashboard:** Fully declarative layout via YAML in the `infra-stack`.
+- [x] **Speaches STT Migration:** Replaced Whisper model with NVIDIA Parakeet v3 ONNX model for improved transcription speed.
 
 ## Repository Structure
 
