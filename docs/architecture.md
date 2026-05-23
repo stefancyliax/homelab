@@ -119,13 +119,16 @@ Dedicated Home Assistant Operating System instance for smart home control. Attac
 A lightweight VM providing persistent remote access to the Hermes AI coding agent.
 Accessible via SSH/Mosh from any device (laptop, phone). Uses tmux for session
 persistence. Hermes connects to the GPU-Worker's llama-swap API for LLM inference.
+It also hosts a synced copy of your Obsidian vault via Syncthing for the agent to access.
 
 | Service | Type | Status |
 |---|---|---|
 | Hermes Agent | CLI tool (user-installed) | ✅ Running |
 | Dev Tools (Python, Node, etc.) | NixOS packages | ✅ Running |
+| [Syncthing](https://syncthing-hermes-node.home.stefancyliax.de) | Native NixOS Service | ✅ Deployed |
 | Mosh + tmux | NixOS modules | ✅ Running |
 | Port 9119 | NixOS firewall config | ✅ Open |
+| Port 8384 (Tailscale only) | NixOS firewall config | ✅ Open |
 
 #### GPU Worker AI Backend
 

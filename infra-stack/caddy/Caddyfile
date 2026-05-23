@@ -88,6 +88,12 @@
 		reverse_proxy 10.1.23.224:3002
 	}
 
+	# Syncthing Hermes Node (Direct Proxy, uses Syncthing's built-in authentication)
+	@syncthing-hermes host syncthing-hermes-node.home.stefancyliax.de
+	handle @syncthing-hermes {
+		reverse_proxy 10.1.23.216:8384
+	}
+
 	# Fallback for undefined subdomains
 	handle {
 		respond "Service Not Found" 404

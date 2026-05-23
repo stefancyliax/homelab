@@ -55,6 +55,7 @@
         modules = baseModules ++ [
           ./nodes/hermes-node/configuration.nix
           ./modules/hermes.nix
+          ./modules/syncthing.nix
         ];
       };
 
