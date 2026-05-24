@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 
 {
+  programs.nix-ld.enable = true;
+
   # Dev tools for coding agent workflows
   environment.systemPackages = with pkgs; [
     git

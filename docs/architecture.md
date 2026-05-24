@@ -125,6 +125,7 @@ It also hosts a synced copy of your Obsidian vault via Syncthing for the agent t
 |---|---|---|
 | Hermes Agent | CLI tool (user-installed) | ✅ Running |
 | Dev Tools (Python, Node, etc.) | NixOS packages | ✅ Running |
+| nix-ld (for dynamic binaries) | NixOS module | ✅ Enabled |
 | [Syncthing](https://syncthing-hermes-node.home.stefancyliax.de) | Native NixOS Service | ✅ Deployed |
 | Mosh + tmux | NixOS modules | ✅ Running |
 | Port 9119 | NixOS firewall config | ✅ Open |
