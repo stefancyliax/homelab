@@ -32,10 +32,7 @@
         href: http://10.1.107.8:6052
         icon: esphome
         description: Microcontroller Firmware Management
-    - Paperless-AI:
-        href: http://10.1.23.224:8001
-        icon: paperless-ngx
-        description: AI Document Classifier
+
     - Paperless-GPT:
         href: http://10.1.23.224:8002
         icon: paperless-ngx
@@ -45,11 +42,11 @@
         icon: grafana
         description: Metrics & Visualization
     - Grafana:
-        href: http://10.1.23.184:3001
+        href: https://grafana.home.stefancyliax.de
         icon: grafana
         description: Metrics & Visualization
     - Prometheus:
-        href: http://10.1.23.184:9090
+        href: https://prometheus.home.stefancyliax.de
         icon: prometheus
         description: Time-series Metrics
     - InfluxDB:
