@@ -32,8 +32,8 @@ services:
     image: grafana/grafana-oss:latest
     container_name: grafana
     restart: unless-stopped
-    # ports:
-    #   - 3001:3000
+    ports:
+      - 3001:3000
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
@@ -44,6 +44,7 @@ services:
       - GF_AUTH_PROXY_HEADER_NAME=Remote-User
       - GF_AUTH_PROXY_HEADER_PROPERTY=username
       - GF_AUTH_PROXY_AUTO_SIGN_UP=true
+      - GF_AUTH_PROXY_AUTO_SIGN_UP_ROLE=Admin
       - GF_AUTH_PROXY_HEADERS=Email:Remote-Email,Name:Remote-Name
       - INFLUXDB_ADMIN_TOKEN=$INFLUXDB_ADMIN_TOKEN
 
