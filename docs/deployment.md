@@ -266,6 +266,8 @@ Mark the service as enrolled in the table below.
 | Grimmory | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | NextExplorer | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | Kestra | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| Hindsight UI | ❌ None | ✅ Enrolled | Reverse proxy | Protected via Authelia forward_auth |
+| Hindsight API | ❌ None | ⏭️ Skip | — | API-only, unprotected on private network |
 | Parakeet | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
 | Jellyfin | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via SSO plugin |
 | Frigate | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |

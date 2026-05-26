@@ -103,6 +103,10 @@
         href: https://syncthing-hermes-node.home.stefancyliax.de
         icon: syncthing
         description: Sync Obsidian Vault
+    - Hindsight:
+        href: https://hindsight.home.stefancyliax.de
+        icon: network
+        description: Biomimetic Memory for AI Agents
 
 - Fallback:
     - Proxmox:

@@ -208,9 +208,24 @@ services:
   #   volumes:
   #     - tududi_db:/app/backend/db
   #     - tududi_uploads:/app/backend/uploads
-  #   ports:
-  #     - "3002:3002"
   #   restart: unless-stopped
+
+  hindsight:
+    image: ghcr.io/vectorize-io/hindsight:latest
+    container_name: hindsight
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+      - "9999:9999"
+    environment:
+      - HINDSIGHT_API_WORKER_ID=hindsight-prod
+      - HINDSIGHT_API_LLM_PROVIDER=openai
+      - HINDSIGHT_API_LLM_BASE_URL=http://100.90.253.20:8080/v1
+      - HINDSIGHT_API_LLM_API_KEY=sk-dummy-key
+      - HINDSIGHT_API_LLM_MODEL=qwen3.6-35b
+      - HINDSIGHT_CP_DATAPLANE_API_URL=https://hindsight-api.home.stefancyliax.de
+    volumes:
+      - hindsight_data:/home/hindsight/.pg0
 
 volumes:
   grimoire_data:
@@ -226,3 +241,4 @@ volumes:
   stirlingpdf_data:
   tududi_db:
   tududi_uploads:
+  hindsight_data:
