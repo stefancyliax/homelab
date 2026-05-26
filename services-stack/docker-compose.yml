@@ -129,102 +129,88 @@ services:
       timeout: 5s
       retries: 10
 
-  kestra:
-    image: kestra/kestra:latest
-    container_name: kestra
-    restart: unless-stopped
-    stop_grace_period: 6m
-    user: "root"
-    command: server standalone
-    depends_on:
-      kestra-db:
-        condition: service_healthy
-    ports:
-      - "8082:8080"
-      - "8083:8081"
-    environment:
-      KESTRA_CONFIGURATION: |
-        datasources:
-          postgres:
-            url: jdbc:postgresql://kestra-db:5432/kestra
-            driverClassName: org.postgresql.Driver
-            username: kestra
-            password: ${KESTRA_DB_PASSWORD}
-        kestra:
-          repository:
-            type: postgres
-          storage:
-            type: local
-            local:
-              base-path: "/app/storage"
-          queue:
-            type: postgres
-          tasks:
-            tmp-dir:
-              path: /tmp/kestra-wd/tmp
-          url: http://10.1.23.224:8082/
-    volumes:
-      - kestra_data:/app/storage
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/kestra-wd:/tmp/kestra-wd
+  # kestra:
+  #   image: kestra/kestra:latest
+  #   container_name: kestra
+  #   restart: unless-stopped
+  #   stop_grace_period: 6m
+  #   user: "root"
+  #   command: server standalone
+  #   depends_on:
+  #     kestra-db:
+  #       condition: service_healthy
+  #   ports:
+  #     - "8082:8080"
+  #     - "8083:8081"
+  #   environment:
+  #     KESTRA_CONFIGURATION: |
+  #       datasources:
+  #         postgres:
+  #           url: jdbc:postgresql://kestra-db:5432/kestra
+  #           driverClassName: org.postgresql.Driver
+  #           username: kestra
+  #           password: ${KESTRA_DB_PASSWORD}
+  #       kestra:
+  #         repository:
+  #           type: postgres
+  #         storage:
+  #           type: local
+  #           local:
+  #             base-path: "/app/storage"
+  #         queue:
+  #           type: postgres
+  #         tasks:
+  #           tmp-dir:
+  #             path: /tmp/kestra-wd/tmp
+  #         url: http://10.1.23.224:8082/
+  #   volumes:
+  #     - kestra_data:/app/storage
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /tmp/kestra-wd:/tmp/kestra-wd
 
-  kestra-db:
-    image: postgres:18
-    container_name: kestra-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: kestra
-      POSTGRES_USER: kestra
-      POSTGRES_PASSWORD: ${KESTRA_DB_PASSWORD}
-    volumes:
-      - kestra_postgres:/var/lib/postgresql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
+  # kestra-db:
+  #   image: postgres:18
+  #   container_name: kestra-db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_DB: kestra
+  #     POSTGRES_USER: kestra
+  #     POSTGRES_PASSWORD: ${KESTRA_DB_PASSWORD}
+  #   volumes:
+  #     - kestra_postgres:/var/lib/postgresql
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 10
 
-  stirling-pdf:
-    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
-    container_name: stirling-pdf
-    restart: unless-stopped
-    ports:
-      - "8084:8080"
-    volumes:
-      - stirlingpdf_data:/configs
+  # stirling-pdf:
+  #   image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
+  #   container_name: stirling-pdf
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8084:8080"
+  #   volumes:
+  #     - stirlingpdf_data:/configs
 
-  grimoire:
-    image: goniszewski/grimoire:latest # or change from 'latest' to 'preview' to use the latest preview version
-    container_name: grimoire
-    restart: unless-stopped
-    environment:
-      - PORT=5173
-      - PUBLIC_HTTPS_ONLY=false
-      - PUBLIC_SIGNUP_DISABLED=false
-      - ORIGIN=https://grimoire.home.stefancyliax.de
-    volumes:
-      - grimoire_data:/app/data/
-    ports:
-      - "5173:5173"
-
-  tududi:
-    image: chrisvel/tududi:latest
-    container_name: tududi
-    environment:
-      - TUDUDI_USER_EMAIL=${TUDUDI_USER_EMAIL:-admin@example.com}
-      - TUDUDI_USER_PASSWORD=${TUDUDI_USER_PASSWORD:-changeme}
-      - TUDUDI_SESSION_SECRET=${TUDUDI_SESSION_SECRET:-changeme-please-use-openssl}
-      - TUDUDI_ALLOWED_ORIGINS=https://tududi.home.stefancyliax.de
-      - TUDUDI_TRUST_PROXY=true
-      - TUDUDI_UPLOAD_PATH=/app/backend/uploads
-      - PUID=1000
-      - PGID=100
-    volumes:
-      - tududi_db:/app/backend/db
-      - tududi_uploads:/app/backend/uploads
-    ports:
-      - "3002:3002"
-    restart: unless-stopped
+  # tududi:
+  #   image: chrisvel/tududi:latest
+  #   container_name: tududi
+  #   environment:
+  #     - TUDUDI_USER_EMAIL=${TUDUDI_USER_EMAIL:-admin@example.com}
+  #     - TUDUDI_USER_PASSWORD=${TUDUDI_USER_PASSWORD:-changeme}
+  #     - TUDUDI_SESSION_SECRET=${TUDUDI_SESSION_SECRET:-changeme-please-use-openssl}
+  #     - TUDUDI_ALLOWED_ORIGINS=https://tududi.home.stefancyliax.de
+  #     - TUDUDI_TRUST_PROXY=true
+  #     - TUDUDI_UPLOAD_PATH=/app/backend/uploads
+  #     - PUID=1000
+  #     - PGID=100
+  #   volumes:
+  #     - tududi_db:/app/backend/db
+  #     - tududi_uploads:/app/backend/uploads
+  #   ports:
+  #     - "3002:3002"
+  #   restart: unless-stopped
 
 volumes:
   grimoire_data:
