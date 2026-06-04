@@ -63,11 +63,22 @@
   # Allow unfree packages (required for Nvidia drivers)
   nixpkgs.config.allowUnfree = true;
 
-  # ---------------------------------------------------------------------------
-  # Wake-on-LAN Support
-  # ---------------------------------------------------------------------------
-  # Ensure WOL is enabled on the ethernet interface after every boot/driver reload
-  services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp7s0", RUN+="${pkgs.ethtool}/bin/ethtool -s %k wol g"
-  '';
+  # Configure WOL via NetworkManager (udev rules get overridden by NM)
+  networking.networkmanager.ensureProfiles.profiles.wol-enp7s0 = {
+    connection = {
+      id = "wol-enp7s0";
+      type = "ethernet";
+      interface-name = "enp7s0";
+      autoconnect = "true";
+    };
+    "802-3-ethernet" = {
+      wake-on-lan = "64";  # 64 = magic packet
+    };
+    ipv4 = {
+      method = "auto";
+    };
+    ipv6 = {
+      method = "auto";
+    };
+  };
 }
