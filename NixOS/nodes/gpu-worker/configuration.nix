@@ -66,8 +66,8 @@
   # ---------------------------------------------------------------------------
   # Wake-on-LAN Support
   # ---------------------------------------------------------------------------
-  # Ensure WOL is enabled on the ethernet interface (assuming enp* or eth*)
+  # Ensure WOL is enabled on the ethernet interface after every boot/driver reload
   services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="net", KERNEL=="e*", RUN+="${pkgs.ethtool}/bin/ethtool -s %k wol g"
+    ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp7s0", RUN+="${pkgs.ethtool}/bin/ethtool -s %k wol g"
   '';
 }

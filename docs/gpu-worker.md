@@ -133,11 +133,11 @@ The following CLI tools are provisioned on the GPU Worker for administration and
 To reduce power draw, this node should be suspended when idle and woken automatically when its AI endpoints are queried. 
 
 **WOL Implementation:**
-- **OS Support:** Enabled via a udev rule in `configuration.nix` that uses `ethtool` to ensure WOL is enabled on the ethernet interface across boots/suspends.
+- **OS Support:** Enabled via a udev rule in `configuration.nix` that uses `ethtool` to ensure WOL is enabled on `enp7s0` across boots/suspends.
 - **Triggering:** 
-  You can wake the machine by sending a magic packet from any node on the local network (e.g., `infra-node` or `services-node`) using the `wakeonlan` package:
+  The `wakeonlan` package is installed on the `infra-node`. To wake the gpu-worker:
   ```bash
-  wakeonlan <MAC-ADDRESS>
+  wakeonlan a8:a1:59:f0:be:6a
   ```
 
 **TODO:** 
