@@ -48,7 +48,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Docker Rootless Mode:** Research whether configuring Docker natively in rootless mode via NixOS is necessary for security, and how it impacts volume/bind-mount permissions.
 - [x] **Paperless-AI Integration:** ~~Researched and deployed~~. Commented out — insufficient benefit to justify running it alongside Paperless-GPT.
 - [x] **GPU Worker Desktop Environment:** Decided against a desktop environment. The GPU Worker is a dedicated AI worker only.
-- [ ] **Wake-on-LAN Integration:** Explore how WOL can automatically wake the GPU Worker when its AI endpoints are queried.
+- [x] **Wake-on-LAN Integration:** WOL enabled via NetworkManager profile on the gpu-worker (`enp7s0`). Magic packets sent from Home Assistant or the `infra-node` via `wakeonlan`.
 - [ ] **Volume Layout Design:** Define the logic for where and how Docker containers bind-mount persistent config and data within the NixOS VMs, tied to the backup strategy.
 - [x] **ZeroByte Configuration:** Backup targets, schedules, and retention policies configured and functional.
 - [ ] **Ingress & SSL:** Research Tailscale's built-in SSL certificate generation for internal HTTPS vs. a standard reverse proxy.

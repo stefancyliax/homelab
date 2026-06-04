@@ -130,15 +130,12 @@ The following CLI tools are provisioned on the GPU Worker for administration and
 
 ## Wake-on-LAN
 
-To reduce power draw, this node should be suspended when idle and woken automatically when its AI endpoints are queried. 
+To reduce power draw, this node can be shut down when idle and woken remotely via magic packet.
 
-**WOL Implementation:**
-- **OS Support:** Enabled via a udev rule in `configuration.nix` that uses `ethtool` to ensure WOL is enabled on `enp7s0` across boots/suspends.
-- **Triggering:** 
-  The `wakeonlan` package is installed on the `infra-node`. To wake the gpu-worker:
-  ```bash
-  wakeonlan a8:a1:59:f0:be:6a
-  ```
-
-**TODO:** 
-- Enable "Wake on LAN" or "Power On By PCI-E" in the physical motherboard BIOS of the gpu-worker (and ensure ErP is disabled).
+**Implementation:**
+- **NIC Config:** WOL is enabled via a NetworkManager connection profile in `configuration.nix` (`wake-on-lan = 64`, i.e. magic packet) on interface `enp7s0`. This persists correctly across reboots — udev rules alone get overridden by NetworkManager.
+- **BIOS:** "Wake on LAN" / "Power On By PCI-E" is enabled in the motherboard BIOS.
+- **MAC Address:** `a8:a1:59:f0:be:6a`
+- **Triggering:**
+  - **Home Assistant:** Built-in `wake_on_lan` integration with a switch entity.
+  - **CLI (infra-node):** `wakeonlan a8:a1:59:f0:be:6a` (package installed on `infra-node`).
