@@ -56,18 +56,12 @@ in
           ];
           ttl = 300;
         };
-        "gemma4" = {
+        "gemma4-e4b" = {
           cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-E4B-it-Q4_K_M.gguf --mmproj /var/lib/models/mmproj-gemma-4-E4B-F16.gguf --n-gpu-layers 99 --ctx-size 51200 --image-min-tokens 1024 --image-max-tokens 2240";
-          aliases = [
-            "gemma4-e4b"
-          ];
           ttl = 300;
         };
         "gemma4-12b" = {
           cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-12b-it-UD-Q4_K_XL.gguf --n-gpu-layers 99 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 262144";
-          aliases = [
-            "gemma4-12b-it"
-          ];
           ttl = 300;
         };
         "mineru" = {
