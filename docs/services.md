@@ -15,13 +15,13 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [IT-Tools](https://github.com/CorentinTh/it-tools) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Jellyfin](https://jellyfin.org/) | NAS | 🔲 Planned |
 | [Frigate](https://frigate.video/) | Docker Compose (`services-stack`) | 🔲 Planned |
-| [n8n](https://n8n.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| [Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| ~~[Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
 | [Grimmory](https://github.com/grimmory-tools/grimmory) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [ESPHome](https://esphome.io/) | Docker Compose (`services-stack`) | 🔲 Planned |
-| [Tududi](https://github.com/chrisvel/tududi) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| ~~[Tududi](https://github.com/chrisvel/tududi)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
 | [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`services-stack`) | 🔲 Planned |
 | ~~[Paperless-AI](https://github.com/clusterzx/paperless-ai)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
 | [Paperless-GPT](https://github.com/icereed/paperless-gpt) | Docker Compose (`services-stack`) | ✅ Functional |
@@ -29,7 +29,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | ~~[Ollama](https://ollama.com/)~~ | ~~Dedicated NixOS VM (`ollama-node`)~~ | ❌ Deprecated |
 | [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service (`gpu-worker`) | ✅ Functional |
 | [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| [Kestra](https://kestra.io/) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| ~~[Kestra](https://kestra.io/)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [nvtop](https://github.com/Syllo/nvtop) | Native NixOS package (`gpu-worker`) | ✅ Deployed |
 

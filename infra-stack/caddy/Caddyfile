@@ -70,11 +70,6 @@
 		reverse_proxy dockhand:3000
 	}
 
-	# Grimoire (Bookmark Manager)
-	@grimoire host grimoire.home.stefancyliax.de
-	handle @grimoire {
-		reverse_proxy 10.1.23.224:5173
-	}
 
 	# Paperless-ngx (OIDC SSO handled by the application)
 	@paperless host paperless.home.stefancyliax.de
@@ -82,11 +77,6 @@
 		reverse_proxy 10.1.23.224:8008
 	}
 
-	# Tududi (Task Management)
-	@tududi host tududi.home.stefancyliax.de
-	handle @tududi {
-		reverse_proxy 10.1.23.224:3002
-	}
 
 	# Syncthing Hermes Node (Direct Proxy, uses Syncthing's built-in authentication)
 	@syncthing-hermes host syncthing-hermes-node.home.stefancyliax.de

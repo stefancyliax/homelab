@@ -63,10 +63,6 @@
         href: http://10.1.23.224:3000
         icon: open-webui
         description: LLM Chat Interface
-    - n8n:
-        href: http://10.1.23.224:5678
-        icon: n8n
-        description: Workflow Automation
     - NocoDB:
         href: http://10.1.23.224:8080
         icon: nocodb
@@ -83,22 +79,6 @@
         href: http://10.1.23.224:3001
         icon: files
         description: File Explorer
-    - Kestra:
-        href: http://10.1.23.224:8082
-        icon: kestra
-        description: Workflow Orchestration
-    - Stirling PDF:
-        href: http://10.1.23.224:8084
-        icon: pdf
-        description: PDF Manipulation Tools
-    - Grimoire:
-        href: https://grimoire.home.stefancyliax.de
-        icon: bookmark
-        description: Bookmark Manager
-    - Tududi:
-        href: https://tududi.home.stefancyliax.de
-        icon: tasks
-        description: Task Management
     - Syncthing (Hermes):
         href: https://syncthing-hermes-node.home.stefancyliax.de
         icon: syncthing
