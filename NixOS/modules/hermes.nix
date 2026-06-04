@@ -3,11 +3,15 @@
 {
   programs.nix-ld.enable = true;
 
+  # Set default system-wide editor
+  environment.variables.EDITOR = "vim";
+
   # Dev tools for coding agent workflows
   environment.systemPackages = with pkgs; [
     git
     gh
     neovim
+    vim
     tree
     ripgrep
     fd

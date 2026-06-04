@@ -42,7 +42,7 @@ in
           ttl = 300;
         };
         "qwen3.6-35b" = {
-          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf --n-gpu-layers 99 --n-cpu-moe 20 --no-mmap  --reasoning-budget 2048 -t 12 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 262144";
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf --mmproj /var/lib/models/mmproj-Qwen3.6-35B-A3B-BF16.gguf --n-gpu-layers 99 --n-cpu-moe 20 --no-mmap --reasoning-budget 2048 -t 12 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --parallel 2 --ctx-size 131072";
           aliases = [
             "qwen-35b"
             "qwen35b"

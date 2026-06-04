@@ -59,7 +59,7 @@ The Docker engine is configured with `nvidia-container-toolkit` passthrough (`ha
 |---|---|---|---|---|
 | Qwen3-VL-8B | 51,200 tokens | 99 (full) | 300s | `mmproj-Qwen3VL-8B-Instruct-F16.gguf` |
 | Qwen3.5-9B | 51,200 tokens | 99 (full) | 300s | N/A |
-| Qwen3.6-35B-A3B | 32,768 tokens | 99 (full) + `-ncmoe 20` | 300s | N/A |
+| Qwen3.6-35B-A3B | 131,072 tokens (2 × 64K slots) | 99 (full) + `-ncmoe 20` | 300s | `mmproj-Qwen3.6-35B-A3B-BF16.gguf` |
 | GLM-OCR | 16,384 tokens | 99 (full) | 300s | `mmproj-GLM-OCR-Q8_0.gguf` |
 | Gemma4 E4B | 32,768 tokens | 99 (full) | 300s | `mmproj-gemma-4-E4B-F16.gguf` |
 | Gemma 4 12B | 262,144 tokens | 99 (full) | 300s | N/A |
@@ -81,6 +81,8 @@ sudo wget -O /var/lib/models/Qwen3.5-9B-UD-Q4_K_XL.gguf \
   "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-UD-Q4_K_XL.gguf"
 sudo wget -O /var/lib/models/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf \
   "https://huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF/resolve/main/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf"
+sudo wget -O /var/lib/models/mmproj-Qwen3.6-35B-A3B-BF16.gguf \
+  "https://huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF/resolve/main/mmproj-BF16.gguf"
 sudo wget -O /var/lib/models/GLM-OCR-f16.gguf \
   "https://huggingface.co/ggml-org/GLM-OCR-GGUF/resolve/main/GLM-OCR-f16.gguf"
 sudo wget -O /var/lib/models/mmproj-GLM-OCR-Q8_0.gguf \
