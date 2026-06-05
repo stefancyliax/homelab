@@ -31,6 +31,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | ~~[Kestra](https://kestra.io/)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed |
 | [nvtop](https://github.com/Syllo/nvtop) | Native NixOS package (`gpu-worker`) | ✅ Deployed |
 
 ### Paperless AI Integrations

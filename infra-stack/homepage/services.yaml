@@ -87,6 +87,10 @@
         href: https://hindsight.home.stefancyliax.de
         icon: network
         description: Biomimetic Memory for AI Agents
+    - Hermes Chat:
+        href: https://chat.home.stefancyliax.de/chat
+        icon: robot
+        description: AI Agent Chat Interface
 
 - Fallback:
     - Proxmox:
