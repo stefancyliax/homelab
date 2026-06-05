@@ -103,7 +103,7 @@ services:
       PAPERLESS_BASE_URL: "http://paperless-ngx:8000"
       PAPERLESS_API_TOKEN: ${PAPERLESS_API_TOKEN}
       LLM_PROVIDER: "openai"
-      LLM_MODEL: "gemma4"
+      LLM_MODEL: "gemma4-e4b"
       OPENAI_BASE_URL: "http://100.90.253.20:8080/v1"
       OPENAI_API_KEY: "sk-dummy-key"
       LLM_LANGUAGE: "German"
