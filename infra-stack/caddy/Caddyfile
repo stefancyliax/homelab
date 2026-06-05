@@ -87,7 +87,7 @@
 	# Hermes Chat (Direct Proxy, AI agent chat interface)
 	@hermes-chat host chat.home.stefancyliax.de
 	handle @hermes-chat {
-		reverse_proxy 10.1.23.216:9119
+		reverse_proxy 100.98.194.7:9119
 	}
 
 	# Hindsight Control Plane (Protected by Authelia)
