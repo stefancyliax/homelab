@@ -88,7 +88,7 @@
         icon: network
         description: Biomimetic Memory for AI Agents
     - Hermes Chat:
-        href: https://chat.home.stefancyliax.de/chat
+        href: http://100.98.194.7:9119/chat
         icon: robot
         description: AI Agent Chat Interface
 
