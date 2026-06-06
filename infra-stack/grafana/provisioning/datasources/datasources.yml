@@ -19,3 +19,9 @@ datasources:
     secureJsonData:
       token: ${INFLUXDB_ADMIN_TOKEN}
     editable: false
+
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: false

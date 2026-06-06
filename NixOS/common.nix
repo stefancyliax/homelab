@@ -29,8 +29,63 @@
     port = 9100;
   };
 
-  # Open Docker metrics port
-  networking.firewall.allowedTCPPorts = [ 9323 ];
+  # Enable Promtail for Log Shipping
+  services.promtail = {
+    enable = true;
+    configuration = {
+      server = {
+        http_listen_port = 9080;
+        grpc_listen_port = 0;
+      };
+      positions = {
+        filename = "/var/lib/promtail/positions.yaml";
+      };
+      clients = [{
+        url = "http://10.1.23.184:3100/loki/api/v1/push";
+      }];
+      scrape_configs = [
+        {
+          job_name = "journal";
+          journal = {
+            max_age = "12h";
+            labels = {
+              job = "systemd-journal";
+            };
+          };
+          relabel_configs = [
+            {
+              source_labels = ["__journal__systemd_unit"];
+              target_label = "unit";
+            }
+            {
+              source_labels = ["__journal__hostname"];
+              target_label = "host";
+            }
+            {
+              source_labels = ["__journal_priority_keyword"];
+              target_label = "level";
+            }
+          ];
+        }
+        {
+          job_name = "docker";
+          static_configs = [{
+            targets = ["localhost"];
+            labels = {
+              job = "docker";
+              __path__ = "/var/lib/docker/containers/*/*-json.log";
+            };
+          }];
+          pipeline_stages = [{
+            docker = {};
+          }];
+        }
+      ];
+    };
+  };
+
+  # Open Docker metrics and Promtail ports
+  networking.firewall.allowedTCPPorts = [ 9323 9080 ];
 
   environment.systemPackages = with pkgs; [
     vim

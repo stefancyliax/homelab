@@ -44,6 +44,18 @@ Grafana connects to Prometheus (and InfluxDB) as data sources to provide real-ti
 
 Primarily used for high-resolution logging and long-term data archival where Prometheus's default short-term retention would be insufficient. The main consumer is Home Assistant, which pushes sensor data via its `recorder` integration.
 
+### Loki & Promtail
+
+**Role:** Centralized Log Aggregation.
+
+Loki provides log storage and indexing (similar to Prometheus but for logs). Promtail runs on every node as an agent to collect and forward logs to Loki.
+
+**Sources:**
+- **systemd-journal**: Captures all host-level logs from NixOS services (SSH, Comin, Node Exporter, Hermes, etc.).
+- **Docker**: Captures JSON logs from all running containers.
+
+Logs are retained for 14 days by default. The Hermes agent programmatically queries the Loki HTTP API at `http://10.1.23.184:3100` to access cluster logs without requiring SSH.
+
 ## Setup Guide
 
 ### 1. Deploy Services
@@ -71,6 +83,10 @@ Use Grafana's declarative provisioning YAMLs to pre-configure:
 ### 5. Connect Home Assistant
 
 Configure Home Assistant's `recorder` integration to push sensor data to InfluxDB for long-term storage and Grafana visualization.
+
+### 6. Enable Logging
+
+Promtail is deployed natively via the NixOS `common.nix` module to automatically ship journald and Docker logs from all nodes. Loki runs alongside the other monitoring services in the `infra-stack` and is pre-provisioned as a Grafana datasource.
 
 ## Notifications
 
