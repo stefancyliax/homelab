@@ -34,21 +34,7 @@ services:
     volumes:
       - open-webui_data:/app/backend/data
 
-  # n8n:
-  #   image: docker.io/n8nio/n8n:latest
-  #   container_name: n8n
-  #   restart: unless-stopped
-  #   ports:
-  #     - "5678:5678"
-  #   environment:
-  #     N8N_HOST: 0.0.0.0
-  #     N8N_PORT: 5678
-  #     N8N_PROTOCOL: http
-  #     N8N_SECURE_COOKIE: "false"
-  #     WEBHOOK_URL: http://10.1.23.224:5678/
-  #     GENERIC_TIMEZONE: Europe/Berlin
-  #   volumes:
-  #     - n8n_data:/home/node/.n8n
+
 
   nocodb:
     image: nocodb/nocodb:latest
@@ -129,60 +115,7 @@ services:
       timeout: 5s
       retries: 10
 
-  # kestra:
-  #   image: kestra/kestra:latest
-  #   container_name: kestra
-  #   restart: unless-stopped
-  #   stop_grace_period: 6m
-  #   user: "root"
-  #   command: server standalone
-  #   depends_on:
-  #     kestra-db:
-  #       condition: service_healthy
-  #   ports:
-  #     - "8082:8080"
-  #     - "8083:8081"
-  #   environment:
-  #     KESTRA_CONFIGURATION: |
-  #       datasources:
-  #         postgres:
-  #           url: jdbc:postgresql://kestra-db:5432/kestra
-  #           driverClassName: org.postgresql.Driver
-  #           username: kestra
-  #           password: ${KESTRA_DB_PASSWORD}
-  #       kestra:
-  #         repository:
-  #           type: postgres
-  #         storage:
-  #           type: local
-  #           local:
-  #             base-path: "/app/storage"
-  #         queue:
-  #           type: postgres
-  #         tasks:
-  #           tmp-dir:
-  #             path: /tmp/kestra-wd/tmp
-  #         url: http://10.1.23.224:8082/
-  #   volumes:
-  #     - kestra_data:/app/storage
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - /tmp/kestra-wd:/tmp/kestra-wd
 
-  # kestra-db:
-  #   image: postgres:18
-  #   container_name: kestra-db
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_DB: kestra
-  #     POSTGRES_USER: kestra
-  #     POSTGRES_PASSWORD: ${KESTRA_DB_PASSWORD}
-  #   volumes:
-  #     - kestra_postgres:/var/lib/postgresql
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 10
 
   # stirling-pdf:
   #   image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
@@ -231,13 +164,10 @@ volumes:
   grimoire_data:
   zerobyte_data:
   open-webui_data:
-  n8n_data:
   nocodb_data:
   hf-hub-cache:
   grimmory_data:
   grimmory_mariadb:
-  kestra_data:
-  kestra_postgres:
   stirlingpdf_data:
   tududi_db:
   tududi_uploads:

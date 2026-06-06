@@ -92,10 +92,11 @@ Cluster-wide push notifications are handled by a self-hosted [ntfy](https://ntfy
 
 ### Integration Points
 
-- **Proxmox → ntfy:** Native webhook target in Datacenter → Notifications. See [proxmox-setup.md](proxmox-setup.md#notifications-ntfy).
-- **Grafana → ntfy:** Configured as a Webhook contact point with a custom JSON payload template targeting the `homelab-alerts` topic.
-- **n8n / Kestra → ntfy:** Native HTTP request nodes publishing to the appropriate topic.
-- **ZeroByte → ntfy:** Post-backup hook script using `curl` to publish results.
-- **Comin → ntfy:** Systemd `OnSuccess`/`OnFailure` hooks on the `comin.service` unit, configured in `modules/comin.nix`. Reports deployment success/failure with the node hostname.
-- **Home Assistant → ntfy:** REST-based notify integration or the native ntfy HA integration.
+- **Proxmox → ntfy:** ✅ Native webhook target in Datacenter → Notifications. See [proxmox-setup.md](proxmox-setup.md#notifications-ntfy).
+- **Comin → ntfy:** ✅ `postDeploymentCommand` hook in `modules/comin.nix`. Reports deployment success/failure with node hostname and commit info to `homelab-deployments`.
+- **Dockhand → ntfy:** ✅ Configured via the Dockhand web UI. Reports deployment events to `homelab-deployments`.
+- **ZeroByte → ntfy:** ✅ Built-in ntfy notification provider, configured via the ZeroByte dashboard to publish to `homelab-backups`.
+- **GitHub Actions → ntfy:** ✅ `nixos-check.yml` sends failure notifications to `homelab-deployments` on CI build failures.
+- **Grafana → ntfy:** 🔲 Planned. Webhook contact point targeting `homelab-alerts`.
+- **Home Assistant → ntfy:** 🔲 Planned. Will likely use Telegram instead.
 

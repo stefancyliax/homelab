@@ -51,9 +51,9 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **Wake-on-LAN Integration:** WOL enabled via NetworkManager profile on the gpu-worker (`enp7s0`). Magic packets sent from Home Assistant or the `infra-node` via `wakeonlan`.
 - [ ] **Volume Layout Design:** Define the logic for where and how Docker containers bind-mount persistent config and data within the NixOS VMs, tied to the backup strategy.
 - [x] **ZeroByte Configuration:** Backup targets, schedules, and retention policies configured and functional.
-- [ ] **Ingress & SSL:** Research Tailscale's built-in SSL certificate generation for internal HTTPS vs. a standard reverse proxy.
+- [x] **Ingress & SSL:** Caddy deployed with automatic wildcard TLS via Porkbun DNS-01 ACME challenge. All services accessible via `*.home.stefancyliax.de`.
 - [ ] **NAS OS Choice:** Decide on the operating system for the NAS (ZimaOS, Unraid, or managed NixOS).
-- [ ] **Single Sign-On (SSO):** Evaluate SSO solutions (Authentik, Authelia, Keycloak) for centralized login across services.
+- [x] **Single Sign-On (SSO):** Authelia deployed as OIDC provider on the `infra-stack`. See [deployment.md](docs/deployment.md#single-sign-on-sso) for onboarding procedures.
 - [x] **Cloud Storage Choice:** Decided to keep NextExplorer for file storage. Nextcloud and Seafile will not be deployed.
 - [x] **Notifications:** Decided on self-hosted [ntfy](https://ntfy.sh/). Gotify lacks UnifiedPush and requires WebSocket clients; HA notifications are not cluster-aware. ntfy is deployed in the `infra-stack`. See [monitoring.md](docs/monitoring.md).
 - [x] **Dozzle:** Evaluated and dropped — too little functionality to justify deployment.
@@ -76,15 +76,15 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **ComfyUI Deployment:** Deploy [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on the `gpu-worker` for GPU-accelerated image generation workflows.
 - [ ] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.
-- [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, n8n, IT-Tools, etc.). See [services.md](docs/services.md).
+- [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, IT-Tools, etc.). See [services.md](docs/services.md).
 - [x] **Tududi Deployment:** Write the Docker Compose definitions to deploy the [Tududi](https://github.com/chrisvel/tududi) task management service to the `services-stack`.
 - [ ] **BamBuddy Deployment:** Write the Docker Compose definitions to deploy the [BamBuddy](https://bambuddy.cool/index.html) service to the `services-stack`.
-- [ ] **ntfy Service Integrations:** Connect services to the self-hosted ntfy instance:
-    - [ ] Grafana Webhook contact point with custom JSON payload template.
-    - [ ] ZeroByte post-backup hook script.
-    - [ ] Comin systemd `OnSuccess`/`OnFailure` notification units.
-    - [ ] n8n / Kestra workflow failure notifications.
-    - [ ] Home Assistant ntfy notify integration.
+- [x] **ntfy Service Integrations:** Connect services to the self-hosted ntfy instance:
+    - [x] ZeroByte backup notifications (configured via ZeroByte UI).
+    - [x] Comin deployment notifications via `postDeploymentCommand` in `modules/comin.nix`.
+    - [x] Dockhand deployment notifications (configured via Dockhand UI).
+    - [x] Proxmox hypervisor events (configured via Proxmox webhook target).
+    - [x] GitHub Actions CI failure notifications (`nixos-check.yml`).
 - [ ] **Dashboard APIs:** Connect Homepage widgets to live data sources:
     - [x] Proxmox API token for hypervisor metrics.
     - [ ] PBS API tokens for backup metrics.

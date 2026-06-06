@@ -15,7 +15,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [IT-Tools](https://github.com/CorentinTh/it-tools) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Jellyfin](https://jellyfin.org/) | NAS | 🔲 Planned |
 | [Frigate](https://frigate.video/) | Docker Compose (`services-stack`) | 🔲 Planned |
-| ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
+| ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | ~~[Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
 | [Grimmory](https://github.com/grimmory-tools/grimmory) | Docker Compose (`services-stack`) | 🚧 Deployed |
@@ -29,7 +29,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | ~~[Ollama](https://ollama.com/)~~ | ~~Dedicated NixOS VM (`ollama-node`)~~ | ❌ Deprecated |
 | [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service (`gpu-worker`) | ✅ Functional |
 | [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| ~~[Kestra](https://kestra.io/)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
+| ~~[Kestra](https://kestra.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed |
 | [nvtop](https://github.com/Syllo/nvtop) | Native NixOS package (`gpu-worker`) | ✅ Deployed |

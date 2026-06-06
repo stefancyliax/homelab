@@ -260,12 +260,10 @@ Mark the service as enrolled in the table below.
 | Paperless-ngx | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Via `allauth.socialaccount.providers.openid_connect`, `client_secret_basic`, no PKCE |
 | Paperless-GPT | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
 | Open-WebUI | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
-| n8n | ✅ Native | 🔲 Planned | OAuth2/OIDC | Enterprise SSO or OIDC |
 | NocoDB | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | Stirling PDF | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in SSO support |
 | Grimmory | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | NextExplorer | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
-| Kestra | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | Hindsight UI | ❌ None | ✅ Enrolled | Reverse proxy | Protected via Authelia forward_auth |
 | Hindsight API | ❌ None | ⏭️ Skip | — | API-only, unprotected on private network |
 | Parakeet | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
