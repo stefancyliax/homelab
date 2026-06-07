@@ -76,7 +76,7 @@ services:
       - "--chromium-disable-javascript=true"
       - "--chromium-allow-list=file:///tmp/.*"
   tika:
-    image: docker.io/apache/tika:latest
+    image: apache/tika:eb02f1c06168
     restart: unless-stopped
 
   # paperless-ai:
