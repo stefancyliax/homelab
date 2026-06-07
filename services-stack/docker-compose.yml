@@ -16,6 +16,7 @@ services:
       - TZ=UTC 
       - BASE_URL=http://10.1.23.224:4096 # Update when exposing behind a proxy
       - APP_SECRET=${ZEROBYTE_APP_SECRET} # Ensure this is passed securely via Dockhand environments!
+      - WEBHOOK_ALLOWED_ORIGINS=http://10.1.23.184:2586
     command: ["sh", "-c", "mkdir -p /root/.config/rclone && cp /etc/rclone/rclone.conf.ro /root/.config/rclone/rclone.conf && exec bun .output/server/index.mjs"]
     volumes:
       - /etc/localtime:/etc/localtime:ro
