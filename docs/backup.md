@@ -25,9 +25,6 @@ The primary backup strategy relies on [ZeroByte](https://github.com/nicotsx/zero
 > The following steps will be documented once the backup pipeline is fully configured and tested.
 
 1. Configure the Rclone remote for Google Drive access (credentials managed via Agenix).
-
-> [!IMPORTANT]
-> The rclone config is managed by Agenix and mounted read-only into the container at `/seed/rclone.conf`. At startup, the container copies it to `/root/.config/rclone/rclone.conf` so that rclone can atomically rename the file during OAuth token refreshes. Do **not** bind-mount directly to rclone's default config path — Docker bind-mounted files cannot be renamed, causing "device or resource busy" errors.
 2. Define the host directories to mount into the ZeroByte container as read-only backup sources.
 3. Set up Restic repositories and encryption passphrases.
 4. Configure backup schedules and retention policies.

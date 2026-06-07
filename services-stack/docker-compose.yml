@@ -19,13 +19,9 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - zerobyte_data:/var/lib/zerobyte
-      - /etc/rclone/rclone.conf:/seed/rclone.conf:ro
+      - /etc/rclone/rclone.conf:/root/.config/rclone/rclone.conf:ro
       # TODO: Mount the host directories you actually want backed up as read-only below.
       - /mnt/data:/mnt/data:ro
-    # Rclone atomically renames its config file during OAuth token refreshes.
-    # Docker bind-mounted files cannot be renamed ("device or resource busy"),
-    # so we copy the agenix-managed seed config to a writable location at startup.
-    command: ["sh", "-c", "mkdir -p /root/.config/rclone && cp /seed/rclone.conf /root/.config/rclone/rclone.conf && exec zerobyte"]
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
