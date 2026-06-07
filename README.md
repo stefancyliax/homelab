@@ -74,7 +74,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **LLM Backend Migration (ollama-node):** Deprecated. The `ollama-node` proved too slow for inference. All LLM tasks now handled by the `gpu-worker` via llama-swap.
 - [x] **Vision LLM Tuning:** Vision LLM parameters tuned and finalized.
 - [ ] **ComfyUI Deployment:** Deploy [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on the `gpu-worker` for GPU-accelerated image generation workflows.
-- [ ] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
+- [x] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.
 - [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, IT-Tools, etc.). See [services.md](docs/services.md).
 - [x] **Tududi Deployment:** Write the Docker Compose definitions to deploy the [Tududi](https://github.com/chrisvel/tududi) task management service to the `services-stack`.
