@@ -77,7 +77,7 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
   tika:
     image: docker.io/apache/tika:latest
-    restart: unless-stoppedd
+    restart: unless-stopped
 
   # paperless-ai:
   #   image: clusterzx/paperless-ai:latest
