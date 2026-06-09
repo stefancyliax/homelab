@@ -49,6 +49,8 @@ The Docker engine is configured with `nvidia-container-toolkit` passthrough (`ha
 - [GLM-OCR](https://huggingface.co/ggml-org/GLM-OCR-GGUF) (`f16` quantization) — an alternative vision model optimized specifically for OCR tasks.
 - [Gemma 4 E4B](https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF) (`Q4_K_M` quantization) — highly efficient text model optimized for edge devices, ideal for fast parallel tagging.
 - [Gemma 4 12B](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF) (`UD-Q4_K_XL` quantization) — mid-sized, unified encoder-free multimodal model from Google DeepMind. Natively handles text, image, and audio inputs.
+- [Gemma 4 12B QAT](https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF) (`UD-Q4_K_XL` quantization) — mid-sized, unified encoder-free multimodal model from Google DeepMind optimized using Quantization-Aware Training.
+- [Gemma 4 26B-A4B QAT](https://huggingface.co/unsloth/gemma-4-26B-A4B-it-qat-GGUF) (`UD-Q4_K_XL` quantization) — 26B MoE model (4B active params) optimized using Quantization-Aware Training.
 - [MinerU 2.5 Pro](https://huggingface.co/mradermacher/MinerU2.5-Pro-2604-1.2B-GGUF) (`f16` quantization) — specialized multimodal model for document parsing and structure extraction.
 - [MiniCPM-V 2.6](https://huggingface.co/openbmb/MiniCPM-V-2_6-gguf) (`Q4_K_M` quantization) — a highly capable 8B multimodal model, excellent alternative for OCR and visual reasoning.
 - [MiniCPM-V 4.5](https://huggingface.co/openbmb/MiniCPM-V-4_5-gguf) (`Q4_K_M` quantization) — the bleeding-edge iteration of MiniCPM-V, boasting better OCR accuracy.
@@ -63,6 +65,8 @@ The Docker engine is configured with `nvidia-container-toolkit` passthrough (`ha
 | GLM-OCR | 16,384 tokens | 99 (full) | 300s | `mmproj-GLM-OCR-Q8_0.gguf` |
 | Gemma4 E4B | 32,768 tokens | 99 (full) | 300s | `mmproj-gemma-4-E4B-F16.gguf` |
 | Gemma 4 12B | 262,144 tokens | 99 (full) | 300s | N/A |
+| Gemma 4 12B QAT | 262,144 tokens | 99 (full) | 300s | `mmproj-gemma-4-12B-it-qat-F16.gguf` |
+| Gemma 4 26B-A4B QAT | 32,768 tokens | 99 (full) + `-ncmoe 20` | 300s | `mmproj-gemma-4-26B-A4B-it-qat-F16.gguf` |
 | MinerU 2.5 | 16,384 tokens | 99 (full) | 300s | `MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf` |
 | MiniCPM-V 2.6 | 16,384 tokens | 99 (full) | 300s | `minicpm-v-2.6-mmproj-f16.gguf` |
 | MiniCPM-V 4.5 | 16,384 tokens | 99 (full) | 300s | `minicpm-v-4.5-mmproj-f16.gguf` |
@@ -93,6 +97,14 @@ sudo wget -O /var/lib/models/mmproj-gemma-4-E4B-F16.gguf \
   "https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF/resolve/main/mmproj-F16.gguf"
 sudo wget -O /var/lib/models/gemma-4-12b-it-UD-Q4_K_XL.gguf \
   "https://huggingface.co/unsloth/gemma-4-12b-it-GGUF/resolve/main/gemma-4-12b-it-UD-Q4_K_XL.gguf"
+sudo wget -O /var/lib/models/gemma-4-12B-it-qat-UD-Q4_K_XL.gguf \
+  "https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF/resolve/main/gemma-4-12B-it-qat-UD-Q4_K_XL.gguf"
+sudo wget -O /var/lib/models/mmproj-gemma-4-12B-it-qat-F16.gguf \
+  "https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF/resolve/main/mmproj-F16.gguf"
+sudo wget -O /var/lib/models/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf \
+  "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-qat-GGUF/resolve/main/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf"
+sudo wget -O /var/lib/models/mmproj-gemma-4-26B-A4B-it-qat-F16.gguf \
+  "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-qat-GGUF/resolve/main/mmproj-F16.gguf"
 sudo wget -O /var/lib/models/MinerU2.5-Pro-2604-1.2B.f16.gguf \
   "https://huggingface.co/mradermacher/MinerU2.5-Pro-2604-1.2B-GGUF/resolve/main/MinerU2.5-Pro-2604-1.2B.f16.gguf"
 sudo wget -O /var/lib/models/MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf \

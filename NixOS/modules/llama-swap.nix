@@ -64,6 +64,14 @@ in
           cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-12b-it-UD-Q4_K_XL.gguf --n-gpu-layers 99 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 262144";
           ttl = 300;
         };
+        "gemma4-12b-qat" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-12B-it-qat-UD-Q4_K_XL.gguf --mmproj /var/lib/models/mmproj-gemma-4-12B-it-qat-F16.gguf --n-gpu-layers 99 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 262144";
+          ttl = 300;
+        };
+        "gemma4-26b-qat" = {
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf --mmproj /var/lib/models/mmproj-gemma-4-26B-A4B-it-qat-F16.gguf --n-gpu-layers 99 --n-cpu-moe 20 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 32768";
+          ttl = 300;
+        };
         "mineru" = {
           cmd = "${llama-server} --port \${PORT} --model /var/lib/models/MinerU2.5-Pro-2604-1.2B.f16.gguf --mmproj /var/lib/models/MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf --n-gpu-layers 99 --ctx-size 16384";
           aliases = [
@@ -108,7 +116,7 @@ in
             "qwen3.5-9b"
             "glm-ocr"
             "gemma4"
-            "gemma4-12b"
+            "gemma4-12b-qat"
             "mineru"
             "glm-ocr-cpu"
             "minicpm-v"
