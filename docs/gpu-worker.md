@@ -65,8 +65,8 @@ The Docker engine is configured with `nvidia-container-toolkit` passthrough (`ha
 | GLM-OCR | 16,384 tokens | 99 (full) | 300s | `mmproj-GLM-OCR-Q8_0.gguf` |
 | Gemma4 E4B | 32,768 tokens | 99 (full) | 300s | `mmproj-gemma-4-E4B-F16.gguf` |
 | Gemma 4 12B | 262,144 tokens | 99 (full) | 300s | N/A |
-| Gemma 4 12B QAT | 262,144 tokens | 99 (full) | 300s | `mmproj-gemma-4-12B-it-qat-F16.gguf` |
-| Gemma 4 26B-A4B QAT | 32,768 tokens | 99 (full) + `-ncmoe 20` | 300s | `mmproj-gemma-4-26B-A4B-it-qat-F16.gguf` |
+| Gemma 4 12B QAT | 131,072 tokens | 99 (full) | 300s | `mmproj-gemma-4-12B-it-qat-F16.gguf` |
+| Gemma 4 26B-A4B QAT | 131,072 tokens | 99 (full) + `-ncmoe 20` | 300s | `mmproj-gemma-4-26B-A4B-it-qat-F16.gguf` |
 | MinerU 2.5 | 16,384 tokens | 99 (full) | 300s | `MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf` |
 | MiniCPM-V 2.6 | 16,384 tokens | 99 (full) | 300s | `minicpm-v-2.6-mmproj-f16.gguf` |
 | MiniCPM-V 4.5 | 16,384 tokens | 99 (full) | 300s | `minicpm-v-4.5-mmproj-f16.gguf` |

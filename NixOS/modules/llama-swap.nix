@@ -61,15 +61,15 @@ in
           ttl = 300;
         };
         "gemma4-12b" = {
-          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-12b-it-UD-Q4_K_XL.gguf --n-gpu-layers 99 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 262144";
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-12b-it-UD-Q4_K_XL.gguf --n-gpu-layers 99 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 32768";
           ttl = 300;
         };
         "gemma4-12b-qat" = {
-          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-12B-it-qat-UD-Q4_K_XL.gguf --mmproj /var/lib/models/mmproj-gemma-4-12B-it-qat-F16.gguf --n-gpu-layers 99 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 262144";
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-12B-it-qat-UD-Q4_K_XL.gguf --mmproj /var/lib/models/mmproj-gemma-4-12B-it-qat-F16.gguf --n-gpu-layers 99 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 131072";
           ttl = 300;
         };
         "gemma4-26b-qat" = {
-          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf --mmproj /var/lib/models/mmproj-gemma-4-26B-A4B-it-qat-F16.gguf --n-gpu-layers 99 --n-cpu-moe 20 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 32768";
+          cmd = "${llama-server} --port \${PORT} --model /var/lib/models/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf --mmproj /var/lib/models/mmproj-gemma-4-26B-A4B-it-qat-F16.gguf --n-gpu-layers 99 --n-cpu-moe 20 --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 --ctx-size 131072";
           ttl = 300;
         };
         "mineru" = {
