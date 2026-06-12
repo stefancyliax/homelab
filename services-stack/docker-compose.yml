@@ -162,6 +162,21 @@ services:
     volumes:
       - hindsight_data:/home/hindsight/.pg0
 
+  scanner:
+    build:
+      context: ./scanner
+      dockerfile: Dockerfile
+    container_name: scanner
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - SCAN_DPI=300
+      - SCANBD_DEBUG=2
+    volumes:
+      - /home/stefan/paperless-consume:/output
+    devices:
+      - /dev/bus/usb/002/002:/dev/bus/usb/002/002  # HP ScanJet Pro 2600 f1 (03f0:6105)
+
 volumes:
   grimoire_data:
   zerobyte_data:
