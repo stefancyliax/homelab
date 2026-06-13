@@ -4,49 +4,52 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Default scan settings (can be overridden in docker-compose)
 ENV SCAN_DPI=300
-ENV SCAN_MODE=Color
-ENV SCANBD_DEBUG=2
+ENV ADF_POLL_INTERVAL=2
+ENV ADF_LOAD_DELAY=5
 
 # Install scanning tools:
 #   sane-utils    - scanimage CLI and SANE library
-#   hplip         - HP scanner backend (hpaio) for SANE
-#   scanbd        - scanner button daemon (polls physical buttons)
+#   ipp-usb       - bridges USB scanner to HTTP (IPP-over-USB)
+#   sane-airscan  - eSCL/AirScan SANE backend (connects via HTTP)
 #   img2pdf       - converts scanned images to PDF
 #   usbutils      - lsusb for debugging USB passthrough
+#   curl          - for eSCL status polling (ADF detection)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         sane-utils \
-        hplip \
-        hplip-data \
-        scanbd \
+        ipp-usb \
+        sane-airscan \
         img2pdf \
         usbutils \
+        curl \
         ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure SANE for standalone scanbd mode:
-#
-# scanbd uses /etc/scanbd/sane.d/ to find the scanner for button polling.
-# scanimage uses /etc/sane.d/ to access the scanner for actual scanning.
-# Both configs include the hpaio backend — this works because scanbd
-# releases the device before calling the action script.
-RUN mkdir -p /etc/scanbd/sane.d/dll.d && \
-    cp /etc/sane.d/dll.conf /etc/scanbd/sane.d/dll.conf && \
-    cp -r /etc/sane.d/dll.d/. /etc/scanbd/sane.d/dll.d/ 2>/dev/null || true
+# Configure ipp-usb to use a fixed HTTP port
+# (so sane-airscan can be statically configured without Avahi)
+RUN mkdir -p /etc/ipp-usb && \
+    printf '[network]\n  http-min-port = 60000\n  http-max-port = 60001\n  interface = loopback\n  dns-sd = disable\n' \
+    > /etc/ipp-usb/ipp-usb.conf
+
+# Configure sane-airscan to connect to the ipp-usb endpoint
+# No mDNS/Avahi needed — we point directly at localhost
+RUN printf '[devices]\n  HP ScanJet Pro 2600 f1 = http://localhost:60000/eSCL, eSCL\n\n[options]\n  discovery = disable\n' \
+    > /etc/sane.d/airscan.conf
 
 # Create directories
-RUN mkdir -p /output /etc/scanbd/scripts /var/run/scanbd
+RUN mkdir -p /output /scripts /var/lib/scanner /var/run/ipp-usb
 
-# Copy configuration and scripts
-COPY config/scanbd.conf /etc/scanbd/scanbd.conf
-COPY scripts/ /etc/scanbd/scripts/
+# Copy scripts
+COPY scripts/ /scripts/
 COPY entrypoint.sh /entrypoint.sh
 
 # Set permissions and create convenience symlinks
-RUN chmod +x /etc/scanbd/scripts/*.sh /entrypoint.sh && \
-    ln -s /etc/scanbd/scripts/toggle-color.sh /usr/local/bin/toggle-color && \
-    ln -s /etc/scanbd/scripts/test-buttons.sh /usr/local/bin/test-buttons && \
-    # Initialize default color mode
-    echo "Color" > /etc/scanbd/color_mode
+RUN chmod +x /scripts/*.sh /entrypoint.sh && \
+    ln -s /scripts/toggle-color.sh /usr/local/bin/toggle-color && \
+    ln -s /scripts/toggle-duplex.sh /usr/local/bin/toggle-duplex && \
+    ln -s /scripts/scanner-status.sh /usr/local/bin/scanner-status && \
+    # Initialize default modes
+    echo "Color" > /var/lib/scanner/color_mode && \
+    echo "off" > /var/lib/scanner/duplex_mode
 
 ENTRYPOINT ["/entrypoint.sh"]

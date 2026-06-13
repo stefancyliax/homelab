@@ -171,11 +171,13 @@ services:
     environment:
       - TZ=Europe/Berlin
       - SCAN_DPI=300
-      - SCANBD_DEBUG=2
+      - ADF_POLL_INTERVAL=2
+      - ADF_LOAD_DELAY=5
     volumes:
       - /home/stefan/paperless-consume:/output
-    devices:
-      - /dev/bus/usb/002/002:/dev/bus/usb/002/002  # HP ScanJet Pro 2600 f1 (03f0:6105)
+      - /dev/bus/usb/002:/dev/bus/usb/002  # Scanner USB bus
+    device_cgroup_rules:
+      - 'c 189:* rwm'  # Allow access to USB device nodes
 
 volumes:
   grimoire_data:
