@@ -100,6 +100,48 @@
 		reverse_proxy 10.1.23.224:8888
 	}
 
+	# Open-WebUI (OIDC SSO handled by the application)
+	@open-webui host open-webui.home.stefancyliax.de
+	handle @open-webui {
+		reverse_proxy 10.1.23.224:3000
+	}
+
+	# NextExplorer (OIDC SSO handled by the application)
+	@nextexplorer host nextexplorer.home.stefancyliax.de
+	handle @nextexplorer {
+		reverse_proxy 10.1.23.224:3001
+	}
+
+	# NocoDB (Protected by Authelia)
+	@nocodb host nocodb.home.stefancyliax.de
+	handle @nocodb {
+		forward_auth authelia:9091 {
+			uri /api/verify?rd=https://auth.home.stefancyliax.de/
+			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+		}
+		reverse_proxy 10.1.23.224:8080
+	}
+
+	# Paperless-GPT (Protected by Authelia)
+	@paperless-gpt host paperless-gpt.home.stefancyliax.de
+	handle @paperless-gpt {
+		forward_auth authelia:9091 {
+			uri /api/verify?rd=https://auth.home.stefancyliax.de/
+			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+		}
+		reverse_proxy 10.1.23.224:8002
+	}
+
+	# ZeroByte (Protected by Authelia)
+	@zerobyte host zerobyte.home.stefancyliax.de
+	handle @zerobyte {
+		forward_auth authelia:9091 {
+			uri /api/verify?rd=https://auth.home.stefancyliax.de/
+			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+		}
+		reverse_proxy 10.1.23.224:4096
+	}
+
 	# Fallback for undefined subdomains
 	handle {
 		respond "Service Not Found" 404

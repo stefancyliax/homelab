@@ -25,7 +25,7 @@
         icon: ntfy
         description: Notification Server
     - ZeroByte:
-        href: http://10.1.23.224:4096
+        href: https://zerobyte.home.stefancyliax.de
         icon: network
         description: Secure Backup Framework
     - ESPHome:
@@ -34,7 +34,7 @@
         description: Microcontroller Firmware Management
 
     - Paperless-GPT:
-        href: http://10.1.23.224:8002
+        href: https://paperless-gpt.home.stefancyliax.de
         icon: paperless-ngx
         description: Document LLM Assistant
     - Grafana old:
@@ -60,11 +60,11 @@
         icon: home-assistant
         description: Home Automation Hub
     - Open-WebUI:
-        href: http://10.1.23.224:3000
+        href: https://open-webui.home.stefancyliax.de
         icon: open-webui
         description: LLM Chat Interface
     - NocoDB:
-        href: http://10.1.23.224:8080
+        href: https://nocodb.home.stefancyliax.de
         icon: nocodb
         description: Database Platform
     - Paperless-ngx:
@@ -76,7 +76,7 @@
         icon: booklore
         description: Digital Library Manager
     - NextExplorer:
-        href: http://10.1.23.224:3001
+        href: https://nextexplorer.home.stefancyliax.de
         icon: files
         description: File Explorer
     - Syncthing (Hermes):

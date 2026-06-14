@@ -253,17 +253,18 @@ Mark the service as enrolled in the table below.
 |---|---|---|---|---|
 | **Infrastructure** | | | | |
 | Homepage | ✅ Native | ⏭️ Skip | — | Read-only dashboard, no login needed |
-| Grafana | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
-| Prometheus | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
+| Grafana | ✅ Native | ✅ Enrolled | Auth Proxy | Configured via Authelia forward_auth / GF_AUTH_PROXY |
+| Prometheus | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
 | Dockhand | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | **Services** | | | | |
 | Paperless-ngx | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Via `allauth.socialaccount.providers.openid_connect`, `client_secret_basic`, no PKCE |
-| Paperless-GPT | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
-| Open-WebUI | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
-| NocoDB | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| Paperless-GPT | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
+| ZeroByte | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
+| Open-WebUI | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
+| NocoDB | ✅ Native | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth (OIDC Enterprise-only) |
 | Stirling PDF | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in SSO support |
 | Grimmory | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
-| NextExplorer | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
+| NextExplorer | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | Hindsight UI | ❌ None | ✅ Enrolled | Reverse proxy | Protected via Authelia forward_auth |
 | Hindsight API | ❌ None | ⏭️ Skip | — | API-only, unprotected on private network |
 | Parakeet | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
