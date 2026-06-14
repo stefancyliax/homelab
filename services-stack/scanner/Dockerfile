@@ -23,6 +23,7 @@ RUN apt-get update && \
         img2pdf \
         usbutils \
         curl \
+        procps \
         ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 

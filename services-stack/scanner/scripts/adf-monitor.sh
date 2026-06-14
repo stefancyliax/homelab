@@ -34,9 +34,12 @@ is_scanner_on_usb() {
 
 restart_ipp_usb() {
     echo "$(date '+%H:%M:%S') Restarting ipp-usb..."
-    # Kill any existing ipp-usb processes
-    pkill -f "ipp-usb" 2>/dev/null || true
+    # Kill any existing ipp-usb processes forcefully
+    pkill -9 -x ipp-usb 2>/dev/null || true
     sleep 1
+
+    # Clear any stale locks or sockets that cause "already running" errors
+    rm -rf /var/run/ipp-usb/* 2>/dev/null || true
 
     # Start fresh ipp-usb
     mkdir -p /var/run/ipp-usb
