@@ -53,6 +53,8 @@ SCAN_ARGS=(
     --batch="${TEMP_DIR}/page_%04d.tiff"
     --batch-count=0
     --source="${SOURCE}"
+    -x 215.9
+    -y 297.18
 )
 
 # scanimage exits non-zero when ADF runs out of paper — this is expected
@@ -69,7 +71,8 @@ echo "  ✓ Scanned ${PAGE_COUNT} page(s)"
 
 # ── Convert to PDF ─────────────────────────────────────
 find "$TEMP_DIR" -maxdepth 1 -name "page_*.tiff" | sort -V | \
-    xargs img2pdf -o "${TEMP_DIR}/${FILENAME}.pdf" 2>&1
+    xargs img2pdf --pillow-limit-break -o "${TEMP_DIR}/${FILENAME}.pdf" 2>&1 | \
+    grep -v "DecompressionBomb\|warnings.warn" || true
 
 # Move final PDF to output (Paperless-ngx handles OCR)
 cp "${TEMP_DIR}/${FILENAME}.pdf" "${OUTPUT_DIR}/${FILENAME}.pdf"

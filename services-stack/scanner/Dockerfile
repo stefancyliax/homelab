@@ -4,8 +4,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Default scan settings (can be overridden in docker-compose)
 ENV SCAN_DPI=300
+ENV FLATBED_DPI=600
 ENV ADF_POLL_INTERVAL=2
-ENV ADF_LOAD_DELAY=5
+ENV ADF_LOAD_DELAY=2
 
 # Install scanning tools:
 #   sane-utils    - scanimage CLI and SANE library
@@ -48,8 +49,9 @@ RUN chmod +x /scripts/*.sh /entrypoint.sh && \
     ln -s /scripts/toggle-color.sh /usr/local/bin/toggle-color && \
     ln -s /scripts/toggle-duplex.sh /usr/local/bin/toggle-duplex && \
     ln -s /scripts/scanner-status.sh /usr/local/bin/scanner-status && \
+    ln -s /scripts/scan-flatbed.sh /usr/local/bin/scan-flatbed && \
     # Initialize default modes
-    echo "Color" > /var/lib/scanner/color_mode && \
-    echo "off" > /var/lib/scanner/duplex_mode
+    echo "Gray" > /var/lib/scanner/color_mode && \
+    echo "on" > /var/lib/scanner/duplex_mode
 
 ENTRYPOINT ["/entrypoint.sh"]
