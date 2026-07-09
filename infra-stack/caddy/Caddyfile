@@ -71,6 +71,12 @@
 	}
 
 
+	# Home Assistant (Direct Proxy, uses built-in authentication)
+	@homeassistant host homeassistant.home.stefancyliax.de
+	handle @homeassistant {
+		reverse_proxy 10.1.23.162:8123
+	}
+
 	# Paperless-ngx (OIDC SSO handled by the application)
 	@paperless host paperless.home.stefancyliax.de
 	handle @paperless {

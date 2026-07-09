@@ -11,7 +11,9 @@ Unlike other services which run as Docker containers on NixOS VMs, Home Assistan
 | Status | ✅ Actively running |
 | VM Type | Dedicated HAOS VM |
 | Network | Attached to the IoT VLAN |
-| Migration | Pending — config and data need to be migrated from the legacy instance |
+| New Instance | `https://homeassistant.home.stefancyliax.de` (via Caddy proxy to HAOS VM `10.1.23.162:8123` on Proxmox) |
+| Legacy Instance | `http://10.1.23.5:8123` (running on Unraid) |
+| Migration | Ongoing / Pending complete migration of configuration and data |
 
 ## Supporting Tools
 

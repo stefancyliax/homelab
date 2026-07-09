@@ -56,6 +56,10 @@
 
 - Applications:
     - Home Assistant:
+        href: https://homeassistant.home.stefancyliax.de
+        icon: home-assistant
+        description: Home Automation Hub
+    - Home Assistant old:
         href: http://10.1.23.5:8123
         icon: home-assistant
         description: Home Automation Hub
