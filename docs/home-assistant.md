@@ -15,6 +15,19 @@ Unlike other services which run as Docker containers on NixOS VMs, Home Assistan
 | Legacy Instance | `http://10.1.23.5:8123` (running on Unraid) |
 | Migration | Ongoing / Pending complete migration of configuration and data |
 
+### Reverse Proxy Configuration (Caddy)
+
+When accessing Home Assistant through Caddy (`https://homeassistant.home.stefancyliax.de`), Home Assistant's built-in HTTP security requires Caddy's IP (`10.1.23.184`) to be explicitly trusted in Home Assistant's `configuration.yaml`. Without this, Home Assistant rejects proxied requests with HTTP `400 Bad Request`.
+
+Add the following to `configuration.yaml` inside the HAOS VM (`10.1.23.162`) and restart Home Assistant:
+
+```yaml
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 10.1.23.184 # Caddy reverse proxy (infra-node)
+```
+
 ## Supporting Tools
 
 While Home Assistant runs autonomously, several peripheral services support its data and physical capabilities:
