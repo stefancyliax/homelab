@@ -27,6 +27,7 @@ services:
     command:
       - "-storageDataPath=/victoria-metrics-data"
       - "-promscrape.config=/etc/victoriametrics/scrape.yml"
+      - "-promscrape.config.strictParse=false"
       - "-retentionPeriod=36M"
 
   grafana:
