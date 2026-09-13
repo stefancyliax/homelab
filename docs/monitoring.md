@@ -17,7 +17,7 @@ The monitoring stack will be hosted within the `infra-stack` on the Infrastructu
 VictoriaMetrics acts as the unified metrics backbone for the entire homelab, replacing both Prometheus and InfluxDB:
 - **Scraping (Pull):** Periodically scrapes defined Prometheus endpoints via `infra-stack/victoriametrics/scrape.yml`.
 - **Ingestion (Push):** Accepts push metrics via InfluxDB Line Protocol (`/write` and `/api/v2/write`) from Home Assistant and Proxmox VE.
-- **Long-term Storage:** Configured with a 36-month retention period (`-retentionPeriod=36m`) and high-efficiency compression while consuming minimal RAM (typically 50–150 MB).
+- **Long-term Storage:** Configured with a 36-month retention period (`-retentionPeriod=36M`) and high-efficiency compression while consuming minimal RAM (typically 50–150 MB).
 
 | Scrape Target | Port | Description |
 |---|---|---|
