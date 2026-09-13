@@ -115,7 +115,7 @@ in
           members = [
             "qwen3.5-9b"
             "glm-ocr"
-            "gemma4"
+            "gemma4-e4b"
             "gemma4-12b-qat"
             "mineru"
             "glm-ocr-cpu"

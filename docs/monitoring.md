@@ -18,24 +18,25 @@ Prometheus periodically polls defined endpoints to collect time-series metrics.
 
 | Scrape Target | Port | Description |
 |---|---|---|
-| Comin nodes | 4242 | GitOps deployment status (pull success, current revision) |
-| Docker daemon | Configurable | Container health and resource utilization |
-| Node Exporters | 9100 | Hardware telemetry (CPU, RAM, disk) from all NixOS VMs and bare-metal nodes |
+| Comin nodes | 4243 | GitOps deployment status (pull success, current revision) |
+| Docker daemon | 9323 | Container health and resource utilization |
+| Node Exporters | 9100 | Hardware telemetry (CPU, RAM, disk) from all NixOS nodes (including `hermes-node` & `gpu-worker`) |
 
 ### Grafana
 
 **Role:** Visualization and alerting.
 
-Grafana connects to Prometheus (and InfluxDB) as data sources to provide real-time dashboards.
+Grafana connects to Prometheus (and InfluxDB) as data sources to provide real-time dashboards. Dashboards are declaratively provisioned via `infra-stack/grafana/provisioning/dashboards/`:
 
-**Planned dashboards:**
+**Provisioned dashboards:**
 
 | Dashboard | Data Source | Description |
 |---|---|---|
-| Node Health | Prometheus | CPU, memory, and disk usage across all NixOS VMs |
-| Docker Overview | Prometheus | Resource utilization per container |
-| Comin Status | Prometheus | Pull-based deployment success and revision history |
-| Deployment Tracking | Prometheus | Deployment frequency and success/failure rates |
+| Node Exporter | Prometheus | CPU, memory, network, and disk usage across all NixOS VMs (`node_exporter.json`) |
+| Docker Overview | Prometheus | Resource utilization and container status (`docker.json`) |
+| Comin Status | Prometheus | Pull-based deployment status and revision history (`comin.json`) |
+| NixOS Versions | Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
+| Proxmox Cluster | Prometheus | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
 | Home Assistant Sensors | InfluxDB | Temperature, energy, and sensor trends over time |
 
 ### InfluxDB

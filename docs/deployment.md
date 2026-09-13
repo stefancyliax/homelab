@@ -127,7 +127,9 @@ See [architecture.md](architecture.md) for the full service-to-node mapping.
 A dedicated NixOS VM runs a self-hosted GitHub Actions runner inside the local network:
 
 - **`dockhand-infra.yml`**: Triggers the Dockhand webhook for `infra-stack` changes.
-- **`dockhand-services.yml`**: Triggers the Dockhand webhook for `services-stack` changes.
+- **`dockhand-services.yml`**: Triggers the Dockhand webhook for `services-stack` changes (`docker-compose.yml`).
+- **`dockhand-paperless.yml`**: Triggers the Dockhand webhook for `services-stack/paperless.compose.yml` changes.
+- **`nixos-check.yml`**: Evaluates `nix flake check` on pushes and pull requests to `NixOS/**`, sending high-priority failure notifications to ntfy.
 
 ## Deployment Commands
 
@@ -140,7 +142,7 @@ All nodes run the Comin systemd service. Pushing updates to the `NixOS/` directo
 If you are provisioning a brand new node for the first time, you must bootstrap it using standard NixOS commands so it can install Comin:
 
 ```bash
-cd /NixOS
+cd NixOS
 sudo nixos-rebuild switch --flake .#<node-name>
 ```
 
@@ -252,7 +254,7 @@ Mark the service as enrolled in the table below.
 | Service | SSO Support | Enrollment Status | Protocol | Notes |
 |---|---|---|---|---|
 | **Infrastructure** | | | | |
-| Homepage | ✅ Native | ⏭️ Skip | — | Read-only dashboard, no login needed |
+| Homepage | ✅ Native | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
 | Grafana | ✅ Native | ✅ Enrolled | Auth Proxy | Configured via Authelia forward_auth / GF_AUTH_PROXY |
 | Prometheus | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
 | Dockhand | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
@@ -275,6 +277,7 @@ Mark the service as enrolled in the table below.
 | ESPHome | ✅ Native | 🔲 Planned | Reverse proxy | Basic auth or proxy |
 | **Dedicated VMs / Nodes** | | | | |
 | Home Assistant | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via auth provider integration |
+| Syncthing (Hermes Node) | ✅ Native | ⏭️ Skip | Direct proxy | Built-in authentication, accessible via Tailscale / Caddy |
 | Proxmox VE | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OpenID Connect realm, username-claim set to `preferred_username` |
 
 ### Implementation Notes
@@ -288,7 +291,7 @@ Mark the service as enrolled in the table below.
 
 Monitoring the health and status of deployments is planned using Prometheus and Grafana.
 
-- **Comin metrics:** Comin nodes export GitOps status metrics on port 4242, which Prometheus will scrape to track pull-based deployment success and revision history.
+- **Comin metrics:** Comin nodes export GitOps status metrics on port 4243, which Prometheus will scrape to track pull-based deployment success and revision history.
 - **Deployment dashboards:** Grafana will visualize deployment frequency, success/failure rates, and current running revisions across the cluster.
 
 See [monitoring.md](monitoring.md) for the full monitoring stack design.

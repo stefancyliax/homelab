@@ -24,8 +24,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 
 | Feature | Status | Details |
 |---|---|---|
-| NixOS Provisioning (Colmena) | ✅ Done | [deployment.md](docs/deployment.md) |
-| Pull-Based Deployment (Comin) | ✅ Done | [deployment.md](docs/deployment.md) |
+| NixOS Provisioning (Comin) | ✅ Done | [deployment.md](docs/deployment.md) |
 | Secrets Management (Agenix) | ✅ Done | [deployment.md](docs/deployment.md) |
 | GitOps App Deployment (Dockhand/Hawser) | ✅ Done | [deployment.md](docs/deployment.md) |
 | GitHub Actions CI/CD | ✅ Done | [deployment.md](docs/deployment.md) |
@@ -36,10 +35,10 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | GPU Worker / AI Stack (llama-swap) | ✅ Done | [gpu-worker.md](docs/gpu-worker.md) |
 | Hermes Node (Remote AI Agent) | ✅ Done | [architecture.md](docs/architecture.md) |
 | ~~Ollama Node (LLM Inference)~~ | ❌ Deprecated | GPU Worker handles all inference |
-| Services (Paperless, Jellyfin, etc.) | 🚧 Ongoing | [services.md](docs/services.md) |
+| Services (Paperless, Grimmory, etc.) | 🚧 Ongoing | [services.md](docs/services.md) |
 | Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |
-| Ingress & SSL | 🔲 Planned | — |
-| Single Sign-On (SSO) | 🔲 Planned | — |
+| Ingress & SSL (Caddy + Porkbun DNS) | ✅ Done | [deployment.md](docs/deployment.md) |
+| Single Sign-On (Authelia OIDC & Proxy) | ✅ Done | [deployment.md](docs/deployment.md) |
 
 ## To-Do
 
@@ -63,7 +62,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 
 - [ ] **GitHub Runner:** Provision the GitHub Actions runner declaratively via NixOS and manage it via Comin.
 - [ ] **Home Assistant Migration:** Migrate configuration and data from the legacy HA instance to the new HAOS VM.
-- [x] **Storage Configuration:** One 512 GB SSD is used for application data in ZFS, the other is reserved for Frigate.
+- [x] **Storage Configuration:** 512 GB SSD is formatted with ext4 and mounted at `/mnt/data` on the `services-node` for application data and media.
 - [x] **GPU Worker Setup:** Provisioned with NixOS, Nvidia drivers, CUDA, and llama-swap. Functional as a dedicated AI worker. See [gpu-worker.md](docs/gpu-worker.md).
 - [x] **GPU Top:** `nvtop` deployed on the `gpu-worker` node.
 - [ ] **Paperless-GPT OCR:** Replace OCR provider for `paperless-gpt` with `docling-serve`.
@@ -77,7 +76,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
 - [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.
 - [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, IT-Tools, etc.). See [services.md](docs/services.md).
-- [x] **Tududi Deployment:** Write the Docker Compose definitions to deploy the [Tududi](https://github.com/chrisvel/tududi) task management service to the `services-stack`.
+- [x] **Tududi Deployment:** Docker Compose definition drafted in `services-stack` (currently commented out).
 - [ ] **BamBuddy Deployment:** Write the Docker Compose definitions to deploy the [BamBuddy](https://bambuddy.cool/index.html) service to the `services-stack`.
 - [x] **ntfy Service Integrations:** Connect services to the self-hosted ntfy instance:
     - [x] ZeroByte backup notifications (configured via ZeroByte UI).
@@ -112,7 +111,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 
 ```
 homelab/
-├── NixOS/                  # NixOS configurations (Colmena flake)
+├── NixOS/                  # NixOS configurations (Flake & Comin)
 │   ├── flake.nix           # Flake entry point
 │   ├── common.nix          # Shared base config for all nodes
 │   ├── nodes/              # Per-node configurations
@@ -120,15 +119,16 @@ homelab/
 │   │   ├── services-node/
 │   │   ├── gpu-worker/
 │   │   ├── hermes-node/        # Hermes AI coding agent
-│   │   └── ollama-node/     # Deprecated
-│   ├── modules/            # Reusable NixOS modules (Dockhand, Hawser, Ollama)
+│   │   └── another-node/       # Auxiliary / test node
+│   ├── modules/            # Reusable NixOS modules (Dockhand, Hawser, Llama-swap)
 │   ├── secrets/            # Agenix-encrypted secret files (.age)
 │   └── secrets.nix         # SSH key → secret file mappings
 ├── infra-stack/            # Docker Compose for infrastructure services
 │   ├── docker-compose.yml
 │   └── homepage/           # Homepage dashboard config (YAML)
 ├── services-stack/         # Docker Compose for application services
-│   └── docker-compose.yml
+│   ├── docker-compose.yml
+│   └── paperless.compose.yml
 ├── docs/                   # Detailed documentation
 │   ├── architecture.md     # Hardware, networking, VM landscape
 │   ├── proxmox-setup.md    # Proxmox hypervisor configuration
@@ -140,7 +140,9 @@ homelab/
 │   └── monitoring.md       # Prometheus, Grafana, InfluxDB
 └── .github/workflows/      # CI/CD pipelines
     ├── dockhand-infra.yml
-    └── dockhand-services.yml
+    ├── dockhand-services.yml
+    ├── dockhand-paperless.yml
+    └── nixos-check.yml
 ```
 
 ## Documentation
@@ -149,7 +151,7 @@ homelab/
 |---|---|
 | [Architecture](docs/architecture.md) | Hardware specs, networking, VM landscape, and service placement |
 | [Proxmox Setup](docs/proxmox-setup.md) | Hypervisor configuration and VM provisioning baseline |
-| [Deployment](docs/deployment.md) | NixOS provisioning (Colmena & Comin), app deployment (Dockhand/Hawser), CI/CD, and commands |
+| [Deployment](docs/deployment.md) | NixOS provisioning (Comin), app deployment (Dockhand/Hawser), CI/CD, and commands |
 | [Backup](docs/backup.md) | Backup strategy (ZeroByte, PBS) and recovery procedures |
 | [GPU Worker](docs/gpu-worker.md) | AI workstation provisioning and tooling |
 | [Services](docs/services.md) | Catalog of user-facing homelab services |

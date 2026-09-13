@@ -9,9 +9,10 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | Service | Type | Status |
 |---|---|---|
 | [Home Assistant](https://www.home-assistant.io/) | Dedicated HAOS VM | ✅ Running |
-| [ntfy](https://ntfy.sh/) | Docker Compose (`infra-stack`) | 🚧 Deployed |
+| [ntfy](https://ntfy.sh/) | Docker Compose (`infra-stack`) | ✅ Functional |
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | ✅ Functional |
+| Samba & WSDD | Native NixOS service (`services-node`) | ✅ Functional |
 | [IT-Tools](https://github.com/CorentinTh/it-tools) | Docker Compose (`services-stack`) | 🔲 Planned |
 | [Jellyfin](https://jellyfin.org/) | NAS | 🔲 Planned |
 | [Frigate](https://frigate.video/) | Docker Compose (`services-stack`) | 🔲 Planned |
@@ -34,6 +35,24 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed |
 | [nvtop](https://github.com/Syllo/nvtop) | Native NixOS package (`gpu-worker`) | ✅ Deployed |
 
+### Supporting Infrastructure & Databases
+
+Several application workloads are supported by dedicated background containers:
+
+| Container | Stack | Purpose |
+|---|---|---|
+| `postgres` (v18) | `services-stack` (`paperless.compose.yml`) | Relational database for Paperless-ngx |
+| `redis` (v8) | `services-stack` (`paperless.compose.yml`) | Message broker and task caching for Paperless celery workers |
+| `gotenberg` (v8.25) | `services-stack` (`paperless.compose.yml`) | Document conversion engine (HTML, Office, EML to PDF) |
+| `tika` | `services-stack` (`paperless.compose.yml`) | Apache Tika text & metadata extraction engine |
+| `grimmory-db` (MariaDB) | `services-stack` (`docker-compose.yml`) | Backend SQL database for Grimmory |
+
+### File Sharing & Ingestion
+
+The `services-node` runs declarative **Samba (SMB)** and **WSDD** services to expose ingestion directories directly to local network clients (macOS, Windows, mobile):
+- **`paperless-consume`**: Mounted to `/home/stefan/paperless-consume`, automatically ingested by Paperless-ngx.
+- **`grimmory-bookdrop`**: Mounted to `/mnt/data/grimmory/bookdrop`, for dropping digital books directly into Grimmory.
+
 ### Paperless AI Integrations
 
 > [!NOTE]
@@ -42,6 +61,3 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 > **Paperless-AI** has been commented out of the stack — it did not provide enough additional benefit to justify running alongside Paperless-GPT.
 
 See [home-assistant.md](home-assistant.md) for the full Home Assistant ecosystem details.
-
-> [!NOTE]
-> This list will grow as new services are added to the homelab. Each service gets its Docker Compose definition in `services-stack/docker-compose.yml` and is deployed automatically via the GitOps pipeline.

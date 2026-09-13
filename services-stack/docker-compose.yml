@@ -33,7 +33,9 @@ services:
     ports:
       - "3000:8080"
     environment:
-      OLLAMA_BASE_URL: http://10.1.23.17:11434
+      ENABLE_OLLAMA_API: "false"
+      OPENAI_API_BASE_URL: "http://100.90.253.20:8080/v1"
+      OPENAI_API_KEY: "sk-dummy-key"
       ENABLE_OAUTH_SIGNUP: "true"
       OAUTH_CLIENT_ID: "open-webui"
       OAUTH_CLIENT_SECRET: "${OPEN_WEBUI_CLIENT_SECRET}"

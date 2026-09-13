@@ -19,16 +19,18 @@ The primary backup strategy relies on [ZeroByte](https://github.com/nicotsx/zero
 
 **Current status:** ✅ ZeroByte is deployed and functional in the `services-stack` with configured backup targets, schedules, and retention policies.
 
-### Setup
+### Setup & Pipeline Architecture
 
-> [!NOTE]
-> The following steps will be documented once the backup pipeline is fully configured and tested.
+The backup pipeline is fully integrated into the GitOps and NixOS configuration:
 
-1. Configure the Rclone remote for Google Drive access (credentials managed via Agenix).
-2. Define the host directories to mount into the ZeroByte container as read-only backup sources.
-3. Set up Restic repositories and encryption passphrases.
-4. Configure backup schedules and retention policies.
-5. Verify the initial backup completes successfully.
+1. **Rclone Configuration:** Google Drive remote credentials are encrypted via Agenix (`secrets/rclone-conf.age`) and automatically decrypted to `/etc/rclone/rclone.conf` on the `services-node`.
+2. **Read-only Volume Mounts:** The host application storage (`/mnt/data`) is mounted into the ZeroByte container as a read-only volume (`/mnt/data:/mnt/data:ro`), preventing accidental modifications during backups.
+3. **Automated Database & Media Exports:** Rather than relying solely on live database volume snapshots, `services-node` runs an automated daily systemd timer (`paperless-exporter`) at 02:00:
+   ```bash
+   docker exec paperless-ngx document_exporter /usr/src/paperless/export --delete
+   ```
+   This exports consistent database dumps and media archives into `/mnt/data/paperless/export` right before ZeroByte triggers its offsite sync.
+4. **Notifications:** ZeroByte is configured with `WEBHOOK_ALLOWED_ORIGINS=http://10.1.23.184:2586` to publish backup success/failure reports directly to the `homelab-backups` topic on ntfy.
 
 ## Local Backups (Planned)
 
@@ -54,14 +56,13 @@ A local backup target provides rapid restoration when a single VM fails, gets co
 
 ### Recovering Application Data from Google Drive
 
-> [!NOTE]
-> Detailed steps will be documented once the cloud backup pipeline is operational.
-
-1. Install Restic and Rclone on a fresh machine.
-2. Configure the Rclone remote with the Google Drive credentials.
-3. Mount or restore the Restic repository.
-4. Copy the restored data to the appropriate application volume paths.
-5. Restart the affected containers.
+1. Install Restic and Rclone on the recovery node.
+2. Configure the Rclone remote using the credentials from `secrets/rclone-conf.age`.
+3. Mount or restore the target repository:
+   ```bash
+   restic -r rclone:gdrive:/homelab-backups restore latest --target /mnt/data
+   ```
+4. Restart the affected containers via Dockhand.
 
 ### Recovering a VM from PBS
 
@@ -77,11 +78,8 @@ A local backup target provides rapid restoration when a single VM fails, gets co
 
 In the event of total hardware failure:
 
-> [!NOTE]
-> This procedure will be validated once both backup targets are operational.
-
 1. **Rebuild the hypervisor:** Install Proxmox on replacement hardware.
-2. **Restore VMs:** If PBS backups are available on surviving hardware, restore VMs directly. Otherwise, provision fresh NixOS VMs from the ISO.
-3. **Reapply NixOS configs:** Clone this repository and run `colmena apply` to reconstruct all node configurations declaratively.
-4. **Restore application data:** Pull data from Google Drive using the Restic/Rclone recovery procedure above.
+2. **Restore VMs:** If PBS backups are available on surviving hardware, restore VMs directly. Otherwise, provision fresh baseline NixOS VMs.
+3. **Reapply NixOS configs:** Clone this repository, bootstrap each node with `nixos-rebuild switch --flake .#<node-name>`, and allow Comin to take over declarative management.
+4. **Restore application data:** Pull data from Google Drive using the Rclone/ZeroByte recovery procedure above.
 5. **Verify:** Confirm all services are running and data integrity is intact.

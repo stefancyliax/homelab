@@ -97,22 +97,15 @@ Dockhand is deployed natively via NixOS modules (`virtualisation.oci-containers`
 
 #### Services Node (NixOS VM)
 
-Hosts user-facing application workloads via Docker Compose, orchestrated by Dockhand through the [Hawser](https://github.com/nicotsx/hawser) agent. See [services.md](services.md) for the full list.
+Hosts user-facing application workloads via Docker Compose, orchestrated by Dockhand through the [Hawser](https://github.com/nicotsx/hawser) agent. See [services.md](services.md) for the full list. Also hosts local Samba network shares (`paperless-consume` and `grimmory-bookdrop`) discoverable via WSDD.
 
 #### GitHub Runner (NixOS VM)
 
-Executes GitHub Actions pipelines. When code is pushed to `main`, it triggers `colmena apply` for OS deployments and Dockhand webhooks for application deployments. See [deployment.md](deployment.md).
+Executes GitHub Actions pipelines. Evaluates pull requests and commits using `nix flake check` and triggers Dockhand webhooks for application deployments. See [deployment.md](deployment.md).
 
 #### HAOS (VM)
 
 Dedicated Home Assistant Operating System instance for smart home control. Attached to the IoT VLAN. See [home-assistant.md](home-assistant.md).
-
-#### ~~Ollama Node (NixOS VM)~~ — Deprecated
-
-> [!WARNING]
-> The Ollama Node has been deprecated. It proved too slow for practical LLM inference. All OCR and tagging tasks have been migrated to the GPU Worker's llama-swap backend.
-
-[Open-WebUI](https://github.com/open-webui/open-webui) runs on the Services Node (via Docker Compose) and now connects to the GPU Worker's llama-swap API.
 
 #### Hermes Node (NixOS VM)
 
@@ -131,6 +124,17 @@ It also hosts a synced copy of your Obsidian vault via Syncthing for the agent t
 | Port 9119 | NixOS firewall config | ✅ Open |
 | Port 8384 (Tailscale only) | NixOS firewall config | ✅ Open |
 
+#### Auxiliary / Test Node (`another-node`, NixOS VM)
+
+A lightweight auxiliary NixOS VM used for testing new modules, packages, and staging GitOps configurations before rolling them out across production nodes. Managed by Comin and monitored by Prometheus.
+
+#### ~~Ollama Node (NixOS VM)~~ — Deprecated
+
+> [!WARNING]
+> The Ollama Node has been deprecated. It proved too slow for practical LLM inference. All OCR and tagging tasks have been migrated to the GPU Worker's llama-swap backend.
+
+[Open-WebUI](https://github.com/open-webui/open-webui) runs on the Services Node (via Docker Compose) and connects to the GPU Worker's llama-swap API.
+
 #### GPU Worker AI Backend
 
 The GPU Worker runs [llama-swap](https://github.com/mostlygeek/llama-swap) as a native NixOS service with CUDA-accelerated `llama-cpp`. It provides an OpenAI-compatible API on port 8080 and manages model hot-swapping on demand. See [gpu-worker.md](gpu-worker.md) for the full configuration.
@@ -143,7 +147,7 @@ The GPU Worker runs [llama-swap](https://github.com/mostlygeek/llama-swap) as a 
 
 The environment follows a strict **GitOps** philosophy where this repository is the single source of truth:
 
-- **OS Level:** NixOS configurations are pushed to always-online nodes via Colmena. Intermittent nodes (like `gpu-worker`) use Comin to pull their state from Git on boot.
+- **OS Level:** All NixOS configurations are pulled declaratively by nodes running the Comin GitOps agent on boot and periodically from the `main` branch.
 - **Application Level:** Docker Compose files are deployed via Dockhand/Hawser, triggered by GitHub Actions webhooks.
 
 See [deployment.md](deployment.md) for the full workflow.

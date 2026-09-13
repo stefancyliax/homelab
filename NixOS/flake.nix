@@ -70,16 +70,6 @@
         ];
       };
 
-      "ollama-node" = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit pkgs-unstable; };
-        modules = baseModules ++ [
-          ./nodes/ollama-node/configuration.nix
-          ./modules/ollama.nix
-          ./modules/hawser.nix
-        ];
-      };
-
     };
   };
 }

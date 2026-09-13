@@ -19,7 +19,7 @@ This document outlines the setup and provisioning of the dedicated AI worker nod
 Proprietary Nvidia drivers are declared in `nodes/gpu-worker/configuration.nix`:
 
 - `services.xserver.videoDrivers = [ "nvidia" ]`
-- `hardware.nvidia.open = false` (proprietary for full CUDA/Tensor support)
+- `hardware.nvidia.open = true` (required for RTX 5060 Ti Blackwell/GB206 architecture)
 - `hardware.nvidia.modesetting.enable = true`
 - `hardware.graphics.enable = true` for GPU acceleration
 - Verify with `nvidia-smi` after deployment.
@@ -39,34 +39,36 @@ The Docker engine is configured with `nvidia-container-toolkit` passthrough (`ha
 
 - Declared in `modules/llama-swap.nix` (uses `pkgs-unstable` for both `llama-swap` and `llama-cpp`)
 - `llama-cpp` is overridden with `cudaSupport = true` for GPU acceleration
-- Listens on `0.0.0.0:8080` (firewall opened via `openFirewall = true`)
-- Access restricted to Tailscale network via `listenAddress` binding
+- Listens on `100.90.253.20:8080` (bound to Tailscale IP via `listenAddress`, firewall opened via `openFirewall = true`)
+- Access is restricted to the internal Tailscale network
 
 **Current models:** 
 - [Qwen3-VL-8B-Instruct](https://huggingface.co/unsloth/Qwen3-VL-8B-Instruct-GGUF) (`Q4_K_M` quantization) — a vision-language model supporting both text and image inputs. Ideal for document processing (Paperless-AI/GPT) and general chat via Open-WebUI.
-- [Qwen3.5-9B](https://huggingface.co/unsloth/Qwen3.5-9B-GGUF) (`Q4_K_XL` quantization) — standard text/chat model.
-- [Qwen3.6-35B-A3B](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF) (`UD-Q4_K_M` quantization) — 35B sparse MoE model (3B active params). Uses `-ncmoe 20` to offload routed experts to system RAM, fitting within 16GB VRAM. Requires ≥32GB system RAM.
+- [Qwen3.5-9B](https://huggingface.co/unsloth/Qwen3.5-9B-GGUF) (`Q4_K_XL` quantization) — standard text/chat model (16k context).
+- **Qwen3.5-9B Hermes** (`Q4_K_XL` quantization) — optimized version for Hermes coding agent with 120k context and Flash Attention.
+- [Qwen3.6-35B-A3B](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF) (`UD-Q4_K_M` quantization) — 35B sparse MoE model (3B active params). Uses `--n-cpu-moe 20` to offload routed experts to system RAM, fitting within 16GB VRAM, with `--reasoning-budget 2048` and Flash Attention. Requires ≥32GB system RAM.
 - [GLM-OCR](https://huggingface.co/ggml-org/GLM-OCR-GGUF) (`f16` quantization) — an alternative vision model optimized specifically for OCR tasks.
-- [Gemma 4 E4B](https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF) (`Q4_K_M` quantization) — highly efficient text model optimized for edge devices, ideal for fast parallel tagging.
-- [Gemma 4 12B](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF) (`UD-Q4_K_XL` quantization) — mid-sized, unified encoder-free multimodal model from Google DeepMind. Natively handles text, image, and audio inputs.
-- [Gemma 4 12B QAT](https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF) (`UD-Q4_K_XL` quantization) — mid-sized, unified encoder-free multimodal model from Google DeepMind optimized using Quantization-Aware Training.
-- [Gemma 4 26B-A4B QAT](https://huggingface.co/unsloth/gemma-4-26B-A4B-it-qat-GGUF) (`UD-Q4_K_XL` quantization) — 26B MoE model (4B active params) optimized using Quantization-Aware Training.
+- [Gemma 4 E4B](https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF) (`Q4_K_M` quantization) — highly efficient text/vision model optimized for edge devices, ideal for fast parallel tagging (51.2k context).
+- [Gemma 4 12B](https://huggingface.co/unsloth/gemma-4-12b-it-GGUF) (`UD-Q4_K_XL` quantization) — mid-sized, unified encoder-free multimodal model from Google DeepMind (32.7k context, Flash Attention, Q8_0 KV cache).
+- [Gemma 4 12B QAT](https://huggingface.co/unsloth/gemma-4-12B-it-qat-GGUF) (`UD-Q4_K_XL` quantization) — mid-sized, unified encoder-free multimodal model from Google DeepMind optimized using Quantization-Aware Training (131k context).
+- [Gemma 4 26B-A4B QAT](https://huggingface.co/unsloth/gemma-4-26B-A4B-it-qat-GGUF) (`UD-Q4_K_XL` quantization) — 26B MoE model (4B active params) optimized using Quantization-Aware Training (131k context, `--n-cpu-moe 20`).
 - [MinerU 2.5 Pro](https://huggingface.co/mradermacher/MinerU2.5-Pro-2604-1.2B-GGUF) (`f16` quantization) — specialized multimodal model for document parsing and structure extraction.
 - [MiniCPM-V 2.6](https://huggingface.co/openbmb/MiniCPM-V-2_6-gguf) (`Q4_K_M` quantization) — a highly capable 8B multimodal model, excellent alternative for OCR and visual reasoning.
 - [MiniCPM-V 4.5](https://huggingface.co/openbmb/MiniCPM-V-4_5-gguf) (`Q4_K_M` quantization) — the bleeding-edge iteration of MiniCPM-V, boasting better OCR accuracy.
 - [Nemotron-Nano-12B-VL](https://huggingface.co/Vastined/NVIDIA-Nemotron-Nano-12B-v2-VL-BF16-GGUF) (`Q5_K_M` quantization) — NVIDIA's 12B multimodal model with strong OCR capabilities.
 - **GLM-OCR CPU** (`f16` quantization) — the same GLM-OCR model, but executed entirely on the CPU (`-ngl 0`) via `llama-swap`. Useful for saving VRAM.
 
-| Model | Context size | GPU layers | TTL | Vision projector |
+| Model | Context size | GPU layers | TTL | Vision projector / Flags |
 |---|---|---|---|---|
 | Qwen3-VL-8B | 51,200 tokens | 99 (full) | 300s | `mmproj-Qwen3VL-8B-Instruct-F16.gguf` |
-| Qwen3.5-9B | 51,200 tokens | 99 (full) | 300s | N/A |
-| Qwen3.6-35B-A3B | 131,072 tokens (2 × 64K slots) | 99 (full) + `-ncmoe 20` | 300s | `mmproj-Qwen3.6-35B-A3B-BF16.gguf` |
+| Qwen3.5-9B | 16,384 tokens | 99 (full) | 300s | N/A |
+| Qwen3.5-9B Hermes | 120,000 tokens | 99 (full) | 300s | Flash Attention (`--flash-attn on`) |
+| Qwen3.6-35B-A3B | 131,072 tokens (2 × 64K slots) | 99 (full) + `--n-cpu-moe 20` | 300s | `mmproj-Qwen3.6-35B-A3B-BF16.gguf`, `--reasoning-budget 2048`, `--flash-attn on` |
 | GLM-OCR | 16,384 tokens | 99 (full) | 300s | `mmproj-GLM-OCR-Q8_0.gguf` |
-| Gemma4 E4B | 32,768 tokens | 99 (full) | 300s | `mmproj-gemma-4-E4B-F16.gguf` |
-| Gemma 4 12B | 262,144 tokens | 99 (full) | 300s | N/A |
-| Gemma 4 12B QAT | 131,072 tokens | 99 (full) | 300s | `mmproj-gemma-4-12B-it-qat-F16.gguf` |
-| Gemma 4 26B-A4B QAT | 131,072 tokens | 99 (full) + `-ncmoe 20` | 300s | `mmproj-gemma-4-26B-A4B-it-qat-F16.gguf` |
+| Gemma 4 E4B | 51,200 tokens | 99 (full) | 300s | `mmproj-gemma-4-E4B-F16.gguf`, `--image-min-tokens 1024 --image-max-tokens 2240` |
+| Gemma 4 12B | 32,768 tokens | 99 (full) | 300s | `--flash-attn on --cache-type-k q8_0 --cache-type-v q8_0` |
+| Gemma 4 12B QAT | 131,072 tokens | 99 (full) | 300s | `mmproj-gemma-4-12B-it-qat-F16.gguf`, `--flash-attn on`, Q8_0 KV cache |
+| Gemma 4 26B-A4B QAT | 131,072 tokens | 99 (full) + `--n-cpu-moe 20` | 300s | `mmproj-gemma-4-26B-A4B-it-qat-F16.gguf`, `--flash-attn on`, Q8_0 KV cache |
 | MinerU 2.5 | 16,384 tokens | 99 (full) | 300s | `MinerU2.5-Pro-2604-1.2B.mmproj-f16.gguf` |
 | MiniCPM-V 2.6 | 16,384 tokens | 99 (full) | 300s | `minicpm-v-2.6-mmproj-f16.gguf` |
 | MiniCPM-V 4.5 | 16,384 tokens | 99 (full) | 300s | `minicpm-v-4.5-mmproj-f16.gguf` |
@@ -137,9 +139,11 @@ The following CLI tools are provisioned on the GPU Worker for administration and
 | `docker`, `docker-compose` | `common.nix` | Container runtime |
 | `docker-buildx` | `configuration.nix` | Multi-platform builds |
 | `neovim` | `configuration.nix` | Editor |
-| `fzf`, `yazi`, `tree` | `common.nix` / `configuration.nix` | File navigation |
+| `yazi`, `tree` | `common.nix` / `configuration.nix` | File navigation |
+| `btop` | `common.nix` / `configuration.nix` | Resource monitor TUI |
 | `lazydocker` | `configuration.nix` | Docker TUI |
 | `nvtop` | `configuration.nix` | GPU monitoring TUI |
+| `ethtool` | `configuration.nix` | Network interface configuration (WOL) |
 | `pciutils` | `configuration.nix` | `lspci` for hardware diagnostics |
 
 ## Wake-on-LAN
