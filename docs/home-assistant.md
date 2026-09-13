@@ -36,15 +36,15 @@ While Home Assistant runs autonomously, several peripheral services support its 
 
 Manages firmware for smart switches and physical microcontrollers (ESP32/ESP8266). ESPHome devices connect to Home Assistant over the local network.
 
-### InfluxDB
+### VictoriaMetrics
 
-Dedicated long-term time-series storage for offloading Home Assistant sensor metrics. The built-in Home Assistant recorder has limited retention — InfluxDB provides high-resolution historical data.
+Dedicated long-term time-series storage for offloading Home Assistant sensor metrics. The built-in Home Assistant recorder has limited retention — VictoriaMetrics provides high-resolution historical data with long retention (36 months) and superior compression. Home Assistant streams metrics either via its `influxdb` integration (to `http://10.1.23.184:8428/write`) or via the native `prometheus:` integration.
 
 ### Grafana
 
-Visualization and dashboards built on top of InfluxDB metrics. Used for analyzing trends in temperature, energy usage, and other sensor data over time.
+Visualization and dashboards built on top of VictoriaMetrics metrics. Used for analyzing trends in temperature, energy usage, and other sensor data over time.
 
-See [monitoring.md](monitoring.md) for the broader monitoring stack that also uses Grafana and InfluxDB.
+See [monitoring.md](monitoring.md) for the broader monitoring stack that also uses Grafana and VictoriaMetrics.
 
 ### Frigate
 

@@ -3,19 +3,19 @@ global:
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: 'victoriametrics'
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['localhost:8428']
 
   - job_name: 'comin'
     metrics_path: /metrics
     static_configs:
-      - targets: 
-        - '10.1.23.184:4243' #infra node
-        - '10.1.23.224:4243' #services node
-        - '10.1.23.165:4243' #another-node (test/auxiliary)
-        - '10.1.23.216:4243' #hermes-node
-        - '10.1.23.247:4243' #gpu worker
+      - targets:
+        - '10.1.23.184:4243' # infra node
+        - '10.1.23.224:4243' # services node
+        - '10.1.23.165:4243' # another-node (test/auxiliary)
+        - '10.1.23.216:4243' # hermes-node
+        - '10.1.23.247:4243' # gpu worker
 
   - job_name: 'node_exporter'
     static_configs:

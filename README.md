@@ -94,7 +94,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 ### Completed
 
 - [x] **Centralized Logging:** Deployed Loki in infra-stack and Promtail via NixOS common module for shipping journald and Docker logs from all nodes.
-- [x] **Monitoring Stack:** Deployed Prometheus, Grafana, and InfluxDB with node exporters and fully declarative dashboards!
+- [x] **Monitoring Stack:** Consolidated onto VictoriaMetrics, Grafana, and Loki with node exporters and fully declarative dashboards!
 - [x] **Comin Migration:** Natively implemented Comin across all nodes, removing all traces of Colmena.
 - [x] **Dockhand & Hawser Migration:** Migrated away from Komodo to natively defined Dockhand and Hawser nodes via NixOS.
 - [x] **GitHub Actions for Deployment:** Workflows trigger internal webhooks when `infra-stack` or `services-stack` are updated.

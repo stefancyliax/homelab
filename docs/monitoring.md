@@ -10,14 +10,18 @@ The monitoring stack will be hosted within the `infra-stack` on the Infrastructu
 
 ## Components
 
-### Prometheus
+### VictoriaMetrics
 
-**Role:** Metrics aggregation and scraping.
+**Role:** Consolidated time-series database (TSDB) and metrics collector.
 
-Prometheus periodically polls defined endpoints to collect time-series metrics.
+VictoriaMetrics acts as the unified metrics backbone for the entire homelab, replacing both Prometheus and InfluxDB:
+- **Scraping (Pull):** Periodically scrapes defined Prometheus endpoints via `infra-stack/victoriametrics/scrape.yml`.
+- **Ingestion (Push):** Accepts push metrics via InfluxDB Line Protocol (`/write` and `/api/v2/write`) from Home Assistant and Proxmox VE.
+- **Long-term Storage:** Configured with a 36-month retention period (`-retentionPeriod=36m`) and high-efficiency compression while consuming minimal RAM (typically 50–150 MB).
 
 | Scrape Target | Port | Description |
 |---|---|---|
+| VictoriaMetrics self | 8428 | Internal TSDB performance and ingestion telemetry |
 | Comin nodes | 4243 | GitOps deployment status (pull success, current revision) |
 | Docker daemon | 9323 | Container health and resource utilization |
 | Node Exporters | 9100 | Hardware telemetry (CPU, RAM, disk) from all NixOS nodes (including `hermes-node` & `gpu-worker`) |
@@ -26,30 +30,24 @@ Prometheus periodically polls defined endpoints to collect time-series metrics.
 
 **Role:** Visualization and alerting.
 
-Grafana connects to Prometheus (and InfluxDB) as data sources to provide real-time dashboards. Dashboards are declaratively provisioned via `infra-stack/grafana/provisioning/dashboards/`:
+Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data source to provide real-time dashboards. Dashboards are declaratively provisioned via `infra-stack/grafana/provisioning/dashboards/`:
 
 **Provisioned dashboards:**
 
 | Dashboard | Data Source | Description |
 |---|---|---|
-| Node Exporter | Prometheus | CPU, memory, network, and disk usage across all NixOS VMs (`node_exporter.json`) |
-| Docker Overview | Prometheus | Resource utilization and container status (`docker.json`) |
-| Comin Status | Prometheus | Pull-based deployment status and revision history (`comin.json`) |
-| NixOS Versions | Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
-| Proxmox Cluster | Prometheus | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
-| Home Assistant Sensors | InfluxDB | Temperature, energy, and sensor trends over time |
-
-### InfluxDB
-
-**Role:** Long-term time-series storage.
-
-Primarily used for high-resolution logging and long-term data archival where Prometheus's default short-term retention would be insufficient. The main consumer is Home Assistant, which pushes sensor data via its `recorder` integration.
+| Node Exporter | VictoriaMetrics / Prometheus | CPU, memory, network, and disk usage across all NixOS VMs (`node_exporter.json`) |
+| Docker Overview | VictoriaMetrics / Prometheus | Resource utilization and container status (`docker.json`) |
+| Comin Status | VictoriaMetrics / Prometheus | Pull-based deployment status and revision history (`comin.json`) |
+| NixOS Versions | VictoriaMetrics / Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
+| Proxmox Cluster | VictoriaMetrics | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
+| Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |
 
 ### Loki & Promtail
 
 **Role:** Centralized Log Aggregation.
 
-Loki provides log storage and indexing (similar to Prometheus but for logs). Promtail runs on every node as an agent to collect and forward logs to Loki.
+Loki provides log storage and indexing (similar to Prometheus/VictoriaMetrics but for logs). Promtail runs on every node as an agent to collect and forward logs to Loki.
 
 **Sources:**
 - **systemd-journal**: Captures all host-level logs from NixOS services (SSH, Comin, Node Exporter, Hermes, etc.).
@@ -61,13 +59,13 @@ Logs are retained for 14 days by default. The Hermes agent programmatically quer
 
 ### 1. Deploy Services
 
-Add Prometheus, Grafana, and InfluxDB to `infra-stack/docker-compose.yml`. All three run as Docker containers orchestrated by Dockhand.
+Deploy VictoriaMetrics, Grafana, and Loki in `infra-stack/docker-compose.yml`. All run as Docker containers orchestrated by Dockhand.
 
-### 2. Configure Prometheus
+### 2. Configure Scrape Targets
 
-Create a `prometheus.yml` configuration file defining:
+Maintain `infra-stack/victoriametrics/scrape.yml` defining:
 - Scrape intervals
-- Job definitions for each target (Comin, Docker, Node Exporters)
+- Job definitions for each target (VictoriaMetrics self, Comin, Docker, Node Exporters)
 - Target addresses for all nodes in the cluster
 
 ### 3. Enable Node Exporters
@@ -76,14 +74,15 @@ On each NixOS VM, enable `node_exporter` via NixOS configuration to expose hardw
 
 ### 4. Provision Grafana
 
-Use Grafana's declarative provisioning YAMLs to pre-configure:
-- Prometheus as a data source
-- InfluxDB as a data source
-- Community-standard dashboards for Node Exporter and Docker
+Use Grafana's declarative provisioning YAMLs (`infra-stack/grafana/provisioning/datasources/datasources.yml`) to pre-configure:
+- VictoriaMetrics as default Prometheus-compatible data source (`http://victoriametrics:8428`)
+- Prometheus alias datasource for backward compatibility with community dashboards
+- Loki data source for logs
 
-### 5. Connect Home Assistant
+### 5. Connect Home Assistant & Proxmox
 
-Configure Home Assistant's `recorder` integration to push sensor data to InfluxDB for long-term storage and Grafana visualization.
+- **Home Assistant:** Configure Home Assistant's `influxdb` integration (or native `prometheus:` integration) to push sensor data to `http://10.1.23.184:8428/write` for long-term storage and Grafana visualization.
+- **Proxmox VE:** Configure Datacenter → Metric Server → InfluxDB (v1) pointing to `10.1.23.184:8428` to export cluster telemetry.
 
 ### 6. Enable Logging
 

@@ -45,14 +45,10 @@
         href: https://grafana.home.stefancyliax.de
         icon: grafana
         description: Metrics & Visualization
-    - Prometheus:
-        href: https://prometheus.home.stefancyliax.de
-        icon: prometheus
-        description: Time-series Metrics
-    - InfluxDB:
-        href: http://10.1.23.184:8086
-        icon: influxdb
-        description: Long-term Database
+    - VictoriaMetrics:
+        href: https://victoriametrics.home.stefancyliax.de
+        icon: victoriametrics
+        description: Unified Metrics & TSDB
 
 - Applications:
     - Home Assistant:

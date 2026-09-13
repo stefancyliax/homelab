@@ -22,14 +22,14 @@
 		reverse_proxy homepage:3000
 	}
 
-	# Prometheus (Protected by Authelia)
-	@prometheus host prometheus.home.stefancyliax.de
-	handle @prometheus {
+	# VictoriaMetrics / Prometheus (Protected by Authelia)
+	@victoriametrics host victoriametrics.home.stefancyliax.de prometheus.home.stefancyliax.de
+	handle @victoriametrics {
 		forward_auth authelia:9091 {
 			uri /api/verify?rd=https://auth.home.stefancyliax.de/
 			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
 		}
-		reverse_proxy prometheus:9090
+		reverse_proxy victoriametrics:8428
 	}
 
 	# Grafana (Protected by Authelia)

@@ -91,7 +91,7 @@ Hosts foundational services that must remain operational even if the application
 | [Homepage](https://gethomepage.dev/) | Docker Compose (`infra-stack`) | ✅ Running |
 | Tailscale Subnet Router | Native NixOS Service | ✅ Running |
 | [ntfy](https://ntfy.sh/) | Docker Compose (`infra-stack`) | ✅ Running |
-| Prometheus / Grafana / Loki / InfluxDB | Docker Compose (`infra-stack`) | ✅ Running |
+| VictoriaMetrics / Grafana / Loki | Docker Compose (`infra-stack`) | ✅ Running |
 
 Dockhand is deployed natively via NixOS modules (`virtualisation.oci-containers`) to ensure it stays operational independently of Docker Compose. It orchestrates application deployments across the cluster by receiving webhooks from the CI pipeline.
 

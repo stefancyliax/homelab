@@ -256,7 +256,7 @@ Mark the service as enrolled in the table below.
 | **Infrastructure** | | | | |
 | Homepage | ✅ Native | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
 | Grafana | ✅ Native | ✅ Enrolled | Auth Proxy | Configured via Authelia forward_auth / GF_AUTH_PROXY |
-| Prometheus | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
+| VictoriaMetrics / Prometheus | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
 | Dockhand | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | **Services** | | | | |
 | Paperless-ngx | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Via `allauth.socialaccount.providers.openid_connect`, `client_secret_basic`, no PKCE |
@@ -289,9 +289,9 @@ Mark the service as enrolled in the table below.
 
 ## Deployment Monitoring
 
-Monitoring the health and status of deployments is planned using Prometheus and Grafana.
+Monitoring the health and status of deployments is managed using VictoriaMetrics and Grafana.
 
-- **Comin metrics:** Comin nodes export GitOps status metrics on port 4243, which Prometheus will scrape to track pull-based deployment success and revision history.
+- **Comin metrics:** Comin nodes export GitOps status metrics on port 4243, which VictoriaMetrics scrapes to track pull-based deployment success and revision history.
 - **Deployment dashboards:** Grafana will visualize deployment frequency, success/failure rates, and current running revisions across the cluster.
 
 See [monitoring.md](monitoring.md) for the full monitoring stack design.

@@ -1,14 +1,5 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX",
-      "label": "influx.mephis.to-proxmox-flux",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    }
-  ],
+  "__inputs": [],
   "__elements": [],
   "__requires": [
     {
@@ -25,8 +16,8 @@
     },
     {
       "type": "datasource",
-      "id": "influxdb",
-      "name": "InfluxDB",
+      "id": "prometheus",
+      "name": "Prometheus",
       "version": "1.0.0"
     },
     {
@@ -67,7 +58,7 @@
       }
     ]
   },
-  "description": "Proxmox Dashboard completely (re)written in Flux",
+  "description": "Proxmox VE dashboard powered by VictoriaMetrics / PromQL",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -91,8 +82,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -150,10 +141,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"cpustat\" and\n    r._field == \"cpu\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)",
+          "editorMode": "code",
+          "expr": "cpustat_cpu{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -162,8 +157,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -213,10 +208,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"cpustat\" and\n    r._field == \"cpus\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> limit(n:1)",
+          "editorMode": "code",
+          "expr": "cpustat_cpus{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -225,8 +224,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "description": "",
       "fieldConfig": {
@@ -278,10 +277,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"memory\" and\n    r._field == \"memtotal\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> limit(n:1)",
+          "editorMode": "code",
+          "expr": "memory_memtotal{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -290,8 +293,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "description": "",
       "fieldConfig": {
@@ -343,10 +346,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"memory\" and\n    r._field == \"swaptotal\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> limit(n:1)",
+          "editorMode": "code",
+          "expr": "memory_swaptotal{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -355,8 +362,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -408,10 +415,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"system\")\n  |> filter(fn: (r) => r._field == \"avail\" or r._field == \"used\")\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with \n    _time: r._time,\n    _measurement: r.measurement,\n    _field: \"used_perc\",\n    _value: float(v: 100) / (float(v: r.avail) + float(v: r.used)) * float(v:r.used)\n     }))\n  |> drop(columns: [\"avail\",\"used\"])",
+          "editorMode": "code",
+          "expr": "100 * (system_used{nodename=~\"$server\"} / (system_avail{nodename=~\"$server\"} + system_used{nodename=~\"$server\"}))",
+          "instant": false,
+          "legendFormat": "{{nodename}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -420,8 +431,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "description": "",
       "fieldConfig": {
@@ -473,10 +484,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"cpustat\" and\n    r._field == \"avg1\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n",
+          "editorMode": "code",
+          "expr": "cpustat_avg1{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -485,8 +500,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "description": "",
       "fieldConfig": {
@@ -544,10 +559,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"memory\" and\n    r._field == \"memused\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> map(fn: (r) => ({\n        r with\n        _value: float(v: r._value) / 1073741824.0\n      })\n    )\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+          "editorMode": "code",
+          "expr": "memory_memused{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -556,8 +575,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -615,10 +634,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"cpustat\" and\n    r._field == \"wait\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> aggregateWindow(every: v.windowPeriod, fn:mean, createEmpty: false)",
+          "editorMode": "code",
+          "expr": "cpustat_wait{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -627,8 +650,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -704,11 +727,16 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"uptime\")\n  |> filter(fn: (r) => r[\"object\"] == \"qemu\")\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> filter(fn: (r) => r._value > 0)\n  |> limit(n:1)\n  |> group(columns: [\"_measurement\"])\n  |> keep(columns: [\"_time\",\"host\",\"_value\"])\n  \n",
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "system_uptime{object=\"qemu\", nodename=~\"$server\"} > 0",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
+          "refId": "A",
+          "format": "table"
         }
       ],
       "title": "Running VMs",
@@ -734,8 +762,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -811,11 +839,16 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"uptime\")\n  |> filter(fn: (r) => r[\"object\"] == \"lxc\")\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> filter(fn: (r) => r._value > 0)\n  |> limit(n:1)\n  |> group(columns: [\"_measurement\"])\n  |> keep(columns: [\"_time\",\"host\",\"_value\"])\n  \n",
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "system_uptime{object=\"lxc\", nodename=~\"$server\"} > 0",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
+          "refId": "A",
+          "format": "table"
         }
       ],
       "title": "Running LXCs",
@@ -854,8 +887,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -953,28 +986,38 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"cpustat\" and\n    r._field == \"cpu\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> map(fn: (r) => ({\n        r with\n        _time: r._time,\n        _value: float(v: r._value) * float(v: 100)\n      })\n    )\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "editorMode": "code",
+          "expr": "cpustat_cpu{host=~\"$server\"} * 100",
+          "instant": false,
+          "legendFormat": "CPU {{host}}",
+          "range": true,
           "refId": "A"
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "hide": false,
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"cpustat\" and\n    r._field == \"wait\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> map(fn: (r) => ({\n        r with\n        _time: r._time,\n        _value: float(v: r._value) * float(v: 100)\n      })\n    )\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "editorMode": "code",
+          "expr": "cpustat_wait{host=~\"$server\"} * 100",
+          "instant": false,
+          "legendFormat": "IO Wait {{host}}",
+          "range": true,
           "refId": "B"
         },
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "hide": false,
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r._measurement == \"cpustat\" and\n    r._field == \"avg1\"\n  )\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)",
+          "editorMode": "code",
+          "expr": "cpustat_avg1{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "Load 1m {{host}}",
+          "range": true,
           "refId": "C"
         }
       ],
@@ -983,8 +1026,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1064,11 +1107,27 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"memory\")\n  |> filter(fn: (r) => r[\"_field\"] == \"memtotal\" or r[\"_field\"] == \"memused\")\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "editorMode": "code",
+          "expr": "memory_memused{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "Used {{host}}",
+          "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "memory_memtotal{host=~\"$server\"}",
+          "instant": false,
+          "legendFormat": "Total {{host}}",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Host Memory",
@@ -1076,8 +1135,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1152,10 +1211,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"cpu\")\n  |> filter(fn: (r) => r[\"object\"] == \"qemu\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "system_cpu{object=\"qemu\", nodename=~\"$server\"} * 100",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1165,8 +1228,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1242,10 +1305,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "mem = from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"mem\")\n  |> filter(fn: (r) => r[\"object\"] == \"qemu\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n\nmaxmem = from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"maxmem\")\n  |> filter(fn: (r) => r[\"object\"] == \"qemu\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n\njoin(\n    tables: {mem:mem, maxmem:maxmem},\n    on: [\"_time\",\"_stop\",\"_start\",\"host\"]\n\n)\n\n|> map(fn: (r) => ({\n      _time: r._time,\n      _value: float(v:r._value_mem) / float(v:r._value_maxmem) * float(v:100),\n      host: r.host\n    })\n  )\n\n|> group(columns: [\"host\"])",
+          "editorMode": "code",
+          "expr": "(system_mem{object=\"qemu\", nodename=~\"$server\"} / system_maxmem{object=\"qemu\", nodename=~\"$server\"}) * 100",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1255,8 +1322,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1331,10 +1398,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"cpu\")\n  |> filter(fn: (r) => r[\"object\"] == \"lxc\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "system_cpu{object=\"lxc\", nodename=~\"$server\"} * 100",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1344,8 +1415,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1420,10 +1491,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "mem = from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"mem\")\n  |> filter(fn: (r) => r[\"object\"] == \"lxc\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n\nmaxmem = from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"maxmem\")\n  |> filter(fn: (r) => r[\"object\"] == \"lxc\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n\njoin(\n    tables: {mem:mem, maxmem:maxmem},\n    on: [\"_time\",\"_stop\",\"_start\",\"host\"]\n\n)\n\n|> map(fn: (r) => ({\n      _time: r._time,\n      _value: float(v:r._value_mem) / float(v:r._value_maxmem) * float(v:100),\n      host: r.host\n    })\n  )\n\n|> group(columns: [\"host\"])",
+          "editorMode": "code",
+          "expr": "(system_mem{object=\"lxc\", nodename=~\"$server\"} / system_maxmem{object=\"lxc\", nodename=~\"$server\"}) * 100",
+          "instant": false,
+          "legendFormat": "{{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1433,8 +1508,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1510,10 +1585,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"diskread\")\n  |> filter(fn: (r) => r[\"object\"] == \"qemu\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n  |> derivative(unit: 1s)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "rate(system_diskread{object=\"qemu\", nodename=~\"$server\"}[1m])",
+          "instant": false,
+          "legendFormat": "Read {{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1523,8 +1602,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1600,10 +1679,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"diskwrite\")\n  |> filter(fn: (r) => r[\"object\"] == \"qemu\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n  |> derivative(unit: 1s)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "rate(system_diskwrite{object=\"qemu\", nodename=~\"$server\"}[1m])",
+          "instant": false,
+          "legendFormat": "Write {{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1613,8 +1696,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1690,10 +1773,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"diskread\")\n  |> filter(fn: (r) => r[\"object\"] == \"lxc\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n  |> derivative(unit: 1s)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "rate(system_diskread{object=\"lxc\", nodename=~\"$server\"}[1m])",
+          "instant": false,
+          "legendFormat": "Read {{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1703,8 +1790,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1780,10 +1867,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"diskwrite\")\n  |> filter(fn: (r) => r[\"object\"] == \"lxc\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n  |> derivative(unit: 1s)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "rate(system_diskwrite{object=\"lxc\", nodename=~\"$server\"}[1m])",
+          "instant": false,
+          "legendFormat": "Write {{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1793,8 +1884,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1870,10 +1961,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"netin\")\n  |> filter(fn: (r) => r[\"object\"] == \"qemu\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n  |> derivative(unit: 1s, nonNegative: true)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "rate(system_netin{object=\"qemu\", nodename=~\"$server\"}[1m])",
+          "instant": false,
+          "legendFormat": "In {{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1883,8 +1978,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -1960,10 +2055,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"netout\")\n  |> filter(fn: (r) => r[\"object\"] == \"qemu\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n  |> derivative(unit: 1s, nonNegative: true)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "rate(system_netout{object=\"qemu\", nodename=~\"$server\"}[1m])",
+          "instant": false,
+          "legendFormat": "Out {{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1973,8 +2072,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -2050,10 +2149,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"netin\")\n  |> filter(fn: (r) => r[\"object\"] == \"lxc\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n  |> derivative(unit: 1s, nonNegative: true)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "rate(system_netin{object=\"lxc\", nodename=~\"$server\"}[1m])",
+          "instant": false,
+          "legendFormat": "In {{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2063,8 +2166,8 @@
     },
     {
       "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -2140,10 +2243,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
           },
-          "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"netout\")\n  |> filter(fn: (r) => r[\"object\"] == \"lxc\")\n  |> filter(fn: (r) => r[\"_value\"] > 0)\n  |> filter(fn: (r) => r[\"nodename\"] == \"${server}\")\n  |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)\n  |> derivative(unit: 1s, nonNegative: true)\n//  |> yield(name: \"mean\")\n",
+          "editorMode": "code",
+          "expr": "rate(system_netout{object=\"lxc\", nodename=~\"$server\"}[1m])",
+          "instant": false,
+          "legendFormat": "Out {{host}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2159,61 +2266,32 @@
   "templating": {
     "list": [
       {
+        "allValue": ".*",
         "current": {
-          "selected": false,
-          "text": "influx.mephis.to-proxmox-flux",
-          "value": "influx.mephis.to-proxmox-flux"
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
         },
-        "description": "Fluxlang Capable Datasouce",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Datasource",
-        "multi": false,
-        "name": "dsProxmox",
-        "options": [],
-        "query": "influxdb",
-        "queryValue": "",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "type": "datasource"
-      },
-      {
-        "current": {},
         "datasource": {
-          "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
+          "type": "prometheus",
+          "uid": "VictoriaMetrics"
         },
-        "definition": "buckets()",
+        "definition": "label_values(cpustat_cpu, host)",
+        "description": "Proxmox Host / Node",
         "hide": 0,
-        "includeAll": false,
-        "multi": false,
-        "name": "Bucket",
-        "options": [],
-        "query": "buckets()",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {},
-        "datasource": {
-          "type": "influxdb",
-          "uid": "${DS_INFLUX.MEPHIS.TO-PROXMOX-FLUX}"
-        },
-        "definition": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => \n    r._measurement == \"system\" and\n    r.object == \"nodes\"\n  )\n  |> keyValues(keyColumns: [\"host\"])\n  |> group()\n  |> keep(columns: [\"host\"])\n  |> distinct(column: \"host\")\n\n",
-        "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Server",
-        "multi": false,
+        "multi": true,
         "name": "server",
         "options": [],
-        "query": "from(bucket: \"${Bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => \n    r._measurement == \"system\" and\n    r.object == \"nodes\"\n  )\n  |> keyValues(keyColumns: [\"host\"])\n  |> group()\n  |> keep(columns: [\"host\"])\n  |> distinct(column: \"host\")\n\n",
+        "query": {
+          "query": "label_values(cpustat_cpu, host)",
+          "refId": "StandardVariableQuery"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "type": "query"
       }
     ]
@@ -2224,7 +2302,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Proxmox [Flux]",
+  "title": "Proxmox Cluster",
   "uid": "IfgdXjtnk",
   "version": 125,
   "weekStart": "",

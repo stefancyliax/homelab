@@ -15,18 +15,19 @@ services:
       - ./homepage:/app/config # Binds the local declarative YAML files
       - /var/run/docker.sock:/var/run/docker.sock:ro # Allows native Docker stats widgets later
 
-  prometheus:
-    image: prom/prometheus:v3
-    container_name: prometheus
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:v1.151.0
+    container_name: victoriametrics
     restart: unless-stopped
-    # ports:
-    #   - 9090:9090
+    ports:
+      - "8428:8428"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
+      - victoriametrics_data:/victoria-metrics-data
+      - ./victoriametrics/scrape.yml:/etc/victoriametrics/scrape.yml:ro
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
+      - "-storageDataPath=/victoria-metrics-data"
+      - "-promscrape.config=/etc/victoriametrics/scrape.yml"
+      - "-retentionPeriod=36m"
 
   grafana:
     image: grafana/grafana-oss:latest
@@ -46,24 +47,6 @@ services:
       - GF_AUTH_PROXY_AUTO_SIGN_UP=true
       - GF_AUTH_PROXY_AUTO_SIGN_UP_ROLE=Admin
       - GF_AUTH_PROXY_HEADERS=Email:Remote-Email,Name:Remote-Name
-      - INFLUXDB_ADMIN_TOKEN=$INFLUXDB_ADMIN_TOKEN
-
-  influxdb:
-    image: influxdb:2
-    container_name: influxdb
-    restart: unless-stopped
-    ports:
-      - 8086:8086
-    volumes:
-      - influxdb_data:/var/lib/influxdb2
-      # - ./influxdb/config:/etc/influxdb2
-    environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=$INFLUXDB_ADMIN_PASSWORD
-      - DOCKER_INFLUXDB_INIT_ORG=homelab
-      - DOCKER_INFLUXDB_INIT_BUCKET=homelab
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=$INFLUXDB_ADMIN_TOKEN
 
   authelia:
     image: authelia/authelia
@@ -125,10 +108,9 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
 
 volumes:
-  prometheus_data:
+  victoriametrics_data:
   grafana_data:
   loki_data:
-  influxdb_data:
   ntfy_cache:
   caddy_data:
   caddy_config:
