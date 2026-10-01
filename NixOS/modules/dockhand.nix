@@ -11,9 +11,9 @@
     requires = [ "docker.service" ];
     wantedBy = [ "multi-user.target" ];
     before = [ "docker-dockhand.service" ];
-    script = ''
-      ${pkgs.docker}/bin/docker network inspect infra_net >/dev/null 2>&1 || \
-      ${pkgs.docker}/bin/docker network create infra_net
+    script = let dockerBin = "${config.virtualisation.docker.package}/bin/docker"; in ''
+      ${dockerBin} network inspect infra_net >/dev/null 2>&1 || \
+      ${dockerBin} network create infra_net
     '';
     serviceConfig = {
       Type = "oneshot";

@@ -13,6 +13,7 @@
   # Enable Docker daemon
   virtualisation.docker = {
     enable = true;
+    package = pkgs.docker_29; # nixos-25.11 defaults to docker_28, which is marked insecure
     autoPrune.enable = true;
     daemon.settings = {
       metrics-addr = "0.0.0.0:9323";
