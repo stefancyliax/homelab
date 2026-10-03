@@ -39,6 +39,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |
 | Ingress & SSL (Caddy + Porkbun DNS) | ✅ Done | [deployment.md](docs/deployment.md) |
 | Single Sign-On (Authelia OIDC & Proxy) | ✅ Done | [deployment.md](docs/deployment.md) |
+| Scanner Service (HP ScanJet Pro 2600 f1) | 🔲 Planned | [scanner/README.md](scanner/README.md) |
 
 ## To-Do
 
@@ -90,8 +91,10 @@ For full hardware specs, networking, and service placement details, see [docs/ar
     - [ ] Home Assistant long-lived access token for entity telemetry.
     - [ ] Paperless-ngx API token for inbox count badges.
     - [ ] Grafana & SSO metrics via the Homepage REST parser.
+- [ ] **Scanner Service Deployment:** Deploy the HP ScanJet Pro 2600 f1 container stack (`scanner/`) on the secondary Proxmox node once online. See [scanner/README.md](scanner/README.md) for open checklist items.
 
 ### Completed
+
 
 - [x] **Centralized Logging:** Deployed Loki in infra-stack and Promtail via NixOS common module for shipping journald and Docker logs from all nodes.
 - [x] **Monitoring Stack:** Consolidated onto VictoriaMetrics, Grafana, and Loki with node exporters and fully declarative dashboards!
