@@ -142,7 +142,7 @@ identity_providers:
         client_name: NextExplorer
         client_secret: '$pbkdf2-sha512$310000$iYAuzJ0LO1CzPLHk1pOvng$HzRGcEkSphpZ15uzqTHlBMV1wQTTrFO/at2BD.kHOvrRszc7u/DIcQjYuYtXOHkvkK9AoOtNf3HJmIk4/yDIag'
         public: false
-        token_endpoint_auth_method: client_secret_post
+        token_endpoint_auth_method: client_secret_basic
         authorization_policy: one_factor
         require_pkce: true
         pkce_challenge_method: S256
