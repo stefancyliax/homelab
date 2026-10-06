@@ -84,6 +84,8 @@ identity_providers:
           - groups
         redirect_uris:
           - https://proxmox.home.stefancyliax.de
+          - https://phil.home.stefancyliax.de
+          - https://vault.home.stefancyliax.de
 
       - client_id: dockhand
         client_name: Dockhand

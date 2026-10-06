@@ -85,11 +85,12 @@ For full hardware specs, networking, and service placement details, see [docs/ar
     - [x] Proxmox hypervisor events (configured via Proxmox webhook target).
     - [x] GitHub Actions CI failure notifications (`nixos-check.yml`).
 - [ ] **Dashboard APIs:** Connect Homepage widgets to live data sources:
-    - [x] Proxmox API token for hypervisor metrics.
+    - [x] ~~Proxmox API token for hypervisor metrics.~~ Widget removed; Homepage only links to PDM, `vault` and `phil`.
     - [ ] PBS API tokens for backup metrics.
     - [ ] Home Assistant long-lived access token for entity telemetry.
     - [ ] Paperless-ngx API token for inbox count badges.
     - [ ] Grafana & SSO metrics via the Homepage REST parser.
+- [ ] **`vault` DMI ASPM:** The CPU package on `vault` idles at 2.3 W but never gets past package C3 (limit is C10, PCIe L1 is on everywhere, SATA, USB, chipset LTR and the iGPU driver are ruled out). Next time in the BIOS, check the DMI entries under Advanced → Platform Misc Configuration (DMI Link ASPM Control, DMI ASPM, DMI Gen3 ASPM) and set them to enabled / L1. Verify with `powertop` (Idle stats): the Pkg column should show time in C6 or deeper. Worth about 2 W at most.
 
 ### Completed
 

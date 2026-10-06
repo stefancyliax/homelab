@@ -6,12 +6,15 @@
     - Proxmox:
         href: https://proxmox.home.stefancyliax.de
         icon: proxmox
-        description: Virtualization Hypervisor
-        widget:
-          type: proxmox
-          url: https://10.1.23.4:8006
-          username: "root@pam!homepage"
-          password: "{{HOMEPAGE_VAR_PROXMOX_TOKEN_SECRET}}"
+        description: Datacenter Manager (phil + vault)
+    - vault:
+        href: https://vault.home.stefancyliax.de
+        icon: proxmox
+        description: Proxmox VE Host
+    - phil:
+        href: https://phil.home.stefancyliax.de
+        icon: proxmox
+        description: Proxmox VE Host
     - Unraid:
         href: http://10.1.23.5
         icon: unraid
@@ -93,10 +96,18 @@
         description: AI Agent Chat Interface
 
 - Fallback:
-    - Proxmox:
+    - Proxmox Datacenter Manager:
+        href: https://10.1.23.115:8443
+        icon: proxmox
+        description: Datacenter Manager (phil + vault)
+    - vault:
+        href: https://10.1.23.3:8006
+        icon: proxmox
+        description: Proxmox VE Host
+    - phil:
         href: https://10.1.23.4:8006
         icon: proxmox
-        description: Virtualization Hypervisor
+        description: Proxmox VE Host
     - Unraid:
         href: http://10.1.23.5
         icon: unraid
