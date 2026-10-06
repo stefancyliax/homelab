@@ -112,6 +112,8 @@ The application stacks are split across VMs to prevent monolithic failures:
 
 - **`infra-stack/`** → Infrastructure Node — foundational services (ZeroByte, Homepage, monitoring).
 - **`services-stack/`** → Services Node — user-facing applications (Paperless, NocoDB, etc.).
+- **`media-stack/`** (🔲 planned) → NAS Node on `vault` — Jellyfin.
+- **`frigate-stack/`** (🔲 planned) → Frigate Node on `phil` — Frigate.
 
 See [architecture.md](architecture.md) for the full service-to-node mapping.
 
@@ -270,9 +272,10 @@ Mark the service as enrolled in the table below.
 | Hindsight UI | ❌ None | ✅ Enrolled | Reverse proxy | Protected via Authelia forward_auth |
 | Hindsight API | ❌ None | ⏭️ Skip | — | API-only, unprotected on private network |
 | Parakeet | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
+| Artifact hosting | ❌ None | ⏭️ Skip | — | Deliberately open on LAN/Tailscale; static pages served by Garage |
+| Garage S3 API | ❌ None | ⏭️ Skip | — | API-only, authenticated by S3 access keys |
 | Jellyfin | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via SSO plugin |
 | Frigate | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
-| IT-Tools | ❌ None | ⏭️ Skip | — | Read-only tool, no login needed |
 | Tududi | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
 | ESPHome | ✅ Native | 🔲 Planned | Reverse proxy | Basic auth or proxy |
 | **Dedicated VMs / Nodes** | | | | |

@@ -77,6 +77,7 @@ services:
       - OIDC_ISSUER=https://auth.home.stefancyliax.de
       - OIDC_CLIENT_ID=nextexplorer
       - OIDC_CLIENT_SECRET=${NEXTEXPLORER_CLIENT_SECRET}
+      - OIDC_SCOPES=openid profile email groups
       - OIDC_AUTO_CREATE_USERS=true
       - OIDC_ADMIN_GROUPS=admins
 

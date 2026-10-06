@@ -4,15 +4,65 @@ This document details the configuration of the Proxmox VE hypervisor and the bas
 
 For the full hardware specs and VM landscape, see [architecture.md](architecture.md).
 
+## Multi-Host Management
+
+The two Proxmox hosts, `phil` and `vault`, are standalone; there is no cluster:
+
+- A two-node cluster loses quorum when either node is down and needs a QDevice to work around it.
+- [Proxmox Datacenter Manager](https://pdm.proxmox.com/docs/) (PDM) provides the combined view and cross-host migration without a cluster.
+
+PDM runs as a VM on `phil` with both hosts added as remotes, reachable at `https://proxmox.home.stefancyliax.de`. It is not GitOps-managed.
+
 ## Storage Configuration
 
-The Proxmox host contains three physical 512 GB SSDs. ZFS is not used — each disk is assigned an independent role to separate IO workloads:
+### `phil`
+
+The host has two SSDs, each with an independent role and no redundancy. Proxmox storages (`/etc/pve/storage.cfg`):
+
+| Storage | Type | Backing | Content |
+|---|---|---|---|
+| `local` | Directory (`/var/lib/vz`) | Boot disk, root filesystem | ISOs, CT templates, import images |
+| `local-lvm` | LVM-thin (`pve/data`) | Boot disk, remaining space | VM disks, CT root disks |
+| `ZFS-Store` | ZFS pool, single disk | Samsung 860 EVO M.2 500 GB (SATA) | VM disks, CT root disks — holds the data disk of `services-node` |
+
+- `ZFS-Store` has no redundancy: ZFS detects corruption there but cannot repair it.
+- No storage has `backup` content enabled, in line with the decision against VM image backups.
+- BTRFS is not used for Proxmox storage: its integration is still a technology preview, while LVM-thin and ZFS are fully supported.
+
+`services-node` gets its application data disk (Paperless etc.) as a virtual disk on `ZFS-Store`, formatted ext4 inside the VM and mounted at `/mnt/data`. The SSD itself is not passed through.
+
+🔲 Planned layout: no ZFS, data disks passed through whole.
+
+| Disk | Target |
+|---|---|
+| Boot disk | `local` + `local-lvm` (all VM and CT OS disks) |
+| Samsung 860 EVO M.2 500 GB | `services-node`, ext4 at `/mnt/data` |
+| Samsung 250 GB SSD (not yet installed) | `frigate-node`, recordings |
+
+The conversion of the 860 EVO from ZFS to ext4 is tracked as a task in the [README](../README.md).
+
+### `vault`
 
 | Drive | Role |
 |---|---|
-| Drive 1 | Proxmox OS, ISOs, and CT templates |
-| Drive 2 | VM disks (NixOS instances, HAOS, etc.) |
-| Drive 3 | Bulk data storage or backup staging |
+| NVMe SSD | Proxmox OS, `local` (100 GB) and `local-lvm` (~400 GB, all guest disks) |
+| SATA SSD | Unassigned |
+| 6 TB HDD | 🔲 Planned: passed through by-id to `nas-node` (bulk/media), btrfs |
+| 1 TB HDD | 🔲 Planned: passed through by-id to `nas-node` (Garage, scratch), XFS |
+| 2 TB HDD | 🔲 Planned: passed through by-id to `nas-node` (local backup copy of important shares), btrfs |
+
+Proxmox is installed with ext4/LVM; the 100 GB root (and with it `local`) is set through the installer's `maxroot` option, and `local-lvm` takes the rest.
+
+The HDDs are passed through individually (`/dev/disk/by-id/...`), not via the SATA controller, which keeps the SATA SSD on that controller available to the host.
+
+## iGPU Passthrough (Planned)
+
+| Host | iGPU | Target VM | Consumer |
+|---|---|---|---|
+| `phil` | Iris Xe (80 EU) | `frigate-node` | Frigate (decode + OpenVINO detection) |
+| `vault` | UHD 770 (32 EU) | `nas-node` | Jellyfin (QuickSync transcoding) |
+
+Full passthrough gives the iGPU to one VM and the host loses its local console. It is not yet validated on either host and is the first thing to test. Fallback: run the consumer in a CT with `/dev/dri` shared from the host.
 
 > [!NOTE]
 > Exact mount points and LVM configurations will be documented here once fully finalized.
@@ -25,6 +75,8 @@ Proxmox uses a standard bridge network (`vmbr0`) by default.
 - **Tailscale Subnet Router:** A dedicated VM ensures the Proxmox host and its subnets are reachable from remote devices via Tailscale.
 
 ## VM Provisioning Baseline
+
+For when to use a VM, a CT or Docker, see [Workload Placement](architecture.md#workload-placement).
 
 When deploying new VMs, apply the following baseline configuration:
 
@@ -44,7 +96,7 @@ Proxmox VE has a built-in notification system with native webhook support. This 
 
 ### Setup
 
-All configuration is done in the Proxmox web UI under **Datacenter → Notifications**.
+All configuration is done in the Proxmox web UI under **Datacenter → Notifications**. Both hosts, `phil` and `vault`, are set up this way.
 
 #### 1. Create the Webhook Target
 

@@ -54,10 +54,30 @@
 		reverse_proxy 10.1.23.224:6060
 	}
 
-	# Proxmox (OIDC SSO handled by Proxmox's built-in OpenID Connect realm)
+	# Proxmox Datacenter Manager (combined view of phil and vault)
 	@proxmox host proxmox.home.stefancyliax.de
 	handle @proxmox {
+		reverse_proxy https://10.1.23.115:8443 {
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	# Proxmox VE host phil (OIDC SSO handled by Proxmox's built-in OpenID Connect realm)
+	@phil host phil.home.stefancyliax.de
+	handle @phil {
 		reverse_proxy https://10.1.23.4:8006 {
+			transport http {
+				tls_insecure_skip_verify
+			}
+		}
+	}
+
+	# Proxmox VE host vault (OIDC SSO handled by Proxmox's built-in OpenID Connect realm)
+	@vault host vault.home.stefancyliax.de
+	handle @vault {
+		reverse_proxy https://10.1.23.3:8006 {
 			transport http {
 				tls_insecure_skip_verify
 			}
