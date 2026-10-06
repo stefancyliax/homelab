@@ -1,0 +1,71 @@
+name: Update GitHub Runner Package
+on:
+  schedule:
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  BRANCH: chore/update-github-runner
+
+jobs:
+  update:
+    runs-on: [ self-hosted, nixos ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Update nixpkgs-runner input
+        id: update
+        working-directory: ./NixOS
+        run: |
+          VERSION_ATTR='.#nixosConfigurations.runner-node.config.services.github-runners.homelab.package.version'
+          BEFORE=$(nix eval --raw "$VERSION_ATTR")
+          nix flake update nixpkgs-runner
+          AFTER=$(nix eval --raw "$VERSION_ATTR")
+          TITLE="chore: bump github-runner $BEFORE -> $AFTER"
+          OPEN_PR_TITLE=$(gh pr list --head "$BRANCH" --state open --json title --jq '.[0].title // ""')
+
+          if [ "$BEFORE" = "$AFTER" ]; then
+            echo "github-runner $BEFORE is already the latest packaged version."
+          elif [ "$OPEN_PR_TITLE" = "$TITLE" ]; then
+            echo "A pull request for $AFTER is already open."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$AFTER" >> "$GITHUB_OUTPUT"
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+          echo "open_pr_title=$OPEN_PR_TITLE" >> "$GITHUB_OUTPUT"
+
+      - name: Run nix flake check
+        # Pull requests opened with the GITHUB_TOKEN do not trigger nixos-check.yml, so check here
+        if: steps.update.outputs.changed == 'true'
+        working-directory: ./NixOS
+        run: nix flake check
+
+      - name: Open or update pull request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          VERSION: ${{ steps.update.outputs.version }}
+          TITLE: ${{ steps.update.outputs.title }}
+          OPEN_PR_TITLE: ${{ steps.update.outputs.open_pr_title }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C "$BRANCH"
+          git commit -m "$TITLE" NixOS/flake.lock
+          git push --force origin "$BRANCH"
+
+          if [ -n "$OPEN_PR_TITLE" ]; then
+            gh pr edit "$BRANCH" --title "$TITLE"
+          else
+            gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "Automated update of the \`nixpkgs-runner\` flake input; \`nix flake check\` passed on the self-hosted runner.
+
+          Release notes: https://github.com/actions/runner/releases/tag/v$VERSION
+
+          GitHub stops serving jobs to outdated runners, so merge this within a few weeks."
+          fi

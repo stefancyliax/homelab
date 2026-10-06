@@ -63,7 +63,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **GLM-OCR VM Migration:** Ollama node deprecated — too slow for inference. GPU Worker now handles all OCR and tagging tasks via llama-swap.
 ### Implementation
 
-- [ ] **GitHub Runner:** Provision the GitHub Actions runner declaratively via NixOS and manage it via Comin. Build it as `runner-node` on `vault`, then retire the legacy VM on `phil` and `temp/github-runner-nixos/`.
+- [ ] **GitHub Runner:** `runner-node` is declared in the flake (`modules/github-runner.nix`, managed via Comin; runner package bumps are proposed as pull requests by `update-runner.yml`). Remaining: bootstrap the VM on `vault`, register the runner with a token from GitHub, then retire the legacy VM on `phil`. See [deployment.md](docs/deployment.md#provisioning-the-runner-vm).
 - [x] **Home Assistant Migration:** Configuration and data migrated from the legacy instance to the HAOS VM.
 - [x] **Storage Configuration:** 512 GB SSD is formatted with ext4 and mounted at `/mnt/data` on the `services-node` for application data and media.
 - [x] **GPU Worker Setup:** Provisioned with NixOS, Nvidia drivers, CUDA, and llama-swap. Functional as a dedicated AI worker. See [gpu-worker.md](docs/gpu-worker.md).
@@ -174,6 +174,7 @@ homelab/
 │   │   ├── services-node/
 │   │   ├── gpu-worker/
 │   │   ├── hermes-node/        # Hermes AI coding agent
+│   │   ├── runner-node/        # Self-hosted GitHub Actions runner
 │   │   └── another-node/       # Auxiliary / test node
 │   ├── modules/            # Reusable NixOS modules (Dockhand, Hawser, Llama-swap)
 │   ├── secrets/            # Agenix-encrypted secret files (.age)
@@ -197,7 +198,8 @@ homelab/
     ├── dockhand-infra.yml
     ├── dockhand-services.yml
     ├── dockhand-paperless.yml
-    └── nixos-check.yml
+    ├── nixos-check.yml
+    └── update-runner.yml
 ```
 
 ## Documentation

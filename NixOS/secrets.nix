@@ -9,6 +9,8 @@ let
   another-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ7NtsOzf6BjKWZUiNFYONrm16K9GGPrtD/Z30cCqOs+ root@nixos-base";
   gpu-worker = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJQLhHjz+3k2fbirx8RX3vVpGzI0To7S1abDf9M22dyk root@nixos-base";
   hermes-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINUVu4Tgapi7czpPHdL8jnWLXluxqfmJqkzBcs9rYvUE root@nixos-base"; 
+  # Kept out of `systems`: the CI runner only needs the Comin PAT
+  runner-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMkWzerz/OZieg2eiqYnRL4UO4aRxiD2XIXQrGfjWKwG root@nixos-base";
   
   systems = [ infra-node services-node another-node gpu-worker hermes-node ]; 
 in
@@ -18,7 +20,7 @@ in
   "secrets/rclone-conf.age".publicKeys = users ++ [ services-node ];
   
   # Comin deploy key, readable by the user and all systems that might run Comin
-  "secrets/github-pat.age".publicKeys = users ++ systems;
+  "secrets/github-pat.age".publicKeys = users ++ systems ++ [ runner-node ];
 
   # OIDC Secrets (mounted into Authelia container as files)
   "secrets/authelia-oidc-hmac.age".publicKeys = users ++ [ infra-node ];
