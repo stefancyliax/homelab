@@ -2,7 +2,7 @@
 
 This document describes the user-facing services and applications that the homelab provides. Services are deployed as Docker containers via the `services-stack/` Docker Compose files, orchestrated by Dockhand/Hawser (see [deployment.md](deployment.md)).
 
-Some services run on dedicated VMs or specialized hardware — these are noted below.
+Some services run on dedicated VMs or specialized hardware — these are noted below. For why a service is Docker, a native NixOS service or its own VM, see [Workload Placement](architecture.md#workload-placement).
 
 ## Services
 
@@ -13,9 +13,13 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | ✅ Functional |
 | Samba & WSDD | Native NixOS service (`services-node`) | ✅ Functional |
-| [IT-Tools](https://github.com/CorentinTh/it-tools) | Docker Compose (`services-stack`) | 🔲 Planned |
-| [Jellyfin](https://jellyfin.org/) | NAS | 🔲 Planned |
-| [Frigate](https://frigate.video/) | Docker Compose (`services-stack`) | 🔲 Planned |
+| [Jellyfin](https://jellyfin.org/) | Docker Compose (`media-stack`, `nas-node` on `vault`) | 🔲 Planned |
+| [Frigate](https://frigate.video/) | Docker Compose (`frigate-stack`, `frigate-node` on `phil`) | 🔲 Planned |
+| NAS shares (Samba/NFS) | Native NixOS service (`nas-node`) | 🔲 Planned |
+| [Garage](https://garagehq.deuxfleurs.fr/) S3 | Native NixOS service (`nas-node` for now) | 🔲 Planned |
+| Artifact hosting (Claude/Gemini) | Garage website bucket + Caddy route | 🔲 Planned |
+| [Proxmox Datacenter Manager](https://pdm.proxmox.com/docs/) | Appliance VM (`phil`) | ✅ Running |
+| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`services-node`) | ✅ Running — 🔲 move to `vault` planned |
 | ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | ~~[Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |

@@ -4,15 +4,27 @@ This document describes the physical and virtual infrastructure of the homelab, 
 
 ## Hardware
 
-### Proxmox Host
+### Proxmox Host `phil`
 
 | Component | Spec |
 |---|---|
 | CPU | Intel Core i5-1235U |
+| iGPU | Iris Xe (80 EU) — 🔲 planned passthrough to `frigate-node` |
 | RAM | 32 GB |
-| Storage | 3× 512 GB SSD (no ZFS, independent roles) |
+| Storage | Boot SSD (`local`, `local-lvm`) and a 500 GB Samsung 860 EVO (`ZFS-Store`). 🔲 Planned: a 250 GB Samsung SSD for Frigate. See [proxmox-setup.md](proxmox-setup.md#storage-configuration) |
 
-The Proxmox host runs all core virtual machines. See [proxmox-setup.md](proxmox-setup.md) for the hypervisor configuration details.
+Runs the control plane and the light application VMs. See [proxmox-setup.md](proxmox-setup.md) for the hypervisor configuration details.
+
+### Proxmox Host `vault`
+
+| Component | Spec |
+|---|---|
+| CPU | Intel Core i5-12600K |
+| iGPU | UHD 770 (32 EU) — 🔲 planned passthrough to `nas-node` for Jellyfin |
+| RAM | 32 GB |
+| Storage | NVMe SSD (Proxmox and VM disks), SATA SSD (unassigned for now); HDDs: 6 TB, 2 TB, 1 TB (9 TB total, carrying some existing data) |
+
+The NAS box: a standalone Proxmox host that holds the HDDs and runs the storage, media and compute-heavy VMs. The NAS shares themselves are 🔲 planned as the [`nas-node`](#nas-node-nixos-vm) VM. Not clustered with `phil` — see [proxmox-setup.md](proxmox-setup.md#multi-host-management).
 
 ### GPU Worker (Physical Node)
 
@@ -23,16 +35,6 @@ The Proxmox host runs all core virtual machines. See [proxmox-setup.md](proxmox-
 | OS | NixOS (managed via Comin) |
 
 A dedicated physical node for AI inference. Not always online — powers on when needed. See [gpu-worker.md](gpu-worker.md) for the full provisioning guide.
-
-### NAS / Storage Node
-
-| Component | Spec |
-|---|---|
-| Current Hardware | Intel NUC i3, 16 GB RAM, 256 GB SSD |
-| Future Hardware | Dedicated NAS or MiniPC |
-| OS | TBD (ZimaOS, Unraid, or managed NixOS) |
-
-Will serve as local backup target and media storage.
 
 ## Networking
 
@@ -77,7 +79,42 @@ Remote clients with Tailscale can then access all `*.home.stefancyliax.de` servi
 
 ## Virtual Machine Landscape
 
-All VMs run on the single Proxmox host. Each VM is isolated to separate concerns.
+Guests are spread over two standalone Proxmox hosts. Each VM is isolated to separate concerns.
+
+| Guest | Host | Type | Status |
+|---|---|---|---|
+| `infra-node` | `phil` | NixOS VM | ✅ Running |
+| `services-node` | `phil` | NixOS VM | ✅ Running |
+| HAOS | `phil` | Appliance VM | ✅ Running |
+| `hermes-node` | `phil` | NixOS VM | ✅ Running |
+| GitHub Runner | `phil` | NixOS VM (manually configured) | ✅ Running |
+| `frigate-node` | `phil` | NixOS VM (Iris Xe + dedicated SSD passthrough) | 🔲 Planned |
+| Proxmox Datacenter Manager | `phil` | Appliance VM | ✅ Running |
+| `nas-node` | `vault` | NixOS VM (HDD + UHD 770 passthrough) | 🔲 Planned |
+| `runner-node` | `vault` | NixOS VM | 🔲 Planned — supersedes the GitHub Runner VM on `phil` |
+| `chiefofstaff-node` | `vault` | NixOS VM | 🔲 Planned — supersedes `hermes-node` |
+
+### Workload Placement
+
+**Which host:**
+
+- **`phil`** — control plane and light apps: ingress, SSO, monitoring, Home Assistant, the `services-stack`. Also Frigate, because its iGPU is the stronger one for OpenVINO detection and it sits next to HAOS.
+- **`vault`** — anything that needs the HDDs, CPU for builds, or a device physically attached to it: NAS, Jellyfin, Garage, the scanner service, the GitHub runner, `chiefofstaff-node`.
+
+Both hosts have 32 GB of RAM, so memory does not decide placement.
+
+Each iGPU is passed through to exactly one VM, so Frigate (`phil`) and Jellyfin (`vault`) never compete for it.
+
+**Which form:**
+
+| Form | Use for | Examples |
+|---|---|---|
+| Docker Compose in a NixOS VM | Default for anything shipped as a container image. Deployed via Dockhand/Hawser. | Jellyfin, Frigate, BamBuddy, Hindsight, scanner service |
+| Native NixOS service in a NixOS VM | Things tied to the OS, the disks or the hardware. | Samba, Garage, GitHub runner, llama-swap, Syncthing |
+| Appliance VM | Software that ships its own OS. Not GitOps-managed, so kept to a minimum and documented manually. | HAOS, PDM |
+| Proxmox CT | Not used. Only a fallback if iGPU passthrough to a VM fails. | — |
+
+Docker is never run inside a CT.
 
 ### Node Details
 
@@ -103,11 +140,78 @@ Hosts user-facing application workloads via Docker Compose, orchestrated by Dock
 
 Executes GitHub Actions pipelines. Evaluates pull requests and commits using `nix flake check` and triggers Dockhand webhooks for application deployments. See [deployment.md](deployment.md).
 
+The runner is a manually configured VM on `phil` (configuration in `temp/github-runner-nixos/`). 🔲 Planned: `runner-node` on `vault`, declared in the flake (`services.github-runners`) and managed by Comin. It is a VM rather than a CT because it executes workflow code. `nixos-check.yml` triggers on `pull_request`; the repo requires approval for all outside contributors, so fork PRs cannot run on it unreviewed.
+
+#### NAS Node (NixOS VM)
+
+**Status:** 🔲 Planned, on `vault`.
+
+Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity scheme (Unraid or SnapRAID) needs the 6 TB disk as parity and leaves only 3 TB usable, so Unraid's mixed-size array brings no benefit here.
+
+| Service | Type |
+|---|---|
+| Samba / NFS shares | Native NixOS service |
+| [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`). On `nas-node` for now; the distribution of services on `vault` is still to be revisited |
+| Artifact hosting (Claude/Gemini HTML artifacts) | One Garage website bucket behind one Caddy route on `infra-node`; each artifact is a path, published by an S3 upload. No authentication |
+| [Jellyfin](https://jellyfin.org/) | Docker Compose (`media-stack`), QuickSync via the passed-through UHD 770 |
+| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`. Currently runs on `services-node` |
+
+Disk roles (no parity; important shares are backed up instead, media is re-acquirable). All three are passed through by-id to `nas-node`:
+
+| Disk | Role | Filesystem |
+|---|---|---|
+| 6 TB | Bulk storage: media and general shares | btrfs |
+| 1 TB | Garage data and scratch | XFS |
+| 2 TB | Local backup copy of the important shares | btrfs |
+
+btrfs is used where there is no second copy on the same disk set: its checksums reveal which file went bad so it can be restored. XFS is what Garage recommends for its data directory, since Garage checksums its own data.
+
+Storage and Jellyfin share one VM because Jellyfin needs both the disks and the iGPU — this avoids NFS/virtiofs hops between VMs.
+
+#### Frigate Node (NixOS VM)
+
+**Status:** 🔲 Planned, on `phil`.
+
+Runs [Frigate](https://frigate.video/) as its own Docker Compose stack (`frigate-stack`) via Hawser.
+
+- **iGPU:** Iris Xe passed through for hardware decoding and OpenVINO detection.
+- **Storage:** dedicated 250 GB Samsung SSD passed through for recordings and the database, so NVR writes don't touch the other VMs' disks.
+- **Network:** second NIC on the IoT VLAN to reach the cameras, like HAOS.
+- **Scope:** 1–2 cameras. Retention is motion/event-based with only a short continuous window, since every 1 Mbit/s of camera bitrate recorded around the clock costs about 11 GB per day.
+
+**Why a dedicated VM instead of `services-node`:** that VM is SeaBIOS, GPU passthrough is better trodden on OVMF, and passthrough problems stay isolated from the other apps.
+
+**Why a VM instead of a CT:** a CT would share the iGPU with the host instead of taking it whole, but nothing else on `phil` needs it. Frigate ships as a Docker image, its docs recommend a VM on Proxmox and do not officially support LXC, and a VM keeps it in the NixOS/Hawser GitOps flow. A CT with `/dev/dri` remains the fallback if passthrough fails. Memory ballooning must be disabled on the VM.
+
+#### Chief of Staff Node (`chiefofstaff-node`, NixOS VM)
+
+**Status:** 🔲 Planned, on `vault`.
+
+Home of the AI agents and the knowledge base; supersedes `hermes-node`. Headless: reached over SSH/Mosh, with herdr as the workspace for the agents.
+
+| Component | Notes |
+|---|---|
+| Hermes, Claude Code, Antigravity | Coding/knowledge agents |
+| herdr | Terminal workspace for running the agents |
+| Obsidian vault | Kept current via Obsidian Sync with a headless client (replaces the Syncthing copy on `hermes-node`) |
+| Automatic maintenance flows | Scheduled agent runs, declared as systemd timers |
+
+Antigravity and Obsidian Sync are GUI-first; their headless use is not yet verified.
+
+#### Proxmox Datacenter Manager (VM)
+
+**Status:** ✅ Running, VM on `phil`, reachable at `https://proxmox.home.stefancyliax.de`.
+
+Single pane of glass over `phil` and `vault` without clustering them. See [proxmox-setup.md](proxmox-setup.md#multi-host-management).
+
 #### HAOS (VM)
 
 Dedicated Home Assistant Operating System instance for smart home control. Attached to the IoT VLAN. See [home-assistant.md](home-assistant.md).
 
 #### Hermes Node (NixOS VM)
+
+> [!NOTE]
+> To be superseded by the [Chief of Staff Node](#chief-of-staff-node-chiefofstaff-node-nixos-vm) on `vault`.
 
 A lightweight VM providing persistent remote access to the Hermes AI coding agent.
 Accessible via SSH/Mosh from any device (laptop, phone). Uses tmux for session
@@ -126,7 +230,7 @@ It also hosts a synced copy of your Obsidian vault via Syncthing for the agent t
 
 #### Auxiliary / Test Node (`another-node`, NixOS VM)
 
-A lightweight auxiliary NixOS VM used for testing new modules, packages, and staging GitOps configurations before rolling them out across production nodes. Managed by Comin and monitored by Prometheus.
+A lightweight auxiliary NixOS VM used for testing new modules, packages, and staging GitOps configurations before rolling them out across production nodes. Managed by Comin and monitored by Prometheus. Only started when needed for testing.
 
 #### ~~Ollama Node (NixOS VM)~~ — Deprecated
 

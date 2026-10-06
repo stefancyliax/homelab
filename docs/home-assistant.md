@@ -50,6 +50,8 @@ See [monitoring.md](monitoring.md) for the broader monitoring stack that also us
 
 Security and CCTV integration with AI-powered object detection. Frigate processes camera feeds and sends detection events to Home Assistant for automations (e.g., notifications, recording triggers).
 
+Planned as a dedicated `frigate-node` VM on `phil`, next to HAOS, with the Iris Xe iGPU and a dedicated 250 GB SSD. See [architecture.md](architecture.md#frigate-node-nixos-vm).
+
 ## IoT VLAN
 
 The HAOS VM is attached to a dedicated IoT VLAN managed by the Unifi controller. This isolates IoT device traffic from the main network. The routing of service traffic across this VLAN boundary is still being defined.

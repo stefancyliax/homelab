@@ -8,8 +8,9 @@ This document describes the backup strategy for the homelab — how data is back
 |---|---|---|
 | This repository | GitHub | The Git repo is the source of truth for all NixOS configs, Docker Compose files, and documentation. Inherently backed up by being hosted on GitHub. |
 | Application volumes | ZeroByte → Google Drive | Databases and bind mounts: Paperless data, NocoDB tables, Home Assistant state, Nextcloud/Seafile files. |
-| Proxmox host config | Manual / PBS | Network interfaces, storage definitions, `/etc/pve` backups. |
-| Full VM images | PBS (planned) | Block-level incremental backups for rapid local restoration. |
+| Proxmox host config | Manual | Network interfaces, storage definitions, `/etc/pve` backups. |
+| Full VM images | Not backed up | NixOS VMs are rebuilt from this repository; only their data is backed up. See [Local Backups](#local-backups). |
+| NAS shares | Local copy + cloud (planned) | See [NAS Data](#nas-data--planned). |
 
 ## Cloud Backups (ZeroByte)
 
@@ -32,25 +33,26 @@ The backup pipeline is fully integrated into the GitOps and NixOS configuration:
    This exports consistent database dumps and media archives into `/mnt/data/paperless/export` right before ZeroByte triggers its offsite sync.
 4. **Notifications:** ZeroByte is configured with `WEBHOOK_ALLOWED_ORIGINS=http://10.1.23.184:2586` to publish backup success/failure reports directly to the `homelab-backups` topic on ntfy.
 
-## Local Backups (Planned)
+## Local Backups
 
-### Overview
+### VM Images
 
-A local backup target provides rapid restoration when a single VM fails, gets corrupted, or is accidentally misconfigured.
+Full VM images are not backed up, and there is no Proxmox Backup Server:
 
-- **Hardware:** Intel NUC i3 (to be replaced by a dedicated NAS).
-- **Method:** Proxmox Backup Server (PBS) for deduplicated, block-level incremental VM backups.
+- NixOS VMs hold no unique state outside their data directories and are rebuilt from this repository.
+- Application data is covered by ZeroByte.
+- Guests outside GitOps (HAOS, Proxmox Datacenter Manager) rely on their own backup/export features or are quick to set up again.
 
-### Setup
+### NAS Data (🔲 Planned)
 
-> [!NOTE]
-> The following steps will be documented once PBS is deployed and configured.
+The HDDs in `nas-node` run without parity, so protection comes from copies:
 
-1. Install PBS on the Intel NUC (or the future NAS).
-2. Configure the Proxmox host to use the PBS instance as a backup target.
-3. Set up scheduled VM backup jobs.
-4. Define retention policies.
-5. Test a full VM restore.
+| Data | Protection |
+|---|---|
+| Important shares | Local copy on the 2 TB disk (restic) + offsite to Google Drive (ZeroByte/restic) |
+| Home Assistant backups | HAOS writes its built-in backups to a NAS share, which is treated as an important share |
+| Media | None — re-acquirable |
+| Garage (dev data) | None |
 
 ## Recovery Procedures
 
@@ -64,22 +66,21 @@ A local backup target provides rapid restoration when a single VM fails, gets co
    ```
 4. Restart the affected containers via Dockhand.
 
-### Recovering a VM from PBS
+### Recovering a VM
 
-> [!NOTE]
-> Detailed steps will be documented once PBS is deployed.
+There are no VM image backups. To recover a NixOS VM:
 
-1. Access the Proxmox UI.
-2. Select the target storage containing the PBS backups.
-3. Restore the VM from the desired snapshot.
-4. Verify network configuration and service health post-restore.
+1. Clone the NixOS template in Proxmox (see [deployment.md](deployment.md#vm-templating--cloning)).
+2. Bootstrap it with `nixos-rebuild switch --flake .#<node-name>`; Comin takes over afterwards.
+3. If the VM uses secrets, add its new host key to `secrets.nix` and re-key Agenix.
+4. Restore the application data from Google Drive as described above.
 
 ### Full Disaster Recovery
 
 In the event of total hardware failure:
 
 1. **Rebuild the hypervisor:** Install Proxmox on replacement hardware.
-2. **Restore VMs:** If PBS backups are available on surviving hardware, restore VMs directly. Otherwise, provision fresh baseline NixOS VMs.
+2. **Recreate VMs:** Provision fresh baseline NixOS VMs.
 3. **Reapply NixOS configs:** Clone this repository, bootstrap each node with `nixos-rebuild switch --flake .#<node-name>`, and allow Comin to take over declarative management.
 4. **Restore application data:** Pull data from Google Drive using the Rclone/ZeroByte recovery procedure above.
 5. **Verify:** Confirm all services are running and data integrity is intact.

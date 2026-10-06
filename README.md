@@ -16,7 +16,7 @@ Overall I wanted to rework my homelab from years ago and learn about new tools a
 
 ## Architecture
 
-The homelab runs on a single Proxmox host with multiple isolated VMs, a physical GPU workstation, and a NAS.
+The homelab runs on two standalone Proxmox hosts, `phil` and `vault`, with multiple isolated VMs, plus a physical GPU workstation.
 
 For full hardware specs, networking, and service placement details, see [docs/architecture.md](docs/architecture.md).
 
@@ -30,13 +30,14 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | GitHub Actions CI/CD | ✅ Done | [deployment.md](docs/deployment.md) |
 | Dashboard (Homepage) | ✅ Done | [architecture.md](docs/architecture.md) |
 | Cloud Backups (ZeroByte) | ✅ Done | [backup.md](docs/backup.md) |
-| Local Backups (PBS) | 🔲 Planned | [backup.md](docs/backup.md) |
+| ~~Local Backups (PBS)~~ | ❌ Dropped | [backup.md](docs/backup.md#local-backups) |
 | Monitoring (Prometheus/Grafana/InfluxDB) | ✅ Done | [monitoring.md](docs/monitoring.md) |
 | GPU Worker / AI Stack (llama-swap) | ✅ Done | [gpu-worker.md](docs/gpu-worker.md) |
 | Hermes Node (Remote AI Agent) | ✅ Done | [architecture.md](docs/architecture.md) |
 | ~~Ollama Node (LLM Inference)~~ | ❌ Deprecated | GPU Worker handles all inference |
 | Services (Paperless, Grimmory, etc.) | 🚧 Ongoing | [services.md](docs/services.md) |
 | Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |
+| NAS & Media on `vault` | 🔲 Planned | [architecture.md](docs/architecture.md#workload-placement) |
 | Ingress & SSL (Caddy + Porkbun DNS) | ✅ Done | [deployment.md](docs/deployment.md) |
 | Single Sign-On (Authelia OIDC & Proxy) | ✅ Done | [deployment.md](docs/deployment.md) |
 
@@ -51,7 +52,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Volume Layout Design:** Define the logic for where and how Docker containers bind-mount persistent config and data within the NixOS VMs, tied to the backup strategy.
 - [x] **ZeroByte Configuration:** Backup targets, schedules, and retention policies configured and functional.
 - [x] **Ingress & SSL:** Caddy deployed with automatic wildcard TLS via Porkbun DNS-01 ACME challenge. All services accessible via `*.home.stefancyliax.de`.
-- [ ] **NAS OS Choice:** Decide on the operating system for the NAS (ZimaOS, Unraid, or managed NixOS).
+- [x] **NAS OS Choice:** Decided on a managed NixOS VM (`nas-node`) on `vault`, without parity — with 6 TB + 2 TB + 1 TB disks Unraid's parity array would leave only 3 TB usable. See [architecture.md](docs/architecture.md#nas-node-nixos-vm).
 - [x] **Single Sign-On (SSO):** Authelia deployed as OIDC provider on the `infra-stack`. See [deployment.md](docs/deployment.md#single-sign-on-sso) for onboarding procedures.
 - [x] **Cloud Storage Choice:** Decided to keep NextExplorer for file storage. Nextcloud and Seafile will not be deployed.
 - [x] **Notifications:** Decided on self-hosted [ntfy](https://ntfy.sh/). Gotify lacks UnifiedPush and requires WebSocket clients; HA notifications are not cluster-aware. ntfy is deployed in the `infra-stack`. See [monitoring.md](docs/monitoring.md).
@@ -60,7 +61,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **GLM-OCR VM Migration:** Ollama node deprecated — too slow for inference. GPU Worker now handles all OCR and tagging tasks via llama-swap.
 ### Implementation
 
-- [ ] **GitHub Runner:** Provision the GitHub Actions runner declaratively via NixOS and manage it via Comin.
+- [ ] **GitHub Runner:** Provision the GitHub Actions runner declaratively via NixOS and manage it via Comin. Build it as `runner-node` on `vault`, then retire the legacy VM on `phil` and `temp/github-runner-nixos/`.
 - [ ] **Home Assistant Migration:** Migrate configuration and data from the legacy HA instance to the new HAOS VM.
 - [x] **Storage Configuration:** 512 GB SSD is formatted with ext4 and mounted at `/mnt/data` on the `services-node` for application data and media.
 - [x] **GPU Worker Setup:** Provisioned with NixOS, Nvidia drivers, CUDA, and llama-swap. Functional as a dedicated AI worker. See [gpu-worker.md](docs/gpu-worker.md).
@@ -74,8 +75,8 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **Vision LLM Tuning:** Vision LLM parameters tuned and finalized.
 - [ ] **ComfyUI Deployment:** Deploy [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on the `gpu-worker` for GPU-accelerated image generation workflows.
 - [x] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
-- [ ] **Local Backups:** Set up Proxmox Backup Server on the Intel NUC.
-- [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, IT-Tools, etc.). See [services.md](docs/services.md).
+- [x] **Local Backups:** Decided against Proxmox Backup Server. VMs are rebuilt from the repo; data is covered by ZeroByte and the NAS copies. See [backup.md](docs/backup.md#local-backups).
+- [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, etc.). See [services.md](docs/services.md).
 - [x] **Tududi Deployment:** Docker Compose definition drafted in `services-stack` (currently commented out).
 - [ ] **BamBuddy Deployment:** Write the Docker Compose definitions to deploy the [BamBuddy](https://bambuddy.cool/index.html) service to the `services-stack`.
 - [x] **ntfy Service Integrations:** Connect services to the self-hosted ntfy instance:
@@ -86,11 +87,60 @@ For full hardware specs, networking, and service placement details, see [docs/ar
     - [x] GitHub Actions CI failure notifications (`nixos-check.yml`).
 - [ ] **Dashboard APIs:** Connect Homepage widgets to live data sources:
     - [x] ~~Proxmox API token for hypervisor metrics.~~ Widget removed; Homepage only links to PDM, `vault` and `phil`.
-    - [ ] PBS API tokens for backup metrics.
+    - [x] ~~PBS API tokens for backup metrics.~~ PBS dropped.
     - [ ] Home Assistant long-lived access token for entity telemetry.
     - [ ] Paperless-ngx API token for inbox count badges.
     - [ ] Grafana & SSO metrics via the Homepage REST parser.
 - [ ] **`vault` DMI ASPM:** The CPU package on `vault` idles at 2.3 W but never gets past package C3 (limit is C10, PCIe L1 is on everywhere, SATA, USB, chipset LTR and the iGPU driver are ruled out). Next time in the BIOS, check the DMI entries under Advanced → Platform Misc Configuration (DMI Link ASPM Control, DMI ASPM, DMI Gen3 ASPM) and set them to enabled / L1. Verify with `powertop` (Idle stats): the Pkg column should show time in C6 or deeper. Worth about 2 W at most.
+- [ ] **Grafana Dashboards:** Set up proper Grafana dashboards for monitoring, covering both Proxmox hosts (`phil`, `vault`) and all nodes. See [monitoring.md](docs/monitoring.md).
+
+### Expansion: NAS, Media and New Nodes
+
+Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), [proxmox-setup.md](docs/proxmox-setup.md).
+
+#### Decisions
+
+- [x] **Frigate on `phil`:** Uses the stronger Iris Xe iGPU (80 EU vs. 32 EU on `vault`) and a dedicated 250 GB Samsung SSD.
+- [x] **Garage scope:** Dev use only, ~100 GB, no redundancy needed.
+- [x] **No cluster:** `phil` and `vault` are standalone and managed through Proxmox Datacenter Manager, which runs as a VM on `phil` (a two-node cluster needs a QDevice for quorum).
+- [x] **HDD layout:** No parity. 6 TB bulk/media, 1 TB Garage + scratch, 2 TB local backup copy of important shares.
+- [x] **No PBS:** No Proxmox Backup Server and no VM image backups.
+- [x] **`chiefofstaff-node`:** Supersedes `hermes-node`; headless with herdr.
+- [x] **Artifact hosting:** Garage website bucket with one path per artifact. No Authelia in front; sharing the `home.stefancyliax.de` parent domain with the other services is accepted.
+- [x] **`services-node` data disk:** Replace the virtual disk on `ZFS-Store` with an SSD passed through whole (ext4) and retire the ZFS pool on `phil`. Leaner (no ZFS cache on a 32 GB host) and consistent with the Frigate SSD and the `vault` HDDs; costs Proxmox-side snapshots of that disk.
+- [x] **`vault` disks:** Proxmox on the NVMe SSD only for now (`local` 100 GB, `local-lvm` ~400 GB); the SATA SSD stays unassigned. HDD filesystems: btrfs on the 6 TB and 2 TB, XFS on the 1 TB (Garage's recommended filesystem for its data directory).
+- [x] **Frigate VM:** Dedicated `frigate-node` VM. Not a CT: Frigate does not officially support LXC, and nothing else on `phil` needs to share the iGPU.
+- [x] **GitHub runner exposure:** `nixos-check.yml` runs on `pull_request` on the self-hosted runner. Covered: the repo requires approval for all outside contributors before workflows run.
+- [ ] **NAS share layout:** Define which shares `nas-node` offers and which count as important for backup (ties in with the Volume Layout Design item above).
+- [ ] **`chiefofstaff-node` scope:** List the maintenance flows that run there and decide what the autonomous agents may reach on the LAN and which credentials they hold.
+- [ ] **VM sizing:** Allocate RAM and CPU per guest. Both hosts have 32 GB; `phil` gets tight once Frigate and PDM are added, `vault` carries `nas-node`, `runner-node` and `chiefofstaff-node`.
+- [ ] **Service distribution on `vault`:** Revisit which services share `nas-node`. Garage and the scanner service are placed there for now.
+
+#### Implementation
+
+- [ ] **⚠️ Migrate the `services-node` data disk (important data):** `/mnt/data` holds the Paperless documents, the Grimmory books and the NextExplorer files. Convert the 860 EVO from the `ZFS-Store` pool to a whole-disk ext4 passthrough, using a spare SanDisk Ultra 500 GB SSD as staging copy so there is always at least one verified local copy besides the cloud backup:
+    - [ ] Verify a fresh ZeroByte backup and Paperless export by test-restoring a sample.
+    - [ ] Attach the SanDisk SSD to `phil` temporarily (free bay or USB adapter), pass it to `services-node` and format it ext4.
+    - [ ] Stop everything using `/mnt/data` (Paperless incl. Postgres, Grimmory, NextExplorer, ZeroByte, Samba), copy to the SanDisk with `rsync -aHAX`, then verify with a checksum pass.
+    - [ ] Only after that verification: remove the virtual disk, destroy `ZFS-Store`, pass the 860 EVO through whole, format it ext4, copy the data back and verify again.
+    - [ ] Switch `fileSystems."/mnt/data"` in `services-node/configuration.nix` to the new UUID, reboot, and check Paperless (document count, open a few documents), the Samba shares and the next ZeroByte run.
+    - [ ] Keep the SanDisk copy as rollback for at least two weeks; it can sit unplugged on the shelf. Afterwards it is a spare.
+- [ ] **iGPU passthrough spike:** Validate Iris Xe → VM on `phil` and UHD 770 → VM on `vault` (OVMF, `intel_gpu_top`, VAAPI/QSV test) before building on it. Fallback: CT with `/dev/dri`.
+- [x] **`vault` baseline:** `vault` is online with its Caddy route, OIDC login, metric server → VictoriaMetrics and ntfy webhook.
+- [x] **Proxmox Datacenter Manager:** Running as a VM on `phil` at `proxmox.home.stefancyliax.de`, with both hosts as remotes.
+- [ ] **`nas-node`:** NixOS VM on `vault` with the three HDDs passed through by-id (btrfs on the 6 TB and 2 TB, XFS on the 1 TB); add to the flake with Comin and Hawser; Samba/NFS shares.
+- [ ] **Data migration:** Inventory the existing data on the three HDDs and fix the shuffle order before any disk is reformatted.
+- [ ] **NAS backups:** Local restic copy of the important shares on the 2 TB disk plus offsite via ZeroByte/restic; media stays unprotected by design.
+- [ ] **HAOS backups:** Point Home Assistant's built-in backups at a NAS share so they are covered without PBS.
+- [ ] **Garage:** `services.garage` on `nas-node` (single node, data on the 1 TB disk, metadata on the VM disk, secrets via Agenix).
+- [ ] **Artifact hosting:** One Garage bucket (`artifacts`) in website mode behind a single Caddy route (`artifacts.home.stefancyliax.de` → Garage web endpoint, no Authelia). Each artifact is a path in the bucket, so pushing a file publishes it without touching Caddy or DNS. Also expose the S3 API (`s3.home.stefancyliax.de`) for uploads, create one write key per machine (Agenix on `chiefofstaff-node`), and add a small `publish-artifact` helper that uploads and prints the URL.
+- [ ] **`media-stack` / Jellyfin:** New Compose stack on `nas-node` with QuickSync, a `dockhand-media.yml` workflow, and Authelia via the SSO plugin.
+- [ ] **Scanner service:** Move the HP ScanJet Pro 2600 f1 container from `services-node` to `vault`, where the scanner physically stands: merge the `setup_scanner_raspberry_pi` branch (in progress), pass the scanner through by USB to the VM, map `/dev/bus/usb` in the Compose file, and mount the `paperless-consume` share from `services-node` as the output directory.
+- [ ] **`frigate-node` / `frigate-stack`:** NixOS VM on `phil` with Iris Xe and the 250 GB Samsung SSD passed through (check its SMART wear level first) and a NIC on the IoT VLAN; ballooning disabled; OpenVINO detector; 1–2 cameras with motion/event-based retention sized to the SSD; Home Assistant integration; ntfy `homelab-security`; Authelia forward_auth.
+- [ ] **`chiefofstaff-node` headless check:** Verify Obsidian Sync runs headless (official headless client) and how Antigravity is used without a desktop (remote SSH from the laptop or CLI).
+- [ ] **`chiefofstaff-node`:** Headless NixOS VM on `vault` with Hermes, Claude Code, Antigravity, herdr, the Obsidian vault (Obsidian Sync) and systemd timers for the maintenance flows.
+- [ ] **Retire `hermes-node`:** After migrating to `chiefofstaff-node`, remove the node from the flake, its Syncthing route in Caddy and its scrape targets.
+- [ ] **Observability & ingress for new guests:** Scrape targets, Homepage entries and Caddy routes for `vault` and every new node.
 
 ### Completed
 
@@ -153,7 +203,7 @@ homelab/
 | [Architecture](docs/architecture.md) | Hardware specs, networking, VM landscape, and service placement |
 | [Proxmox Setup](docs/proxmox-setup.md) | Hypervisor configuration and VM provisioning baseline |
 | [Deployment](docs/deployment.md) | NixOS provisioning (Comin), app deployment (Dockhand/Hawser), CI/CD, and commands |
-| [Backup](docs/backup.md) | Backup strategy (ZeroByte, PBS) and recovery procedures |
+| [Backup](docs/backup.md) | Backup strategy (ZeroByte, NAS copies) and recovery procedures |
 | [GPU Worker](docs/gpu-worker.md) | AI workstation provisioning and tooling |
 | [Services](docs/services.md) | Catalog of user-facing homelab services |
 | [Home Assistant](docs/home-assistant.md) | Smart home ecosystem and integrations |
