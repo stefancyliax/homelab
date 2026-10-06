@@ -36,7 +36,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Hermes Node (Remote AI Agent) | ✅ Done | [architecture.md](docs/architecture.md) |
 | ~~Ollama Node (LLM Inference)~~ | ❌ Deprecated | GPU Worker handles all inference |
 | Services (Paperless, Grimmory, etc.) | 🚧 Ongoing | [services.md](docs/services.md) |
-| Home Assistant | 🚧 VM running, migration pending | [home-assistant.md](docs/home-assistant.md) |
+| Home Assistant | ✅ Done | [home-assistant.md](docs/home-assistant.md) |
 | NAS & Media on `vault` | 🔲 Planned | [architecture.md](docs/architecture.md#workload-placement) |
 | Ingress & SSL (Caddy + Porkbun DNS) | ✅ Done | [deployment.md](docs/deployment.md) |
 | Single Sign-On (Authelia OIDC & Proxy) | ✅ Done | [deployment.md](docs/deployment.md) |
@@ -57,17 +57,18 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **Cloud Storage Choice:** Decided to keep NextExplorer for file storage. Nextcloud and Seafile will not be deployed.
 - [x] **Notifications:** Decided on self-hosted [ntfy](https://ntfy.sh/). Gotify lacks UnifiedPush and requires WebSocket clients; HA notifications are not cluster-aware. ntfy is deployed in the `infra-stack`. See [monitoring.md](docs/monitoring.md).
 - [x] **Dozzle:** Evaluated and dropped — too little functionality to justify deployment.
-- [ ] **Nemoclaw:** Research Nemoclaw and evaluate its potential use-case in the homelab.
+- [x] **Nemoclaw:** Decided against it; Hermes is the agent.
+- [ ] **GLM-OCR on `vault`:** Benchmark GLM-OCR on `vault`'s CPU (llama.cpp, quantized GGUF, a few real scans) to see whether it can serve as an always-on OCR backend for Paperless-GPT when the `gpu-worker` is off. The iGPU is reserved for Jellyfin, so CPU only.
 - [x] **GLM-OCR VM Migration:** Ollama node deprecated — too slow for inference. GPU Worker now handles all OCR and tagging tasks via llama-swap.
 ### Implementation
 
 - [ ] **GitHub Runner:** Provision the GitHub Actions runner declaratively via NixOS and manage it via Comin. Build it as `runner-node` on `vault`, then retire the legacy VM on `phil` and `temp/github-runner-nixos/`.
-- [ ] **Home Assistant Migration:** Migrate configuration and data from the legacy HA instance to the new HAOS VM.
+- [x] **Home Assistant Migration:** Configuration and data migrated from the legacy instance to the HAOS VM.
 - [x] **Storage Configuration:** 512 GB SSD is formatted with ext4 and mounted at `/mnt/data` on the `services-node` for application data and media.
 - [x] **GPU Worker Setup:** Provisioned with NixOS, Nvidia drivers, CUDA, and llama-swap. Functional as a dedicated AI worker. See [gpu-worker.md](docs/gpu-worker.md).
 - [x] **GPU Top:** `nvtop` deployed on the `gpu-worker` node.
-- [ ] **Paperless-GPT OCR:** Replace OCR provider for `paperless-gpt` with `docling-serve`.
-- [ ] **Paperless-GPT Native Parsing:** Set up a secondary instance of `paperless-gpt` using `docling` as the backend for non-scanned/digital native documents (e.g., received via email).
+- [x] **Paperless-GPT OCR:** ~~Replace OCR provider for `paperless-gpt` with `docling-serve`.~~ Dropped — GLM-OCR on the `gpu-worker` covers OCR.
+- [x] **Paperless-GPT Native Parsing:** ~~Set up a secondary instance of `paperless-gpt` using `docling` as the backend for non-scanned/digital native documents (e.g., received via email).~~ Dropped — Paperless-ngx already extracts the text layer of digital documents itself.
 - [x] **Paperless Email Ingress:** Email fetching, accounts, and routing rules configured and functional in Paperless-ngx.
 - [x] **LLM Backend Migration (gpu-worker):** Migrated the `gpu-worker` from `ollama` to `llama-swap` as a native NixOS service with CUDA-accelerated `llama-cpp`. Initial model: Qwen3-VL-8B-Instruct (Q4_K_M). See [gpu-worker.md](docs/gpu-worker.md).
 - [ ] **Tune Hermes GPU Offload:** Tune the `--n-gpu-layers` for the Qwen3.6-35B-A3B model on the GPU worker to maximize VRAM usage while leaving room for context.
