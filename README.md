@@ -40,6 +40,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | NAS & Media on `vault` | 🔲 Planned | [architecture.md](docs/architecture.md#workload-placement) |
 | Ingress & SSL (Caddy + Porkbun DNS) | ✅ Done | [deployment.md](docs/deployment.md) |
 | Single Sign-On (Authelia OIDC & Proxy) | ✅ Done | [deployment.md](docs/deployment.md) |
+| Scanner Service (HP ScanJet Pro 2600 f1) | 🔲 Planned | [scanner/README.md](scanner/README.md) |
 
 ## To-Do
 
@@ -92,6 +93,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
     - [ ] Home Assistant long-lived access token for entity telemetry.
     - [ ] Paperless-ngx API token for inbox count badges.
     - [ ] Grafana & SSO metrics via the Homepage REST parser.
+- [ ] **Scanner Service Deployment:** Deploy the HP ScanJet Pro 2600 f1 container stack (`scanner/`) on the secondary Proxmox node once online. See [scanner/README.md](scanner/README.md) for open checklist items.
 - [ ] **`vault` DMI ASPM:** The CPU package on `vault` idles at 2.3 W but never gets past package C3 (limit is C10, PCIe L1 is on everywhere, SATA, USB, chipset LTR and the iGPU driver are ruled out). Next time in the BIOS, check the DMI entries under Advanced → Platform Misc Configuration (DMI Link ASPM Control, DMI ASPM, DMI Gen3 ASPM) and set them to enabled / L1. Verify with `powertop` (Idle stats): the Pkg column should show time in C6 or deeper. Worth about 2 W at most.
 - [ ] **Grafana Dashboards:** Set up proper Grafana dashboards for monitoring, covering both Proxmox hosts (`phil`, `vault`) and all nodes. See [monitoring.md](docs/monitoring.md).
 
@@ -144,6 +146,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **Observability & ingress for new guests:** Scrape targets, Homepage entries and Caddy routes for `vault` and every new node.
 
 ### Completed
+
 
 - [x] **Centralized Logging:** Deployed Loki in infra-stack and Promtail via NixOS common module for shipping journald and Docker logs from all nodes.
 - [x] **Monitoring Stack:** Consolidated onto VictoriaMetrics, Grafana, and Loki with node exporters and fully declarative dashboards!

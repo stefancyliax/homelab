@@ -1,0 +1,17 @@
+services:
+  scanner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scanner
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - SCAN_DPI=300
+      - ADF_POLL_INTERVAL=2
+      - ADF_LOAD_DELAY=2
+    volumes:
+      - /home/stefan/paperless-consume:/output
+      - /dev/bus/usb/002:/dev/bus/usb/002  # Scanner USB bus
+    device_cgroup_rules:
+      - 'c 189:* rwm'  # Allow access to USB device nodes
