@@ -87,11 +87,10 @@ Guests are spread over two standalone Proxmox hosts. Each VM is isolated to sepa
 | `services-node` | `phil` | NixOS VM | ✅ Running |
 | HAOS | `phil` | Appliance VM | ✅ Running |
 | `hermes-node` | `phil` | NixOS VM | ✅ Running |
-| GitHub Runner | `phil` | NixOS VM (manually configured) | ✅ Running |
 | `frigate-node` | `phil` | NixOS VM (Iris Xe + dedicated SSD passthrough) | 🔲 Planned |
 | Proxmox Datacenter Manager | `phil` | Appliance VM | ✅ Running |
 | `nas-node` | `vault` | NixOS VM (HDD + UHD 770 passthrough) | 🔲 Planned |
-| `runner-node` | `vault` | NixOS VM | 🚧 Declared in the flake, VM not yet created — supersedes the GitHub Runner VM on `phil` |
+| `runner-node` | `vault` | NixOS VM | ✅ Running |
 | `chiefofstaff-node` | `vault` | NixOS VM | 🔲 Planned — supersedes `hermes-node` |
 
 ### Workload Placement
@@ -142,9 +141,9 @@ Executes GitHub Actions pipelines. Evaluates pull requests and commits using `ni
 
 | Service | Type | Status |
 |---|---|---|
-| GitHub Actions Runner (`github-runner-homelab.service`) | Native NixOS Service | 🚧 Declared, VM not yet created |
+| GitHub Actions Runner (`github-runner-homelab.service`) | Native NixOS Service | ✅ Running |
 
-The current runner is a manually configured VM on `phil`. Its successor, `runner-node` on `vault`, is declared in the flake (`services.github-runners` in `modules/github-runner.nix`) and managed by Comin like every other NixOS VM; the VM itself still has to be created. It is a VM rather than a CT because it executes workflow code. `nixos-check.yml` triggers on `pull_request`; the repo requires approval for all outside contributors, so fork PRs cannot run on it unreviewed.
+The runner lives on `runner-node` on `vault`, declared in the flake (`services.github-runners` in `modules/github-runner.nix`) and managed by Comin like every other NixOS VM. It is a VM rather than a CT because it executes workflow code. `nixos-check.yml` triggers on `pull_request`; the repo requires approval for all outside contributors, so fork PRs cannot run on it unreviewed.
 
 #### NAS Node (NixOS VM)
 

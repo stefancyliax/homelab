@@ -63,7 +63,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **GLM-OCR VM Migration:** Ollama node deprecated — too slow for inference. GPU Worker now handles all OCR and tagging tasks via llama-swap.
 ### Implementation
 
-- [ ] **GitHub Runner:** `runner-node` is declared in the flake (`modules/github-runner.nix`, managed via Comin; runner package bumps are proposed as pull requests by `update-runner.yml`). Remaining: bootstrap the VM on `vault`, register the runner with a token from GitHub, then retire the legacy VM on `phil`. See [deployment.md](docs/deployment.md#provisioning-the-runner-vm).
+- [x] **GitHub Runner:** `runner-node` runs on `vault`, declared in the flake (`modules/github-runner.nix`) and managed via Comin; runner package bumps are proposed as pull requests by `update-runner.yml`. The legacy VM on `phil` is retired. See [deployment.md](docs/deployment.md#cicd-pipeline).
 - [x] **Home Assistant Migration:** Configuration and data migrated from the legacy instance to the HAOS VM.
 - [x] **Storage Configuration:** 512 GB SSD is formatted with ext4 and mounted at `/mnt/data` on the `services-node` for application data and media.
 - [x] **GPU Worker Setup:** Provisioned with NixOS, Nvidia drivers, CUDA, and llama-swap. Functional as a dedicated AI worker. See [gpu-worker.md](docs/gpu-worker.md).

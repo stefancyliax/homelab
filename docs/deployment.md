@@ -181,7 +181,7 @@ nix flake update nixpkgs-runner
    ```bash
    journalctl -u github-runner-homelab.service -n 30 --no-pager
    ```
-6. Add the VM's IP to `infra-stack/victoriametrics/scrape.yml`, then retire the legacy runner VM on `phil`.
+6. Add the VM's IP to `infra-stack/victoriametrics/scrape.yml`.
 
 ## Deployment Commands
 
