@@ -53,13 +53,13 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **Volume Layout Design:** Define the logic for where and how Docker containers bind-mount persistent config and data within the NixOS VMs, tied to the backup strategy.
 - [x] **ZeroByte Configuration:** Backup targets, schedules, and retention policies configured and functional.
 - [x] **Ingress & SSL:** Caddy deployed with automatic wildcard TLS via Porkbun DNS-01 ACME challenge. All services accessible via `*.home.stefancyliax.de`.
-- [x] **NAS OS Choice:** Decided on a managed NixOS VM (`nas-node`) on `vault`, without parity — with 6 TB + 2 TB + 1 TB disks Unraid's parity array would leave only 3 TB usable. See [architecture.md](docs/architecture.md#nas-node-nixos-vm).
+- [x] **NAS OS Choice:** Decided on a managed NixOS VM (`storage-node`) on `vault`, without parity — with 6 TB + 2 TB + 1 TB disks Unraid's parity array would leave only 3 TB usable. See [architecture.md](docs/architecture.md#storage-node-nixos-vm).
 - [x] **Single Sign-On (SSO):** Authelia deployed as OIDC provider on the `infra-stack`. See [deployment.md](docs/deployment.md#single-sign-on-sso) for onboarding procedures.
 - [x] **Cloud Storage Choice:** Decided to keep NextExplorer for file storage. Nextcloud and Seafile will not be deployed.
 - [x] **Notifications:** Decided on self-hosted [ntfy](https://ntfy.sh/). Gotify lacks UnifiedPush and requires WebSocket clients; HA notifications are not cluster-aware. ntfy is deployed in the `infra-stack`. See [monitoring.md](docs/monitoring.md).
 - [x] **Dozzle:** Evaluated and dropped — too little functionality to justify deployment.
 - [x] **Nemoclaw:** Decided against it; Hermes is the agent.
-- [ ] **GLM-OCR on `vault`:** Benchmark GLM-OCR on `vault`'s CPU (llama.cpp, quantized GGUF, a few real scans) to see whether it can serve as an always-on OCR backend for Paperless-GPT when the `gpu-worker` is off. The iGPU is reserved for Jellyfin, so CPU only.
+- [ ] **GLM-OCR on `vault`:** Benchmark GLM-OCR on `vault`'s CPU (llama.cpp, quantized GGUF, a few real scans) to see whether it can serve as an always-on OCR backend for Paperless-GPT when the `gpu-worker` is off. The iGPU is reserved for Jellyfin, so CPU only. Runs as a temporary test in `vault`'s unallocated RAM, not as a planned resident of a VM.
 - [x] **GLM-OCR VM Migration:** Ollama node deprecated — too slow for inference. GPU Worker now handles all OCR and tagging tasks via llama-swap.
 ### Implementation
 
@@ -80,7 +80,8 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **Local Backups:** Decided against Proxmox Backup Server. VMs are rebuilt from the repo; data is covered by ZeroByte and the NAS copies. See [backup.md](docs/backup.md#local-backups).
 - [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, etc.). See [services.md](docs/services.md).
 - [x] **Tududi Deployment:** Docker Compose definition drafted in `services-stack` (currently commented out).
-- [ ] **BamBuddy Deployment:** Write the Docker Compose definitions to deploy the [BamBuddy](https://bambuddy.cool/index.html) service to the `services-stack`.
+- [ ] **BamBuddy Deployment:** Write the Docker Compose definitions to deploy the [BamBuddy](https://bambuddy.cool/index.html) service to the `storage-stack` on `storage-node`.
+- [ ] **Pilot Deployment:** Deploy [Pilot](https://pilot.quantflow.studio/) (`ghcr.io/qf-studio/pilot`, gateway on `:9090`) to the `agent-tools-stack` on `agent-tools-node` as an autonomous ticket-to-PR agent. Spike outcome: GitHub issue polling (label `pilot`, no public ingress needed), Claude Pro subscription via `CLAUDE_CODE_OAUTH_TOKEN` from `claude setup-token`, state and repo checkouts bind-mounted on the VM, Caddy route behind Authelia, `/metrics` scraped by VictoriaMetrics. Open points: Pilot's intent classifier and epic decomposition expect an `ANTHROPIC_API_KEY`; there is no Gemini backend (only via `opencode` with a Gemini API key); target repo still to be chosen.
 - [x] **ntfy Service Integrations:** Connect services to the self-hosted ntfy instance:
     - [x] ZeroByte backup notifications (configured via ZeroByte UI).
     - [x] Comin deployment notifications via `postDeploymentCommand` in `modules/comin.nix`.
@@ -106,19 +107,21 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **Frigate on `phil`:** Uses the stronger Iris Xe iGPU (80 EU vs. 32 EU on `vault`) and a dedicated 250 GB Samsung SSD.
 - [x] **Garage scope:** Dev use only, ~100 GB, no redundancy needed.
 - [x] **No cluster:** `phil` and `vault` are standalone and managed through Proxmox Datacenter Manager, which runs as a VM on `phil` (a two-node cluster needs a QDevice for quorum).
-- [x] **HDD layout:** No parity. 6 TB bulk/media, 1 TB Garage + scratch, 2 TB local backup copy of important shares.
+- [x] **HDD layout:** No parity. 6 TB bulk/media, 1 TB scratch (and Garage data, if the disk follows Garage), 2 TB local backup copy of important shares.
 - [x] **No PBS:** No Proxmox Backup Server and no VM image backups.
-- [x] **`chiefofstaff-node`:** Supersedes `hermes-node`; headless with herdr.
+- [x] **`agent-node`:** Supersedes `hermes-node`; headless with herdr. Planned as `chiefofstaff-node` before the rename.
 - [x] **Artifact hosting:** Garage website bucket with one path per artifact. No Authelia in front; sharing the `home.stefancyliax.de` parent domain with the other services is accepted.
 - [x] **`services-node` data disk:** Replace the virtual disk on `ZFS-Store` with an SSD passed through whole (ext4) and retire the ZFS pool on `phil`. Leaner (no ZFS cache on a 32 GB host) and consistent with the Frigate SSD and the `vault` HDDs; costs Proxmox-side snapshots of that disk.
 - [x] **`vault` disks:** Proxmox on the NVMe SSD only for now (`local` 100 GB, `local-lvm` ~400 GB); the SATA SSD stays unassigned. HDD filesystems: btrfs on the 6 TB and 2 TB, XFS on the 1 TB (Garage's recommended filesystem for its data directory).
 - [x] **Frigate VM:** Dedicated `frigate-node` VM. Not a CT: Frigate does not officially support LXC, and nothing else on `phil` needs to share the iGPU.
 - [x] **GitHub runner exposure:** `nixos-check.yml` runs on `pull_request` on the self-hosted runner. Covered: the repo requires approval for all outside contributors before workflows run.
-- [ ] **NAS share layout:** Define which shares `nas-node` offers and which count as important for backup (ties in with the Volume Layout Design item above).
-- [ ] **`chiefofstaff-node` scope:** List the maintenance flows that run there and decide what the autonomous agents may reach on the LAN and which credentials they hold.
-- [ ] **VM sizing:** Allocate RAM and CPU per guest. Both hosts have 32 GB; `phil` gets tight once Frigate and PDM are added, `vault` carries `nas-node`, `runner-node` and `chiefofstaff-node`.
-- [ ] **Service distribution on `vault`:** Revisit which services share `nas-node`. Garage and the scanner service are placed there for now.
-
+- [ ] **NAS share layout:** Define which shares `storage-node` offers and which count as important for backup (ties in with the Volume Layout Design item above).
+- [ ] **`agent-node` scope:** List the maintenance flows that run there and decide what the autonomous agents may reach on the LAN and which credentials they hold.
+- [x] **Service distribution:** `storage-node` (was `nas-node`) holds the shares, Jellyfin, the scanner service, NextExplorer and BamBuddy. A new `agent-tools-node` on `vault` holds what the agents rely on: Hindsight, Parakeet, Open-WebUI, NocoDB, Garage, artifact hosting and pilot. A new `work-tools-node` on `phil` runs a separate Hindsight instance for work. See [architecture.md](docs/architecture.md#workload-placement).
+- [x] **Dropped services:** ESPHome as a standalone container, Stirling PDF, Tududi and Paperless-AI.
+- [x] **`vault` RAM reserve:** `vault` goes from 32 GB to 48 GB and keeps at least 16 GB unallocated for experiments.
+- [ ] **VM sizing:** Allocate RAM and CPU per guest. `phil` runs fine at about 26 GB allocated. First draft for `vault` (30 GB of 48 GB): `storage-node` 6 GB (pinned by the passthrough), `runner-node` 6 GB, `agent-node` 6 GB, `agent-tools-node` 10 GB, host 2 GB. Estimates, to be checked against real use.
+- [ ] **Garage data disk:** Garage moved from `storage-node` to `agent-tools-node`. Decide whether the 1 TB HDD is passed through to `agent-tools-node` instead, or Garage's ~100 GB live on the VM disk on the NVMe.
 #### Implementation
 
 - [ ] **⚠️ Migrate the `services-node` data disk (important data):** `/mnt/data` holds the Paperless documents, the Grimmory books and the NextExplorer files. Convert the 860 EVO from the `ZFS-Store` pool to a whole-disk ext4 passthrough, using a spare SanDisk Ultra 500 GB SSD as staging copy so there is always at least one verified local copy besides the cloud backup:
@@ -131,18 +134,23 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **iGPU passthrough spike:** Validate Iris Xe → VM on `phil` and UHD 770 → VM on `vault` (OVMF, `intel_gpu_top`, VAAPI/QSV test) before building on it. Fallback: CT with `/dev/dri`.
 - [x] **`vault` baseline:** `vault` is online with its Caddy route, OIDC login, metric server → VictoriaMetrics and ntfy webhook.
 - [x] **Proxmox Datacenter Manager:** Running as a VM on `phil` at `proxmox.home.stefancyliax.de`, with both hosts as remotes.
-- [ ] **`nas-node`:** NixOS VM on `vault` with the three HDDs passed through by-id (btrfs on the 6 TB and 2 TB, XFS on the 1 TB); add to the flake with Comin and Hawser; Samba/NFS shares.
+- [ ] **`vault` RAM:** Install the second 16 GB stick (32 → 48 GB).
+- [ ] **`storage-node`:** NixOS VM on `vault` with the 6 TB and 2 TB HDDs passed through by-id (btrfs), plus the 1 TB (XFS) unless it goes to `agent-tools-node`; add to the flake with Comin and Hawser; Samba/NFS shares.
 - [ ] **Data migration:** Inventory the existing data on the three HDDs and fix the shuffle order before any disk is reformatted.
 - [ ] **NAS backups:** Local restic copy of the important shares on the 2 TB disk plus offsite via ZeroByte/restic; media stays unprotected by design.
 - [ ] **HAOS backups:** Point Home Assistant's built-in backups at a NAS share so they are covered without PBS.
-- [ ] **Garage:** `services.garage` on `nas-node` (single node, data on the 1 TB disk, metadata on the VM disk, secrets via Agenix).
-- [ ] **Artifact hosting:** One Garage bucket (`artifacts`) in website mode behind a single Caddy route (`artifacts.home.stefancyliax.de` → Garage web endpoint, no Authelia). Each artifact is a path in the bucket, so pushing a file publishes it without touching Caddy or DNS. Also expose the S3 API (`s3.home.stefancyliax.de`) for uploads, create one write key per machine (Agenix on `chiefofstaff-node`), and add a small `publish-artifact` helper that uploads and prints the URL.
-- [ ] **`media-stack` / Jellyfin:** New Compose stack on `nas-node` with QuickSync, a `dockhand-media.yml` workflow, and Authelia via the SSO plugin.
-- [ ] **Scanner service:** Move the HP ScanJet Pro 2600 f1 container from `services-node` to `vault`, where the scanner physically stands: merge the `setup_scanner_raspberry_pi` branch (in progress), pass the scanner through by USB to the VM, map `/dev/bus/usb` in the Compose file, and mount the `paperless-consume` share from `services-node` as the output directory.
+- [ ] **`agent-tools-node` / `agent-tools-stack`:** NixOS VM on `vault`; add to the flake with Comin and Hawser and a `dockhand-agent-tools.yml` workflow. Move Hindsight, Parakeet, Open-WebUI and NocoDB over from the `services-stack` including their volumes, then repoint their Caddy routes, Homepage entries and the Hindsight URLs the agents use.
+- [ ] **`work-tools-node` / `work-tools-stack`:** NixOS VM on `phil` with a second Hindsight instance for work, with its own Caddy route.
+- [ ] **Garage:** `services.garage` on `agent-tools-node` (single node, data per the Garage data disk decision, metadata on the VM disk, secrets via Agenix).
+- [ ] **Artifact hosting:** One Garage bucket (`artifacts`) in website mode behind a single Caddy route (`artifacts.home.stefancyliax.de` → Garage web endpoint, no Authelia). Each artifact is a path in the bucket, so pushing a file publishes it without touching Caddy or DNS. Also expose the S3 API (`s3.home.stefancyliax.de`) for uploads, create one write key per machine (Agenix on `agent-node`), and add a small `publish-artifact` helper that uploads and prints the URL.
+- [ ] **`storage-stack` / Jellyfin:** New Compose stack on `storage-node` with QuickSync, a `dockhand-storage.yml` workflow, and Authelia via the SSO plugin.
+- [ ] **NextExplorer move:** Move NextExplorer and its files from `/mnt/data` on `services-node` into the `storage-stack`, then repoint its Caddy route.
+- [ ] **Remove dropped services:** Delete the commented-out Stirling PDF, Tududi and Paperless-AI blocks and their volumes from the `services-stack` compose files.
+- [ ] **Scanner service:** Move the HP ScanJet Pro 2600 f1 container from `services-node` to `storage-node` on `vault`, where the scanner physically stands: merge the `setup_scanner_raspberry_pi` branch (in progress), pass the scanner through by USB to the VM, map `/dev/bus/usb` in the Compose file, and mount the `paperless-consume` share from `services-node` as the output directory.
 - [ ] **`frigate-node` / `frigate-stack`:** NixOS VM on `phil` with Iris Xe and the 250 GB Samsung SSD passed through (check its SMART wear level first) and a NIC on the IoT VLAN; ballooning disabled; OpenVINO detector; 1–2 cameras with motion/event-based retention sized to the SSD; Home Assistant integration; ntfy `homelab-security`; Authelia forward_auth.
-- [ ] **`chiefofstaff-node` headless check:** Verify Obsidian Sync runs headless (official headless client) and how Antigravity is used without a desktop (remote SSH from the laptop or CLI).
-- [ ] **`chiefofstaff-node`:** Headless NixOS VM on `vault` with Hermes, Claude Code, Antigravity, herdr, the Obsidian vault (Obsidian Sync) and systemd timers for the maintenance flows.
-- [ ] **Retire `hermes-node`:** After migrating to `chiefofstaff-node`, remove the node from the flake, its Syncthing route in Caddy and its scrape targets.
+- [ ] **`agent-node` headless check:** Verify Obsidian Sync runs headless (official headless client) and how Antigravity is used without a desktop (remote SSH from the laptop or CLI).
+- [ ] **`agent-node`:** Headless NixOS VM on `vault` with Hermes, Claude Code, Antigravity, herdr, the Obsidian vault (Obsidian Sync) and systemd timers for the maintenance flows.
+- [ ] **Retire `hermes-node`:** After migrating to `agent-node`, remove the node from the flake, its Syncthing route in Caddy and its scrape targets.
 - [ ] **Observability & ingress for new guests:** Scrape targets, Homepage entries and Caddy routes for `vault` and every new node.
 
 ### Completed

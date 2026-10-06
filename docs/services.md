@@ -13,30 +13,32 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | ✅ Functional |
 | Samba & WSDD | Native NixOS service (`services-node`) | ✅ Functional |
-| [Jellyfin](https://jellyfin.org/) | Docker Compose (`media-stack`, `nas-node` on `vault`) | 🔲 Planned |
+| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🔲 Planned |
 | [Frigate](https://frigate.video/) | Docker Compose (`frigate-stack`, `frigate-node` on `phil`) | 🔲 Planned |
-| NAS shares (Samba/NFS) | Native NixOS service (`nas-node`) | 🔲 Planned |
-| [Garage](https://garagehq.deuxfleurs.fr/) S3 | Native NixOS service (`nas-node` for now) | 🔲 Planned |
-| Artifact hosting (Claude/Gemini) | Garage website bucket + Caddy route | 🔲 Planned |
+| NAS shares (Samba/NFS) | Native NixOS service (`storage-node`) | 🔲 Planned |
+| [Garage](https://garagehq.deuxfleurs.fr/) S3 | Native NixOS service (`agent-tools-node`) | 🔲 Planned |
+| Artifact hosting (Claude/Gemini) | Garage website bucket (`agent-tools-node`) + Caddy route | 🔲 Planned |
 | [Proxmox Datacenter Manager](https://pdm.proxmox.com/docs/) | Appliance VM (`phil`) | ✅ Running |
-| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`services-node`) | ✅ Running — 🔲 move to `vault` planned |
+| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`services-node`) | ✅ Running — 🔲 move to `storage-node` planned |
 | ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
-| [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| ~~[Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
+| [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `agent-tools-node` planned |
+| ~~[Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)~~ | Docker Compose (`services-stack`) | ❌ Dropped |
 | [Grimmory](https://github.com/grimmory-tools/grimmory) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| [ESPHome](https://esphome.io/) | Docker Compose (`services-stack`) | 🔲 Planned |
-| ~~[Tududi](https://github.com/chrisvel/tududi)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
-| [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`services-stack`) | 🔲 Planned |
-| ~~[Paperless-AI](https://github.com/clusterzx/paperless-ai)~~ | Docker Compose (`services-stack`) | ⏸️ Commented out |
+| [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `agent-tools-node` planned |
+| ~~[ESPHome](https://esphome.io/)~~ | ~~Docker Compose (`services-stack`)~~ | ❌ Dropped |
+| ~~[Tududi](https://github.com/chrisvel/tududi)~~ | Docker Compose (`services-stack`) | ❌ Dropped |
+| [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🔲 Planned |
+| ~~[Paperless-AI](https://github.com/clusterzx/paperless-ai)~~ | Docker Compose (`services-stack`) | ❌ Dropped |
 | [Paperless-GPT](https://github.com/icereed/paperless-gpt) | Docker Compose (`services-stack`) | ✅ Functional |
-| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `storage-node` planned |
 | ~~[Ollama](https://ollama.com/)~~ | ~~Dedicated NixOS VM (`ollama-node`)~~ | ❌ Deprecated |
 | [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service (`gpu-worker`) | ✅ Functional |
-| [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `agent-tools-node` planned |
 | ~~[Kestra](https://kestra.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
-| [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`services-stack`) | 🚧 Deployed |
-| Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed |
+| [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `agent-tools-node` planned |
+| [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`, `work-tools-node` on `phil`) | 🔲 Planned |
+| pilot | To be defined (`agent-tools-node`) | 🔲 Planned |
+| Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed — 🔲 move to `agent-node` planned |
 | [nvtop](https://github.com/Syllo/nvtop) | Native NixOS package (`gpu-worker`) | ✅ Deployed |
 
 ### Supporting Infrastructure & Databases
@@ -62,6 +64,6 @@ The `services-node` runs declarative **Samba (SMB)** and **WSDD** services to ex
 > [!NOTE]
 > **Paperless-GPT** is the sole active AI document processor running alongside Paperless-ngx. It handles document parsing, tagging, and metadata extraction via the `gpu-worker`'s llama-swap backend.
 >
-> **Paperless-AI** has been commented out of the stack — it did not provide enough additional benefit to justify running alongside Paperless-GPT.
+> **Paperless-AI** has been dropped — it did not provide enough additional benefit to justify running alongside Paperless-GPT. Its commented-out block in the compose file is still to be removed.
 
 See [home-assistant.md](home-assistant.md) for the full Home Assistant ecosystem details.

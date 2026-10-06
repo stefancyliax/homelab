@@ -20,11 +20,11 @@ Runs the control plane and the light application VMs. See [proxmox-setup.md](pro
 | Component | Spec |
 |---|---|
 | CPU | Intel Core i5-12600K |
-| iGPU | UHD 770 (32 EU) — 🔲 planned passthrough to `nas-node` for Jellyfin |
-| RAM | 32 GB |
+| iGPU | UHD 770 (32 EU) — 🔲 planned passthrough to `storage-node` for Jellyfin |
+| RAM | 32 GB — 🔲 planned: 48 GB (one more 16 GB stick) |
 | Storage | NVMe SSD (Proxmox and VM disks), SATA SSD (unassigned for now); HDDs: 6 TB, 2 TB, 1 TB (9 TB total, carrying some existing data) |
 
-The NAS box: a standalone Proxmox host that holds the HDDs and runs the storage, media and compute-heavy VMs. The NAS shares themselves are 🔲 planned as the [`nas-node`](#nas-node-nixos-vm) VM. Not clustered with `phil` — see [proxmox-setup.md](proxmox-setup.md#multi-host-management).
+The NAS box: a standalone Proxmox host that holds the HDDs and runs the storage, media and compute-heavy VMs. The NAS shares themselves are 🔲 planned as the [`storage-node`](#storage-node-nixos-vm) VM. Not clustered with `phil` — see [proxmox-setup.md](proxmox-setup.md#multi-host-management).
 
 ### GPU Worker (Physical Node)
 
@@ -89,18 +89,20 @@ Guests are spread over two standalone Proxmox hosts. Each VM is isolated to sepa
 | `hermes-node` | `phil` | NixOS VM | ✅ Running |
 | `frigate-node` | `phil` | NixOS VM (Iris Xe + dedicated SSD passthrough) | 🔲 Planned |
 | Proxmox Datacenter Manager | `phil` | Appliance VM | ✅ Running |
-| `nas-node` | `vault` | NixOS VM (HDD + UHD 770 passthrough) | 🔲 Planned |
+| `work-tools-node` | `phil` | NixOS VM | 🔲 Planned |
+| `storage-node` | `vault` | NixOS VM (HDD + UHD 770 passthrough) | 🔲 Planned |
 | `runner-node` | `vault` | NixOS VM | ✅ Running |
-| `chiefofstaff-node` | `vault` | NixOS VM | 🔲 Planned — supersedes `hermes-node` |
+| `agent-node` | `vault` | NixOS VM | 🔲 Planned — supersedes `hermes-node` |
+| `agent-tools-node` | `vault` | NixOS VM | 🔲 Planned |
 
 ### Workload Placement
 
 **Which host:**
 
-- **`phil`** — control plane and light apps: ingress, SSO, monitoring, Home Assistant, the `services-stack`. Also Frigate, because its iGPU is the stronger one for OpenVINO detection and it sits next to HAOS.
-- **`vault`** — anything that needs the HDDs, CPU for builds, or a device physically attached to it: NAS, Jellyfin, Garage, the scanner service, the GitHub runner, `chiefofstaff-node`.
+- **`phil`** — control plane and light apps: ingress, SSO, monitoring, Home Assistant, the `services-stack`. Also Frigate, because its iGPU is the stronger one for OpenVINO detection and it sits next to HAOS, and `work-tools-node`, which keeps the work tooling apart from the private one on `vault`.
+- **`vault`** — anything that needs the HDDs, CPU for builds, or a device physically attached to it: NAS, Jellyfin, the scanner service, the GitHub runner, `agent-node`, and `agent-tools-node` with the services the agents rely on (Hindsight, Parakeet, Garage and others).
 
-Both hosts have 32 GB of RAM, so memory does not decide placement.
+`phil` has 32 GB of RAM. `vault` has 32 GB and gets a second stick (🔲 48 GB); at least 16 GB of that stay unallocated, because `vault` is also the box for trying things out.
 
 Each iGPU is passed through to exactly one VM, so Frigate (`phil`) and Jellyfin (`vault`) never compete for it.
 
@@ -135,6 +137,8 @@ Dockhand is deployed natively via NixOS modules (`virtualisation.oci-containers`
 
 Hosts user-facing application workloads via Docker Compose, orchestrated by Dockhand through the [Hawser](https://github.com/nicotsx/hawser) agent. See [services.md](services.md) for the full list. Also hosts local Samba network shares (`paperless-consume` and `grimmory-bookdrop`) discoverable via WSDD.
 
+🔲 Planned: the AI-supporting services (Open-WebUI, NocoDB, Parakeet, Hindsight) move to [`agent-tools-node`](#agent-tools-node-nixos-vm), and NextExplorer and the scanner service move to [`storage-node`](#storage-node-nixos-vm). Paperless, ZeroByte and Grimmory stay.
+
 #### GitHub Runner (NixOS VM)
 
 Executes GitHub Actions pipelines. Evaluates pull requests and commits using `nix flake check` and triggers Dockhand webhooks for application deployments. See [deployment.md](deployment.md#cicd-pipeline).
@@ -145,7 +149,7 @@ Executes GitHub Actions pipelines. Evaluates pull requests and commits using `ni
 
 The runner lives on `runner-node` on `vault`, declared in the flake (`services.github-runners` in `modules/github-runner.nix`) and managed by Comin like every other NixOS VM. It is a VM rather than a CT because it executes workflow code. `nixos-check.yml` triggers on `pull_request`; the repo requires approval for all outside contributors, so fork PRs cannot run on it unreviewed.
 
-#### NAS Node (NixOS VM)
+#### Storage Node (NixOS VM)
 
 **Status:** 🔲 Planned, on `vault`.
 
@@ -154,22 +158,48 @@ Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity sche
 | Service | Type |
 |---|---|
 | Samba / NFS shares | Native NixOS service |
-| [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`). On `nas-node` for now; the distribution of services on `vault` is still to be revisited |
-| Artifact hosting (Claude/Gemini HTML artifacts) | One Garage website bucket behind one Caddy route on `infra-node`; each artifact is a path, published by an S3 upload. No authentication |
-| [Jellyfin](https://jellyfin.org/) | Docker Compose (`media-stack`), QuickSync via the passed-through UHD 770 |
+| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`), QuickSync via the passed-through UHD 770 |
+| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`). Currently runs on `services-node` |
+| [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`storage-stack`) |
 | Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`. Currently runs on `services-node` |
 
-Disk roles (no parity; important shares are backed up instead, media is re-acquirable). All three are passed through by-id to `nas-node`:
+Disk roles (no parity; important shares are backed up instead, media is re-acquirable). The 6 TB and 2 TB disks are passed through by-id to `storage-node`. The 1 TB disk was meant for Garage, which now lives on `agent-tools-node`; where its data goes is still open:
 
 | Disk | Role | Filesystem |
 |---|---|---|
 | 6 TB | Bulk storage: media and general shares | btrfs |
-| 1 TB | Garage data and scratch | XFS |
+| 1 TB | Scratch. Garage data only if the disk follows Garage to `agent-tools-node` (open) | XFS |
 | 2 TB | Local backup copy of the important shares | btrfs |
 
 btrfs is used where there is no second copy on the same disk set: its checksums reveal which file went bad so it can be restored. XFS is what Garage recommends for its data directory, since Garage checksums its own data.
 
 Storage and Jellyfin share one VM because Jellyfin needs both the disks and the iGPU — this avoids NFS/virtiofs hops between VMs.
+
+#### Agent Tools Node (`agent-tools-node`, NixOS VM)
+
+**Status:** 🔲 Planned, on `vault`.
+
+The services the AI agents and workflows rely on, kept apart from the general apps on `services-node` and from the agents themselves on `agent-node`.
+
+| Service | Type |
+|---|---|
+| [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`). Currently runs on `services-node` |
+| [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`). Currently runs on `services-node` |
+| [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`agent-tools-stack`). Currently runs on `services-node` |
+| [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`). Currently runs on `services-node` |
+| [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`). Data location is open: the 1 TB HDD passed through to this VM, or the VM disk on the NVMe |
+| Artifact hosting (Claude/Gemini HTML artifacts) | One Garage website bucket behind one Caddy route on `infra-node`; each artifact is a path, published by an S3 upload. No authentication |
+| pilot | To be defined |
+
+#### Work Tools Node (`work-tools-node`, NixOS VM)
+
+**Status:** 🔲 Planned, on `phil`.
+
+Tooling for work, on its own VM and its own host so that it shares neither data nor a memory store with the private setup on `vault`.
+
+| Service | Type |
+|---|---|
+| [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`) |
 
 #### Frigate Node (NixOS VM)
 
@@ -186,7 +216,7 @@ Runs [Frigate](https://frigate.video/) as its own Docker Compose stack (`frigate
 
 **Why a VM instead of a CT:** a CT would share the iGPU with the host instead of taking it whole, but nothing else on `phil` needs it. Frigate ships as a Docker image, its docs recommend a VM on Proxmox and do not officially support LXC, and a VM keeps it in the NixOS/Hawser GitOps flow. A CT with `/dev/dri` remains the fallback if passthrough fails. Memory ballooning must be disabled on the VM.
 
-#### Chief of Staff Node (`chiefofstaff-node`, NixOS VM)
+#### Agent Node (NixOS VM)
 
 **Status:** 🔲 Planned, on `vault`.
 
@@ -214,7 +244,7 @@ Dedicated Home Assistant Operating System instance for smart home control. Attac
 #### Hermes Node (NixOS VM)
 
 > [!NOTE]
-> To be superseded by the [Chief of Staff Node](#chief-of-staff-node-chiefofstaff-node-nixos-vm) on `vault`.
+> To be superseded by the [Agent Node](#agent-node-nixos-vm) on `vault`.
 
 A lightweight VM providing persistent remote access to the Hermes AI coding agent.
 Accessible via SSH/Mosh from any device (laptop, phone). Uses tmux for session
@@ -240,7 +270,7 @@ A lightweight auxiliary NixOS VM used for testing new modules, packages, and sta
 > [!WARNING]
 > The Ollama Node has been deprecated. It proved too slow for practical LLM inference. All OCR and tagging tasks have been migrated to the GPU Worker's llama-swap backend.
 
-[Open-WebUI](https://github.com/open-webui/open-webui) runs on the Services Node (via Docker Compose) and connects to the GPU Worker's llama-swap API.
+[Open-WebUI](https://github.com/open-webui/open-webui) runs on the Services Node (via Docker Compose, 🔲 moving to `agent-tools-node`) and connects to the GPU Worker's llama-swap API.
 
 #### GPU Worker AI Backend
 

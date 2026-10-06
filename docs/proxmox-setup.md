@@ -47,9 +47,9 @@ The conversion of the 860 EVO from ZFS to ext4 is tracked as a task in the [READ
 |---|---|
 | NVMe SSD | Proxmox OS, `local` (100 GB) and `local-lvm` (~400 GB, all guest disks) |
 | SATA SSD | Unassigned |
-| 6 TB HDD | 🔲 Planned: passed through by-id to `nas-node` (bulk/media), btrfs |
-| 1 TB HDD | 🔲 Planned: passed through by-id to `nas-node` (Garage, scratch), XFS |
-| 2 TB HDD | 🔲 Planned: passed through by-id to `nas-node` (local backup copy of important shares), btrfs |
+| 6 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (bulk/media), btrfs |
+| 1 TB HDD | 🔲 Planned: scratch, XFS. Open whether it goes to `storage-node` or follows Garage to `agent-tools-node` |
+| 2 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (local backup copy of important shares), btrfs |
 
 Proxmox is installed with ext4/LVM; the 100 GB root (and with it `local`) is set through the installer's `maxroot` option, and `local-lvm` takes the rest.
 
@@ -60,7 +60,7 @@ The HDDs are passed through individually (`/dev/disk/by-id/...`), not via the SA
 | Host | iGPU | Target VM | Consumer |
 |---|---|---|---|
 | `phil` | Iris Xe (80 EU) | `frigate-node` | Frigate (decode + OpenVINO detection) |
-| `vault` | UHD 770 (32 EU) | `nas-node` | Jellyfin (QuickSync transcoding) |
+| `vault` | UHD 770 (32 EU) | `storage-node` | Jellyfin (QuickSync transcoding) |
 
 Full passthrough gives the iGPU to one VM and the host loses its local console. It is not yet validated on either host and is the first thing to test. Fallback: run the consumer in a CT with `/dev/dri` shared from the host.
 

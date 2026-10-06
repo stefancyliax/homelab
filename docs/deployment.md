@@ -114,7 +114,9 @@ The application stacks are split across VMs to prevent monolithic failures:
 
 - **`infra-stack/`** → Infrastructure Node — foundational services (ZeroByte, Homepage, monitoring).
 - **`services-stack/`** → Services Node — user-facing applications (Paperless, NocoDB, etc.).
-- **`media-stack/`** (🔲 planned) → NAS Node on `vault` — Jellyfin.
+- **`storage-stack/`** (🔲 planned) → Storage Node on `vault` — Jellyfin, NextExplorer, BamBuddy, scanner service.
+- **`agent-tools-stack/`** (🔲 planned) → Agent Tools Node on `vault` — Hindsight, Parakeet, Open-WebUI, NocoDB.
+- **`work-tools-stack/`** (🔲 planned) → Work Tools Node on `phil` — Hindsight (work instance).
 - **`frigate-stack/`** (🔲 planned) → Frigate Node on `phil` — Frigate.
 
 See [architecture.md](architecture.md) for the full service-to-node mapping.
@@ -316,7 +318,6 @@ Mark the service as enrolled in the table below.
 | ZeroByte | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
 | Open-WebUI | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | NocoDB | ✅ Native | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth (OIDC Enterprise-only) |
-| Stirling PDF | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in SSO support |
 | Grimmory | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | NextExplorer | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | Hindsight UI | ❌ None | ✅ Enrolled | Reverse proxy | Protected via Authelia forward_auth |
@@ -326,8 +327,6 @@ Mark the service as enrolled in the table below.
 | Garage S3 API | ❌ None | ⏭️ Skip | — | API-only, authenticated by S3 access keys |
 | Jellyfin | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via SSO plugin |
 | Frigate | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
-| Tududi | ✅ Native | 🔲 Planned | OAuth2/OIDC | Built-in OIDC support |
-| ESPHome | ✅ Native | 🔲 Planned | Reverse proxy | Basic auth or proxy |
 | **Dedicated VMs / Nodes** | | | | |
 | Home Assistant | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via auth provider integration |
 | Syncthing (Hermes Node) | ✅ Native | ⏭️ Skip | Direct proxy | Built-in authentication, accessible via Tailscale / Caddy |

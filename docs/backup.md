@@ -45,7 +45,7 @@ Full VM images are not backed up, and there is no Proxmox Backup Server:
 
 ### NAS Data (🔲 Planned)
 
-The HDDs in `nas-node` run without parity, so protection comes from copies:
+The HDDs in `storage-node` run without parity, so protection comes from copies:
 
 | Data | Protection |
 |---|---|
