@@ -4,13 +4,15 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    # Only provides the github-runner package; bumped independently of the other inputs
+    nixpkgs-runner.url = "github:NixOS/nixpkgs/nixos-unstable";
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
     comin.url = "github:nlewo/comin";
     comin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, agenix, comin }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-runner, agenix, comin }:
   let
     # Import unstable nixpkgs for packages that need bleeding-edge versions
     pkgs-unstable = import nixpkgs-unstable {
@@ -68,6 +70,15 @@
           ./nodes/gpu-worker/configuration.nix 
           ./modules/llama-swap.nix
           ./modules/hawser.nix
+        ];
+      };
+
+      "runner-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { pkgs-runner = nixpkgs-runner.legacyPackages.x86_64-linux; };
+        modules = baseModules ++ [
+          ./nodes/runner-node/configuration.nix
+          ./modules/github-runner.nix
         ];
       };
 

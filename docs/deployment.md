@@ -18,10 +18,12 @@ NixOS/
 ├── nodes/          # Per-node configurations
 │   ├── infra-node/
 │   ├── services-node/
-│   └── gpu-worker/
+│   ├── gpu-worker/
+│   └── runner-node/
 ├── modules/        # Reusable NixOS modules
 │   ├── dockhand.nix
-│   └── hawser.nix
+│   ├── hawser.nix
+│   └── github-runner.nix
 ├── secrets/        # Agenix-encrypted secret files (.age)
 └── secrets.nix     # Maps SSH public keys to secret files for decryption
 ```
@@ -126,12 +128,60 @@ See [architecture.md](architecture.md) for the full service-to-node mapping.
 
 ## CI/CD Pipeline
 
-A dedicated NixOS VM runs a self-hosted GitHub Actions runner inside the local network:
+A dedicated NixOS VM (`runner-node`) runs a self-hosted GitHub Actions runner inside the local network:
 
 - **`dockhand-infra.yml`**: Triggers the Dockhand webhook for `infra-stack` changes.
 - **`dockhand-services.yml`**: Triggers the Dockhand webhook for `services-stack` changes (`docker-compose.yml`).
 - **`dockhand-paperless.yml`**: Triggers the Dockhand webhook for `services-stack/paperless.compose.yml` changes.
 - **`nixos-check.yml`**: Evaluates `nix flake check` on pushes and pull requests to `NixOS/**`, sending high-priority failure notifications to ntfy.
+- **`update-runner.yml`**: Weekly job that opens a pull request bumping the `nixpkgs-runner` flake input whenever a new runner version is available.
+
+### Self-Hosted Runner
+
+The runner is defined in `modules/github-runner.nix` and deployed to the `runner-node` VM by Comin. It registers itself with the repository under the labels `self-hosted` and `nixos`.
+
+- **Registration token:** The runner is registered by hand with a one-time token from GitHub (**Settings → Actions → Runners → New self-hosted runner**), stored on the VM at `/var/lib/secrets/github-runner-token`. It expires after an hour and is therefore not kept in the repo; no admin-scoped PAT lives on the CI machine. The file must stay in place — the service compares against it on every start and is skipped while it is missing.
+- **Re-registration:** Needed after rebuilding the VM, after changing the runner's name, labels or URL, or once GitHub has removed a runner that was offline for more than 14 days. Write a fresh token to the file and restart `github-runner-homelab.service`.
+- **Runner version:** GitHub stops serving jobs to runners that are more than ~30 days behind the latest release (`Runner version ... is deprecated and cannot receive messages`). The stable channel stops receiving runner bumps once it is EOL, so the package is taken from a dedicated `nixpkgs-runner` input (`nixos-unstable`) instead of the cluster-wide `nixpkgs`.
+- **Keeping it current:** `update-runner.yml` updates that input, runs `nix flake check` and opens (or refreshes) a pull request from the `chore/update-github-runner` branch. Once merged, Comin rolls the new runner out. This requires **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests** to be enabled on the repository.
+
+> [!WARNING]
+> The update workflow runs on the self-hosted runner itself. If its pull requests stay unmerged until GitHub deprecates the running version, the runner goes offline and can no longer open new ones — bump the input by hand in that case.
+
+To bump the runner by hand:
+
+```bash
+cd NixOS
+nix flake update nixpkgs-runner
+```
+
+#### Provisioning the Runner VM
+
+1. Full-clone the NixOS base template on `phil`, migrate the clone to `vault` via PDM, boot it and read its host key:
+   ```bash
+   cat /etc/ssh/ssh_host_ed25519_key.pub
+   ```
+   Migrate the clone, not the template itself: remote migration does not support VMs with snapshots, and a full clone has none.
+   `nodes/runner-node/hardware-configuration.nix` and the GRUB settings match a clone of that template. For a fresh install (e.g. with OVMF), replace them with the generated ones.
+2. Set that key as `runner-node` in `secrets.nix`, then re-key so the VM can decrypt the Comin PAT (see [Creating or Editing Secrets](#creating-or-editing-secrets)):
+   ```bash
+   cd NixOS
+   nix run github:ryantm/agenix -- -r
+   ```
+3. Commit and push to `main`, then bootstrap the VM:
+   ```bash
+   sudo nixos-rebuild switch --flake 'github:stefancyliax/homelab?dir=NixOS#runner-node'
+   ```
+4. Register the runner: create a token under **Settings → Actions → Runners → New self-hosted runner** (the value after `--token`), then on the VM paste it into the token file (finish with Enter and Ctrl-D) and start the service:
+   ```bash
+   sudo tee /var/lib/secrets/github-runner-token > /dev/null
+   sudo systemctl start github-runner-homelab.service
+   ```
+5. Verify that the runner is listening for jobs:
+   ```bash
+   journalctl -u github-runner-homelab.service -n 30 --no-pager
+   ```
+6. Add the VM's IP to `infra-stack/victoriametrics/scrape.yml`, then retire the legacy runner VM on `phil`.
 
 ## Deployment Commands
 

@@ -91,7 +91,7 @@ Guests are spread over two standalone Proxmox hosts. Each VM is isolated to sepa
 | `frigate-node` | `phil` | NixOS VM (Iris Xe + dedicated SSD passthrough) | 🔲 Planned |
 | Proxmox Datacenter Manager | `phil` | Appliance VM | ✅ Running |
 | `nas-node` | `vault` | NixOS VM (HDD + UHD 770 passthrough) | 🔲 Planned |
-| `runner-node` | `vault` | NixOS VM | 🔲 Planned — supersedes the GitHub Runner VM on `phil` |
+| `runner-node` | `vault` | NixOS VM | 🚧 Declared in the flake, VM not yet created — supersedes the GitHub Runner VM on `phil` |
 | `chiefofstaff-node` | `vault` | NixOS VM | 🔲 Planned — supersedes `hermes-node` |
 
 ### Workload Placement
@@ -138,9 +138,13 @@ Hosts user-facing application workloads via Docker Compose, orchestrated by Dock
 
 #### GitHub Runner (NixOS VM)
 
-Executes GitHub Actions pipelines. Evaluates pull requests and commits using `nix flake check` and triggers Dockhand webhooks for application deployments. See [deployment.md](deployment.md).
+Executes GitHub Actions pipelines. Evaluates pull requests and commits using `nix flake check` and triggers Dockhand webhooks for application deployments. See [deployment.md](deployment.md#cicd-pipeline).
 
-The runner is a manually configured VM on `phil` (configuration in `temp/github-runner-nixos/`). 🔲 Planned: `runner-node` on `vault`, declared in the flake (`services.github-runners`) and managed by Comin. It is a VM rather than a CT because it executes workflow code. `nixos-check.yml` triggers on `pull_request`; the repo requires approval for all outside contributors, so fork PRs cannot run on it unreviewed.
+| Service | Type | Status |
+|---|---|---|
+| GitHub Actions Runner (`github-runner-homelab.service`) | Native NixOS Service | 🚧 Declared, VM not yet created |
+
+The current runner is a manually configured VM on `phil`. Its successor, `runner-node` on `vault`, is declared in the flake (`services.github-runners` in `modules/github-runner.nix`) and managed by Comin like every other NixOS VM; the VM itself still has to be created. It is a VM rather than a CT because it executes workflow code. `nixos-check.yml` triggers on `pull_request`; the repo requires approval for all outside contributors, so fork PRs cannot run on it unreviewed.
 
 #### NAS Node (NixOS VM)
 
