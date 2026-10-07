@@ -141,7 +141,7 @@ Hosts user-facing application workloads via Docker Compose, orchestrated by Dock
 
 #### GitHub Runner (NixOS VM)
 
-Executes GitHub Actions pipelines. Evaluates pull requests and commits using `nix flake check` and triggers Dockhand webhooks for application deployments. See [deployment.md](deployment.md#cicd-pipeline).
+Executes GitHub Actions pipelines. Evaluates pull requests and commits with `NixOS/check-nodes.sh` and triggers Dockhand webhooks for application deployments. See [deployment.md](deployment.md#cicd-pipeline).
 
 | Service | Type | Status |
 |---|---|---|

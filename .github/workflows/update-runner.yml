@@ -41,11 +41,10 @@ jobs:
           echo "title=$TITLE" >> "$GITHUB_OUTPUT"
           echo "open_pr_title=$OPEN_PR_TITLE" >> "$GITHUB_OUTPUT"
 
-      - name: Run nix flake check
+      - name: Evaluate all nodes
         # Pull requests opened with the GITHUB_TOKEN do not trigger nixos-check.yml, so check here
         if: steps.update.outputs.changed == 'true'
-        working-directory: ./NixOS
-        run: nix flake check
+        run: ./NixOS/check-nodes.sh
 
       - name: Open or update pull request
         if: steps.update.outputs.changed == 'true'
@@ -63,7 +62,7 @@ jobs:
           if [ -n "$OPEN_PR_TITLE" ]; then
             gh pr edit "$BRANCH" --title "$TITLE"
           else
-            gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "Automated update of the \`nixpkgs-runner\` flake input; \`nix flake check\` passed on the self-hosted runner.
+            gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "Automated update of the \`nixpkgs-runner\` flake input; all nodes evaluate on the self-hosted runner.
 
           Release notes: https://github.com/actions/runner/releases/tag/v$VERSION
 

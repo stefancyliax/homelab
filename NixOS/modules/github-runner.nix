@@ -32,6 +32,15 @@ in
       curl
       gh # update-runner.yml opens its pull request with it
     ];
+
+    serviceOverrides = {
+      # Cap what a job may use (the VM has 6 GB) so a runaway step is killed inside the
+      # service instead of taking the whole VM down with it
+      MemoryMax = "5G";
+      MemorySwapMax = "1G";
+      # Only the offending process dies; the default ("stop") would end the runner too
+      OOMPolicy = "continue";
+    };
   };
 
   # Without a token file the service would fail and wipe its registration; skip it instead

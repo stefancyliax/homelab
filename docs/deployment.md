@@ -135,7 +135,7 @@ A dedicated NixOS VM (`runner-node`) runs a self-hosted GitHub Actions runner in
 - **`dockhand-infra.yml`**: Triggers the Dockhand webhook for `infra-stack` changes.
 - **`dockhand-services.yml`**: Triggers the Dockhand webhook for `services-stack` changes (`docker-compose.yml`).
 - **`dockhand-paperless.yml`**: Triggers the Dockhand webhook for `services-stack/paperless.compose.yml` changes.
-- **`nixos-check.yml`**: Evaluates `nix flake check` on pushes and pull requests to `NixOS/**`, sending high-priority failure notifications to ntfy.
+- **`nixos-check.yml`**: Evaluates every node (`NixOS/check-nodes.sh`, one node per process to stay within the runner's memory) on pushes and pull requests to `NixOS/**`, sending high-priority failure notifications to ntfy.
 - **`update-runner.yml`**: Weekly job that opens a pull request bumping the `nixpkgs-runner` flake input whenever a new runner version is available.
 
 ### Self-Hosted Runner
@@ -145,7 +145,7 @@ The runner is defined in `modules/github-runner.nix` and deployed to the `runner
 - **Registration token:** The runner is registered by hand with a one-time token from GitHub (**Settings → Actions → Runners → New self-hosted runner**), stored on the VM at `/var/lib/secrets/github-runner-token`. It expires after an hour and is therefore not kept in the repo; no admin-scoped PAT lives on the CI machine. The file must stay in place — the service compares against it on every start and is skipped while it is missing.
 - **Re-registration:** Needed after rebuilding the VM, after changing the runner's name, labels or URL, or once GitHub has removed a runner that was offline for more than 14 days. Write a fresh token to the file and restart `github-runner-homelab.service`.
 - **Runner version:** GitHub stops serving jobs to runners that are more than ~30 days behind the latest release (`Runner version ... is deprecated and cannot receive messages`). The stable channel stops receiving runner bumps once it is EOL, so the package is taken from a dedicated `nixpkgs-runner` input (`nixos-unstable`) instead of the cluster-wide `nixpkgs`.
-- **Keeping it current:** `update-runner.yml` updates that input, runs `nix flake check` and opens (or refreshes) a pull request from the `chore/update-github-runner` branch. Once merged, Comin rolls the new runner out. This requires **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests** to be enabled on the repository.
+- **Keeping it current:** `update-runner.yml` updates that input, runs `NixOS/check-nodes.sh` and opens (or refreshes) a pull request from the `chore/update-github-runner` branch. Once merged, Comin rolls the new runner out. This requires **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests** to be enabled on the repository.
 
 > [!WARNING]
 > The update workflow runs on the self-hosted runner itself. If its pull requests stay unmerged until GitHub deprecates the running version, the runner goes offline and can no longer open new ones — bump the input by hand in that case.
