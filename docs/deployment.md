@@ -115,7 +115,7 @@ The application stacks are split across VMs to prevent monolithic failures:
 - **`infra-stack/`** → Infrastructure Node — foundational services (ZeroByte, Homepage, monitoring).
 - **`services-stack/`** → Services Node — user-facing applications (Paperless, NocoDB, etc.).
 - **`storage-stack/`** → Storage Node on `vault` — NextExplorer. 🔲 Planned: Jellyfin, BamBuddy, scanner service.
-- **`agent-tools-stack/`** (🔲 planned) → Agent Tools Node on `vault` — Hindsight, Parakeet, Open-WebUI, NocoDB.
+- **`agent-tools-stack/`** → Agent Tools Node on `vault` — Parakeet. 🔲 Planned: Hindsight, Open-WebUI, NocoDB.
 - **`work-tools-stack/`** → Work Tools Node on `phil` — Hindsight (work instance).
 - **`frigate-stack/`** (🔲 planned) → Frigate Node on `phil` — Frigate.
 
@@ -137,6 +137,8 @@ A dedicated NixOS VM (`runner-node`) runs a self-hosted GitHub Actions runner in
 - **`dockhand-paperless.yml`**: Triggers the Dockhand webhook for `services-stack/paperless.compose.yml` changes.
 - **`dockhand-storage.yml`**: Triggers the Dockhand webhook for `storage-stack` changes (`docker-compose.yml`).
 - **`dockhand-work-tools.yml`**: Triggers the Dockhand webhook for `work-tools-stack` changes (`docker-compose.yml`).
+- **`dockhand-frigate.yml`**: Triggers the Dockhand webhook for `frigate-stack` changes (`docker-compose.yml`).
+- **`dockhand-agent-tools.yml`**: Triggers the Dockhand webhook for `agent-tools-stack` changes (`docker-compose.yml`).
 - **`nixos-check.yml`**: Evaluates every node (`NixOS/check-nodes.sh`, one node per process to stay within the runner's memory) on pushes and pull requests to `NixOS/**`, sending high-priority failure notifications to ntfy.
 - **`update-runner.yml`**: Weekly job that opens a pull request bumping the `nixpkgs-runner` flake input whenever a new runner version is available.
 

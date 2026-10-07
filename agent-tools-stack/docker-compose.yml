@@ -1,4 +1,11 @@
 ## Agent Tools Stack
 # Runs on agent-tools-node (vault). Services are added one at a time, see docs/services.md.
 
-services: {}
+services:
+
+  parakeet:
+    image: ghcr.io/achetronic/parakeet:latest
+    container_name: parakeet
+    restart: unless-stopped
+    ports:
+      - 8000:5092

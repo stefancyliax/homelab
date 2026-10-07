@@ -58,13 +58,6 @@ services:
     volumes:
       - nocodb_data:/usr/app/data
 
-  parakeet:
-    image: ghcr.io/achetronic/parakeet:latest
-    container_name: parakeet
-    restart: unless-stopped
-    ports:
-      - 8000:5092
-
   grimmory:
     image: grimmory/grimmory:latest
     container_name: grimmory

@@ -208,6 +208,8 @@ homelab/
     ├── dockhand-paperless.yml
     ├── dockhand-storage.yml
     ├── dockhand-work-tools.yml
+    ├── dockhand-frigate.yml
+    ├── dockhand-agent-tools.yml
     ├── nixos-check.yml
     └── update-runner.yml
 ```
