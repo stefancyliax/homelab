@@ -199,7 +199,7 @@ Tooling for work, on its own VM and its own host so that it shares neither data 
 
 | Service | Type |
 |---|---|
-| [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`) |
+| [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`). UI at `hindsight-work.home.stefancyliax.de` (Authelia), API at `hindsight-work-api.home.stefancyliax.de`. Uses a hosted LLM provider (still to be chosen), configured through the Dockhand stack environment; agents reach the API directly at `10.1.23.47:8888` |
 
 #### Frigate Node (NixOS VM)
 

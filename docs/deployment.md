@@ -116,7 +116,7 @@ The application stacks are split across VMs to prevent monolithic failures:
 - **`services-stack/`** → Services Node — user-facing applications (Paperless, NocoDB, etc.).
 - **`storage-stack/`** → Storage Node on `vault` — NextExplorer. 🔲 Planned: Jellyfin, BamBuddy, scanner service.
 - **`agent-tools-stack/`** (🔲 planned) → Agent Tools Node on `vault` — Hindsight, Parakeet, Open-WebUI, NocoDB.
-- **`work-tools-stack/`** (🔲 planned) → Work Tools Node on `phil` — Hindsight (work instance).
+- **`work-tools-stack/`** → Work Tools Node on `phil` — Hindsight (work instance).
 - **`frigate-stack/`** (🔲 planned) → Frigate Node on `phil` — Frigate.
 
 See [architecture.md](architecture.md) for the full service-to-node mapping.
@@ -136,6 +136,7 @@ A dedicated NixOS VM (`runner-node`) runs a self-hosted GitHub Actions runner in
 - **`dockhand-services.yml`**: Triggers the Dockhand webhook for `services-stack` changes (`docker-compose.yml`).
 - **`dockhand-paperless.yml`**: Triggers the Dockhand webhook for `services-stack/paperless.compose.yml` changes.
 - **`dockhand-storage.yml`**: Triggers the Dockhand webhook for `storage-stack` changes (`docker-compose.yml`).
+- **`dockhand-work-tools.yml`**: Triggers the Dockhand webhook for `work-tools-stack` changes (`docker-compose.yml`).
 - **`nixos-check.yml`**: Evaluates every node (`NixOS/check-nodes.sh`, one node per process to stay within the runner's memory) on pushes and pull requests to `NixOS/**`, sending high-priority failure notifications to ntfy.
 - **`update-runner.yml`**: Weekly job that opens a pull request bumping the `nixpkgs-runner` flake input whenever a new runner version is available.
 
@@ -323,6 +324,8 @@ Mark the service as enrolled in the table below.
 | NextExplorer | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | Hindsight UI | ❌ None | ✅ Enrolled | Reverse proxy | Protected via Authelia forward_auth |
 | Hindsight API | ❌ None | ⏭️ Skip | — | API-only, unprotected on private network |
+| Hindsight UI (work) | ❌ None | ✅ Enrolled | Reverse proxy | Protected via Authelia forward_auth |
+| Hindsight API (work) | ❌ None | ⏭️ Skip | — | API-only, unprotected on private network |
 | Parakeet | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
 | Artifact hosting | ❌ None | ⏭️ Skip | — | Deliberately open on LAN/Tailscale; static pages served by Garage |
 | Garage S3 API | ❌ None | ⏭️ Skip | — | API-only, authenticated by S3 access keys |

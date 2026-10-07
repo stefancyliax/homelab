@@ -1,4 +1,25 @@
 ## Work Tools Stack
 # Runs on work-tools-node (phil). Services are added one at a time, see docs/services.md.
 
-services: {}
+services:
+
+  # Work instance, separate from the private Hindsight: own memory store, own URLs
+  hindsight:
+    image: ghcr.io/vectorize-io/hindsight:latest
+    container_name: hindsight
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+      - "9999:9999"
+    environment:
+      - HINDSIGHT_API_WORKER_ID=hindsight-work
+      # Hosted LLM provider, set in the Dockhand stack environment
+      - HINDSIGHT_API_LLM_PROVIDER=${HINDSIGHT_LLM_PROVIDER}
+      - HINDSIGHT_API_LLM_API_KEY=${HINDSIGHT_LLM_API_KEY}
+      - HINDSIGHT_API_LLM_MODEL=${HINDSIGHT_LLM_MODEL}
+      - HINDSIGHT_CP_DATAPLANE_API_URL=https://hindsight-work-api.home.stefancyliax.de
+    volumes:
+      - hindsight_data:/home/hindsight/.pg0
+
+volumes:
+  hindsight_data:

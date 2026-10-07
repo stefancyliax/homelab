@@ -126,6 +126,22 @@
 		reverse_proxy 10.1.23.224:8888
 	}
 
+	# Hindsight Control Plane, work instance (Protected by Authelia)
+	@hindsight-work host hindsight-work.home.stefancyliax.de
+	handle @hindsight-work {
+		forward_auth authelia:9091 {
+			uri /api/verify?rd=https://auth.home.stefancyliax.de/
+			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+		}
+		reverse_proxy 10.1.23.47:9999
+	}
+
+	# Hindsight API, work instance (Direct Proxy, Unprotected for API/Agent access)
+	@hindsight-work-api host hindsight-work-api.home.stefancyliax.de
+	handle @hindsight-work-api {
+		reverse_proxy 10.1.23.47:8888
+	}
+
 	# Open-WebUI (OIDC SSO handled by the application)
 	@open-webui host open-webui.home.stefancyliax.de
 	handle @open-webui {

@@ -78,6 +78,10 @@
         href: https://hindsight.home.stefancyliax.de
         icon: network
         description: Biomimetic Memory for AI Agents
+    - Hindsight (Work):
+        href: https://hindsight-work.home.stefancyliax.de
+        icon: network
+        description: Biomimetic Memory for AI Agents (work instance)
     - Hermes Chat:
         href: http://100.98.194.7:9119/chat
         icon: robot

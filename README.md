@@ -140,7 +140,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **NAS backups:** Local restic copy of the important shares on the 2 TB disk plus offsite via ZeroByte/restic; media stays unprotected by design.
 - [ ] **HAOS backups:** Point Home Assistant's built-in backups at a NAS share so they are covered without PBS.
 - [ ] **`agent-tools-node` / `agent-tools-stack`:** NixOS VM on `vault`; add to the flake with Comin and Hawser and a `dockhand-agent-tools.yml` workflow. Move Hindsight, Parakeet, Open-WebUI and NocoDB over from the `services-stack` including their volumes, then repoint their Caddy routes, Homepage entries and the Hindsight URLs the agents use.
-- [ ] **`work-tools-node` / `work-tools-stack`:** NixOS VM on `phil` with a second Hindsight instance for work, with its own Caddy route.
+- [x] **`work-tools-node` / `work-tools-stack`:** NixOS VM on `phil` with a second Hindsight instance for work, with its own Caddy routes and a `dockhand-work-tools.yml` workflow.
 - [ ] **Garage:** `services.garage` on `agent-tools-node` (single node, data per the Garage data disk decision, metadata on the VM disk, secrets via Agenix).
 - [ ] **Artifact hosting:** One Garage bucket (`artifacts`) in website mode behind a single Caddy route (`artifacts.home.stefancyliax.de` → Garage web endpoint, no Authelia). Each artifact is a path in the bucket, so pushing a file publishes it without touching Caddy or DNS. Also expose the S3 API (`s3.home.stefancyliax.de`) for uploads, create one write key per machine (Agenix on `agent-node`), and add a small `publish-artifact` helper that uploads and prints the URL.
 - [ ] **`storage-stack` / Jellyfin:** New Compose stack on `storage-node` with QuickSync, a `dockhand-storage.yml` workflow, and Authelia via the SSO plugin.
@@ -207,6 +207,7 @@ homelab/
     ├── dockhand-services.yml
     ├── dockhand-paperless.yml
     ├── dockhand-storage.yml
+    ├── dockhand-work-tools.yml
     ├── nixos-check.yml
     └── update-runner.yml
 ```
