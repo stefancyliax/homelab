@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'storage-stack/docker-compose.yml'
+      - 'storage-stack/**'
   workflow_dispatch:
 
 jobs:

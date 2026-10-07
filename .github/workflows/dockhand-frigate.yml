@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'frigate-stack/docker-compose.yml'
+      - 'frigate-stack/**'
   workflow_dispatch:
 
 jobs:

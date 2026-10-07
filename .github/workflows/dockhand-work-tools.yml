@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'work-tools-stack/docker-compose.yml'
+      - 'work-tools-stack/**'
   workflow_dispatch:
 
 jobs:

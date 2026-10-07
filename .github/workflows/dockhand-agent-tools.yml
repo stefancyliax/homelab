@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'agent-tools-stack/docker-compose.yml'
+      - 'agent-tools-stack/**'
   workflow_dispatch:
 
 jobs:
