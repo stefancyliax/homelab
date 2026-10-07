@@ -34,9 +34,9 @@ in
     ];
 
     serviceOverrides = {
-      # Cap what a job may use (the VM has 6 GB) so a runaway step is killed inside the
+      # Cap what a job may use (the VM has 4 GB) so a runaway step is killed inside the
       # service instead of taking the whole VM down with it
-      MemoryMax = "5G";
+      MemoryMax = "3G";
       MemorySwapMax = "1G";
       # Only the offending process dies; the default ("stop") would end the runner too
       OOMPolicy = "continue";
