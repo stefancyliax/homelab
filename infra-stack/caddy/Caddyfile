@@ -117,13 +117,13 @@
 			uri /api/verify?rd=https://auth.home.stefancyliax.de/
 			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
 		}
-		reverse_proxy 10.1.23.224:9999
+		reverse_proxy 10.1.23.12:9999
 	}
 
 	# Hindsight API (Direct Proxy, Unprotected for API/Agent access)
 	@hindsight-api host hindsight-api.home.stefancyliax.de
 	handle @hindsight-api {
-		reverse_proxy 10.1.23.224:8888
+		reverse_proxy 10.1.23.12:8888
 	}
 
 	# Hindsight Control Plane, work instance (Protected by Authelia)

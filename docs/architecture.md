@@ -137,7 +137,7 @@ Dockhand is deployed natively via NixOS modules (`virtualisation.oci-containers`
 
 Hosts user-facing application workloads via Docker Compose, orchestrated by Dockhand through the [Hawser](https://github.com/nicotsx/hawser) agent. See [services.md](services.md) for the full list. Also hosts local Samba network shares (`paperless-consume` and `grimmory-bookdrop`) discoverable via WSDD.
 
-🔲 Planned: Hindsight moves to [`agent-tools-node`](#agent-tools-node-nixos-vm), and the scanner service moves to [`storage-node`](#storage-node-nixos-vm) (NextExplorer already has). Parakeet, NocoDB and Open-WebUI already run on `agent-tools-node`. Paperless, ZeroByte and Grimmory stay.
+🔲 Planned: the scanner service moves to [`storage-node`](#storage-node-nixos-vm) (NextExplorer already has). The AI-supporting services (Open-WebUI, NocoDB, Parakeet, Hindsight) already run on [`agent-tools-node`](#agent-tools-node-nixos-vm). Paperless, ZeroByte and Grimmory stay.
 
 #### GitHub Runner (NixOS VM)
 
@@ -183,7 +183,7 @@ The services the AI agents and workflows rely on, kept apart from the general ap
 
 | Service | Type |
 |---|---|
-| [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`). Currently runs on `services-node` |
+| [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`), ✅ moved. API at `10.1.23.12:8000` |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`), ✅ moved |

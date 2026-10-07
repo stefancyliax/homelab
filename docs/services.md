@@ -35,7 +35,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service (`gpu-worker`) | ✅ Functional |
 | [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | ~~[Kestra](https://kestra.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
-| [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `agent-tools-node` planned |
+| [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`, `work-tools-node` on `phil`) | 🚧 Deployed |
 | pilot | To be defined (`agent-tools-node`) | 🔲 Planned |
 | Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed — 🔲 move to `agent-node` planned |
