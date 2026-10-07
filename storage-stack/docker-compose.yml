@@ -1,0 +1,4 @@
+## Storage Stack
+# Runs on storage-node (vault). Services are added one at a time, see docs/services.md.
+
+services: {}

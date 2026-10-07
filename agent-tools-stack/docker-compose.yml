@@ -1,0 +1,4 @@
+## Agent Tools Stack
+# Runs on agent-tools-node (vault). Services are added one at a time, see docs/services.md.
+
+services: {}

@@ -1,0 +1,4 @@
+## Work Tools Stack
+# Runs on work-tools-node (phil). Services are added one at a time, see docs/services.md.
+
+services: {}

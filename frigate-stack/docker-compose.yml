@@ -1,0 +1,4 @@
+## Frigate Stack
+# Runs on frigate-node (phil). Services are added one at a time, see docs/services.md.
+
+services: {}
