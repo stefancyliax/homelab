@@ -22,7 +22,7 @@
   };
 
   virtualisation.oci-containers.containers.dockhand = {
-    image = "fnsys/dockhand:latest";
+    image = "fnsys/dockhand:v1.0.24";
     ports = [ "3000:3000" ];
     volumes = [
       "/var/run/docker.sock:/var/run/docker.sock"

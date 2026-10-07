@@ -8,7 +8,7 @@
   virtualisation.oci-containers.backend = "docker";
 
   virtualisation.oci-containers.containers.hawser = {
-    image = "ghcr.io/finsys/hawser:latest";
+    image = "ghcr.io/finsys/hawser:0.2.50";
     ports = [ "2376:2376" ];
     volumes = [
       "/var/run/docker.sock:/var/run/docker.sock"
