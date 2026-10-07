@@ -19,5 +19,27 @@ services:
     volumes:
       - nocodb_data:/usr/app/data
 
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      ENABLE_OLLAMA_API: "false"
+      OPENAI_API_BASE_URL: "http://100.90.253.20:8080/v1"
+      OPENAI_API_KEY: "sk-dummy-key"
+      ENABLE_OAUTH_SIGNUP: "true"
+      OAUTH_CLIENT_ID: "open-webui"
+      OAUTH_CLIENT_SECRET: "${OPEN_WEBUI_CLIENT_SECRET}"
+      OPENID_PROVIDER_URL: "https://auth.home.stefancyliax.de/.well-known/openid-configuration"
+      OAUTH_PROVIDER_NAME: "Authelia"
+      OAUTH_SCOPES: "openid email profile groups"
+      OAUTH_MERGE_ACCOUNTS_BY_EMAIL: "true"
+      WEBUI_URL: "https://open-webui.home.stefancyliax.de"
+    volumes:
+      - open-webui_data:/app/backend/data
+
 volumes:
   nocodb_data:
+  open-webui_data:

@@ -145,7 +145,7 @@
 	# Open-WebUI (OIDC SSO handled by the application)
 	@open-webui host open-webui.home.stefancyliax.de
 	handle @open-webui {
-		reverse_proxy 10.1.23.224:3000
+		reverse_proxy 10.1.23.12:3000
 	}
 
 	# NextExplorer (OIDC SSO handled by the application)
