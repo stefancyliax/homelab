@@ -137,7 +137,7 @@ Dockhand is deployed natively via NixOS modules (`virtualisation.oci-containers`
 
 Hosts user-facing application workloads via Docker Compose, orchestrated by Dockhand through the [Hawser](https://github.com/nicotsx/hawser) agent. See [services.md](services.md) for the full list. Also hosts local Samba network shares (`paperless-consume` and `grimmory-bookdrop`) discoverable via WSDD.
 
-🔲 Planned: the AI-supporting services (Open-WebUI, NocoDB, Parakeet, Hindsight) move to [`agent-tools-node`](#agent-tools-node-nixos-vm), and NextExplorer and the scanner service move to [`storage-node`](#storage-node-nixos-vm). Paperless, ZeroByte and Grimmory stay.
+🔲 Planned: the AI-supporting services (Open-WebUI, NocoDB, Parakeet, Hindsight) move to [`agent-tools-node`](#agent-tools-node-nixos-vm), and the scanner service moves to [`storage-node`](#storage-node-nixos-vm) (NextExplorer already has). Paperless, ZeroByte and Grimmory stay.
 
 #### GitHub Runner (NixOS VM)
 
@@ -159,7 +159,7 @@ Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity sche
 |---|---|
 | Samba / NFS shares | Native NixOS service |
 | [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`), QuickSync via the passed-through UHD 770 |
-| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`). Currently runs on `services-node` |
+| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`), ✅ moved. Serves `/mnt/data`, which sits on the VM disk until the HDDs are passed through |
 | [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`storage-stack`) |
 | Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`. Currently runs on `services-node` |
 

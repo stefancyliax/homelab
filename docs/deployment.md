@@ -114,7 +114,7 @@ The application stacks are split across VMs to prevent monolithic failures:
 
 - **`infra-stack/`** → Infrastructure Node — foundational services (ZeroByte, Homepage, monitoring).
 - **`services-stack/`** → Services Node — user-facing applications (Paperless, NocoDB, etc.).
-- **`storage-stack/`** (🔲 planned) → Storage Node on `vault` — Jellyfin, NextExplorer, BamBuddy, scanner service.
+- **`storage-stack/`** → Storage Node on `vault` — NextExplorer. 🔲 Planned: Jellyfin, BamBuddy, scanner service.
 - **`agent-tools-stack/`** (🔲 planned) → Agent Tools Node on `vault` — Hindsight, Parakeet, Open-WebUI, NocoDB.
 - **`work-tools-stack/`** (🔲 planned) → Work Tools Node on `phil` — Hindsight (work instance).
 - **`frigate-stack/`** (🔲 planned) → Frigate Node on `phil` — Frigate.
@@ -123,7 +123,7 @@ See [architecture.md](architecture.md) for the full service-to-node mapping.
 
 ### Adding a New Service
 
-1. Create or append to the `docker-compose.yml` in the relevant stack directory (`infra-stack/` or `services-stack/`).
+1. Create or append to the `docker-compose.yml` in the relevant stack directory (`infra-stack/`, `services-stack/`, `storage-stack/`, …).
 2. Commit and push to the `main` branch.
 3. The path-bound GitHub Actions workflow detects the change.
 4. The runner fires the appropriate Dockhand webhook, deploying the containers automatically via Hawser.
@@ -135,6 +135,7 @@ A dedicated NixOS VM (`runner-node`) runs a self-hosted GitHub Actions runner in
 - **`dockhand-infra.yml`**: Triggers the Dockhand webhook for `infra-stack` changes.
 - **`dockhand-services.yml`**: Triggers the Dockhand webhook for `services-stack` changes (`docker-compose.yml`).
 - **`dockhand-paperless.yml`**: Triggers the Dockhand webhook for `services-stack/paperless.compose.yml` changes.
+- **`dockhand-storage.yml`**: Triggers the Dockhand webhook for `storage-stack` changes (`docker-compose.yml`).
 - **`nixos-check.yml`**: Evaluates every node (`NixOS/check-nodes.sh`, one node per process to stay within the runner's memory) on pushes and pull requests to `NixOS/**`, sending high-priority failure notifications to ntfy.
 - **`update-runner.yml`**: Weekly job that opens a pull request bumping the `nixpkgs-runner` flake input whenever a new runner version is available.
 

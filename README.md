@@ -124,10 +124,10 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **Garage data disk:** Garage moved from `storage-node` to `agent-tools-node`. Decide whether the 1 TB HDD is passed through to `agent-tools-node` instead, or Garage's ~100 GB live on the VM disk on the NVMe.
 #### Implementation
 
-- [ ] **⚠️ Migrate the `services-node` data disk (important data):** `/mnt/data` holds the Paperless documents, the Grimmory books and the NextExplorer files. Convert the 860 EVO from the `ZFS-Store` pool to a whole-disk ext4 passthrough, using a spare SanDisk Ultra 500 GB SSD as staging copy so there is always at least one verified local copy besides the cloud backup:
+- [ ] **⚠️ Migrate the `services-node` data disk (important data):** `/mnt/data` holds the Paperless documents and the Grimmory books. Convert the 860 EVO from the `ZFS-Store` pool to a whole-disk ext4 passthrough, using a spare SanDisk Ultra 500 GB SSD as staging copy so there is always at least one verified local copy besides the cloud backup:
     - [ ] Verify a fresh ZeroByte backup and Paperless export by test-restoring a sample.
     - [ ] Attach the SanDisk SSD to `phil` temporarily (free bay or USB adapter), pass it to `services-node` and format it ext4.
-    - [ ] Stop everything using `/mnt/data` (Paperless incl. Postgres, Grimmory, NextExplorer, ZeroByte, Samba), copy to the SanDisk with `rsync -aHAX`, then verify with a checksum pass.
+    - [ ] Stop everything using `/mnt/data` (Paperless incl. Postgres, Grimmory, ZeroByte, Samba), copy to the SanDisk with `rsync -aHAX`, then verify with a checksum pass.
     - [ ] Only after that verification: remove the virtual disk, destroy `ZFS-Store`, pass the 860 EVO through whole, format it ext4, copy the data back and verify again.
     - [ ] Switch `fileSystems."/mnt/data"` in `services-node/configuration.nix` to the new UUID, reboot, and check Paperless (document count, open a few documents), the Samba shares and the next ZeroByte run.
     - [ ] Keep the SanDisk copy as rollback for at least two weeks; it can sit unplugged on the shelf. Afterwards it is a spare.
@@ -144,7 +144,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **Garage:** `services.garage` on `agent-tools-node` (single node, data per the Garage data disk decision, metadata on the VM disk, secrets via Agenix).
 - [ ] **Artifact hosting:** One Garage bucket (`artifacts`) in website mode behind a single Caddy route (`artifacts.home.stefancyliax.de` → Garage web endpoint, no Authelia). Each artifact is a path in the bucket, so pushing a file publishes it without touching Caddy or DNS. Also expose the S3 API (`s3.home.stefancyliax.de`) for uploads, create one write key per machine (Agenix on `agent-node`), and add a small `publish-artifact` helper that uploads and prints the URL.
 - [ ] **`storage-stack` / Jellyfin:** New Compose stack on `storage-node` with QuickSync, a `dockhand-storage.yml` workflow, and Authelia via the SSO plugin.
-- [ ] **NextExplorer move:** Move NextExplorer and its files from `/mnt/data` on `services-node` into the `storage-stack`, then repoint its Caddy route.
+- [x] **NextExplorer move:** NextExplorer runs in the `storage-stack` with a `dockhand-storage.yml` workflow, and its Caddy route points at `storage-node`. No data moved: it only gave access to `/mnt/data` on `services-node`.
 - [ ] **Remove dropped services:** Delete the commented-out Stirling PDF, Tududi and Paperless-AI blocks and their volumes from the `services-stack` compose files.
 - [ ] **Scanner service:** Move the HP ScanJet Pro 2600 f1 container from `services-node` to `storage-node` on `vault`, where the scanner physically stands: merge the `setup_scanner_raspberry_pi` branch (in progress), pass the scanner through by USB to the VM, map `/dev/bus/usb` in the Compose file, and mount the `paperless-consume` share from `services-node` as the output directory.
 - [ ] **`frigate-node` / `frigate-stack`:** NixOS VM on `phil` with Iris Xe and the 250 GB Samsung SSD passed through (check its SMART wear level first) and a NIC on the IoT VLAN; ballooning disabled; OpenVINO detector; 1–2 cameras with motion/event-based retention sized to the SSD; Home Assistant integration; ntfy `homelab-security`; Authelia forward_auth.
@@ -206,6 +206,7 @@ homelab/
     ├── dockhand-infra.yml
     ├── dockhand-services.yml
     ├── dockhand-paperless.yml
+    ├── dockhand-storage.yml
     ├── nixos-check.yml
     └── update-runner.yml
 ```

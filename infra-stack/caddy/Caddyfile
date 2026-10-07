@@ -135,7 +135,7 @@
 	# NextExplorer (OIDC SSO handled by the application)
 	@nextexplorer host nextexplorer.home.stefancyliax.de
 	handle @nextexplorer {
-		reverse_proxy 10.1.23.224:3001
+		reverse_proxy 10.1.23.65:3001
 	}
 
 	# NocoDB (Protected by Authelia)

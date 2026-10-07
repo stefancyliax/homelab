@@ -58,29 +58,6 @@ services:
     volumes:
       - nocodb_data:/usr/app/data
 
-  nextexplorer:
-    image: nxzai/explorer:latest
-    container_name: nextexplorer
-    restart: unless-stopped
-    ports:
-      - '3001:3000'
-    volumes:
-      - ./config:/config
-      - ./cache:/cache
-      # Each /mnt/<Label> mount becomes a top-level volume in the UI
-      - /mnt/data:/mnt/Files
-    environment:
-      - NODE_ENV=production
-      - PUBLIC_URL=https://nextexplorer.home.stefancyliax.de
-      - AUTH_MODE=oidc
-      - OIDC_ENABLED=true
-      - OIDC_ISSUER=https://auth.home.stefancyliax.de
-      - OIDC_CLIENT_ID=nextexplorer
-      - OIDC_CLIENT_SECRET=${NEXTEXPLORER_CLIENT_SECRET}
-      - OIDC_SCOPES=openid profile email groups
-      - OIDC_AUTO_CREATE_USERS=true
-      - OIDC_ADMIN_GROUPS=admins
-
   parakeet:
     image: ghcr.io/achetronic/parakeet:latest
     container_name: parakeet

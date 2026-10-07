@@ -30,7 +30,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🔲 Planned |
 | ~~[Paperless-AI](https://github.com/clusterzx/paperless-ai)~~ | Docker Compose (`services-stack`) | ❌ Dropped |
 | [Paperless-GPT](https://github.com/icereed/paperless-gpt) | Docker Compose (`services-stack`) | ✅ Functional |
-| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `storage-node` planned |
+| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🚧 Deployed |
 | ~~[Ollama](https://ollama.com/)~~ | ~~Dedicated NixOS VM (`ollama-node`)~~ | ❌ Deprecated |
 | [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service (`gpu-worker`) | ✅ Functional |
 | [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `agent-tools-node` planned |
