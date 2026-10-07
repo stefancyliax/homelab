@@ -113,9 +113,9 @@ The application layer uses a GitOps pull-model via Docker Compose, orchestrated 
 The application stacks are split across VMs to prevent monolithic failures:
 
 - **`infra-stack/`** → Infrastructure Node — foundational services (ZeroByte, Homepage, monitoring).
-- **`services-stack/`** → Services Node — user-facing applications (Paperless, NocoDB, etc.).
+- **`services-stack/`** → Services Node — user-facing applications (Paperless, Grimmory, etc.).
 - **`storage-stack/`** → Storage Node on `vault` — NextExplorer. 🔲 Planned: Jellyfin, BamBuddy, scanner service.
-- **`agent-tools-stack/`** → Agent Tools Node on `vault` — Parakeet. 🔲 Planned: Hindsight, Open-WebUI, NocoDB.
+- **`agent-tools-stack/`** → Agent Tools Node on `vault` — Parakeet, NocoDB. 🔲 Planned: Hindsight, Open-WebUI.
 - **`work-tools-stack/`** → Work Tools Node on `phil` — Hindsight (work instance).
 - **`frigate-stack/`** (🔲 planned) → Frigate Node on `phil` — Frigate.
 

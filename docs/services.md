@@ -21,7 +21,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Proxmox Datacenter Manager](https://pdm.proxmox.com/docs/) | Appliance VM (`phil`) | ✅ Running |
 | Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`services-node`) | ✅ Running — 🔲 move to `storage-node` planned |
 | ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
-| [NocoDB](https://nocodb.com/) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `agent-tools-node` planned |
+| [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | ~~[Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)~~ | Docker Compose (`services-stack`) | ❌ Dropped |
 | [Grimmory](https://github.com/grimmory-tools/grimmory) | Docker Compose (`services-stack`) | 🚧 Deployed |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`services-stack`) | 🚧 Deployed — 🔲 move to `agent-tools-node` planned |

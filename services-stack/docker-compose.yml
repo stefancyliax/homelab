@@ -49,15 +49,6 @@ services:
 
 
 
-  nocodb:
-    image: nocodb/nocodb:latest
-    container_name: nocodb
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    volumes:
-      - nocodb_data:/usr/app/data
-
   grimmory:
     image: grimmory/grimmory:latest
     container_name: grimmory
@@ -155,7 +146,6 @@ volumes:
   grimoire_data:
   zerobyte_data:
   open-webui_data:
-  nocodb_data:
   hf-hub-cache:
   grimmory_data:
   grimmory_mariadb:
