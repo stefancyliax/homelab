@@ -12,7 +12,14 @@ let
   # Kept out of `systems`: the CI runner only needs the Comin PAT
   runner-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMkWzerz/OZieg2eiqYnRL4UO4aRxiD2XIXQrGfjWKwG root@nixos-base";
   
-  systems = [ infra-node services-node another-node gpu-worker hermes-node ]; 
+  # Kept out of `systems` like the runner: runs no Hawser, only needs the Comin PAT
+  agent-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGWjCs8EFuAJTflQqVl91Noi7r/AtPasD70vd9yx2Toh";
+  storage-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOJWfTUuyHHOb6AHYpTLj6tJ9dzGLFMzTgslK5Fdr5C";
+  agent-tools-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN8/bila9Zj1kB1204Jv72H/bX+9j6j/6xr71+bgJ1h4";
+  work-tools-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMalIA//5lvQBFDWIWVf7jbKmvf0DKpwPhxC+qIXwoHI";
+  frigate-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDrdRmrQ21s1wYCd/PmvPa5HqfEASqkyE6MB2sCGRBxh";
+
+  systems = [ infra-node services-node another-node gpu-worker hermes-node storage-node agent-tools-node work-tools-node frigate-node ]; 
 in
 {
   # How this works: The hawser token can be decrypted by Stefan and (eventually) the nodes that run Hawser.
@@ -20,7 +27,7 @@ in
   "secrets/rclone-conf.age".publicKeys = users ++ [ services-node ];
   
   # Comin deploy key, readable by the user and all systems that might run Comin
-  "secrets/github-pat.age".publicKeys = users ++ systems ++ [ runner-node ];
+  "secrets/github-pat.age".publicKeys = users ++ systems ++ [ runner-node agent-node ];
 
   # OIDC Secrets (mounted into Authelia container as files)
   "secrets/authelia-oidc-hmac.age".publicKeys = users ++ [ infra-node ];

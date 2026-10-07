@@ -84,7 +84,7 @@ When deploying new VMs, apply the following baseline configuration:
 |---|---|---|
 | CPU Type | `host` | Passes physical CPU features directly to the VM. Improves performance but prevents live-migration to different CPU architectures. |
 | QEMU Guest Agent | Enabled | Must be enabled both in the Proxmox UI and inside the guest OS (configured in `common.nix` for NixOS nodes). |
-| Firmware | SeaBIOS | Used for existing VMs. Migrating to UEFI/OVMF is not worth the effort (requires repartitioning). All new VMs should use OVMF. |
+| Firmware | OVMF (UEFI), machine `q35` | For all new VMs: EFI disk on `local-lvm`, "Pre-Enroll keys" unticked (Secure Boot would reject systemd-boot). The NixOS template (`nodes/nixos-base/`) is built this way. Existing VMs stay on SeaBIOS with GRUB; migrating them is not worth the effort. |
 
 ## HAOS VM
 

@@ -82,6 +82,45 @@
         ];
       };
 
+      "storage-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/storage-node/configuration.nix
+          ./modules/hawser.nix
+        ];
+      };
+
+      "agent-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/agent-node/configuration.nix
+        ];
+      };
+
+      "agent-tools-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/agent-tools-node/configuration.nix
+          ./modules/hawser.nix
+        ];
+      };
+
+      "work-tools-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/work-tools-node/configuration.nix
+          ./modules/hawser.nix
+        ];
+      };
+
+      "frigate-node" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = baseModules ++ [
+          ./nodes/frigate-node/configuration.nix
+          ./modules/hawser.nix
+        ];
+      };
+
     };
   };
 }

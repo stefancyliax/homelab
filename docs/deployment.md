@@ -164,7 +164,7 @@ nix flake update nixpkgs-runner
    cat /etc/ssh/ssh_host_ed25519_key.pub
    ```
    Migrate the clone, not the template itself: remote migration does not support VMs with snapshots, and a full clone has none.
-   `nodes/runner-node/hardware-configuration.nix` and the GRUB settings match a clone of that template. For a fresh install (e.g. with OVMF), replace them with the generated ones.
+   `nodes/runner-node/hardware-configuration.nix` and the GRUB settings match a clone of the old SeaBIOS template. The current template is OVMF (`nodes/nixos-base/`): for a clone of it, copy its `hardware-configuration.nix` and use the systemd-boot lines from its `configuration.nix` instead of the GRUB ones.
 2. Set that key as `runner-node` in `secrets.nix`, then re-key so the VM can decrypt the Comin PAT (see [Creating or Editing Secrets](#creating-or-editing-secrets)):
    ```bash
    cd NixOS
