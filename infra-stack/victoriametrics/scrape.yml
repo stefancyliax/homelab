@@ -36,6 +36,8 @@ scrape_configs:
         - '10.1.23.12:9100'
         - '10.1.23.47:9100'
         - '10.1.23.122:9100'
+        - '10.1.23.4:9100' # phil (Proxmox host, hardware temperatures)
+        - '10.1.23.3:9100' # vault (Proxmox host, hardware temperatures)
 
   - job_name: 'docker_daemon'
     static_configs:

@@ -36,7 +36,7 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 
 | Dashboard | Data Source | Description |
 |---|---|---|
-| Node Exporter | VictoriaMetrics / Prometheus | CPU, memory, network, and disk usage across all NixOS VMs (`node_exporter.json`) |
+| Node Exporter | VictoriaMetrics / Prometheus | CPU, memory, network, and disk usage across all NixOS VMs, plus hardware temperatures of the Proxmox hosts (`node_exporter.json`) |
 | Docker Overview | VictoriaMetrics / Prometheus | Resource utilization and container status (`docker.json`) |
 | Comin Status | VictoriaMetrics / Prometheus | Pull-based deployment status and revision history (`comin.json`) |
 | NixOS Versions | VictoriaMetrics / Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
@@ -71,6 +71,19 @@ Maintain `infra-stack/victoriametrics/scrape.yml` defining:
 ### 3. Enable Node Exporters
 
 On each NixOS VM, enable `node_exporter` via NixOS configuration to expose hardware metrics on port 9100. Configure Docker to expose daemon metrics on the bridge network.
+
+VMs cannot see the host's sensors, so the Proxmox hosts `phil` and `vault` run their own `node_exporter` for CPU, board, NVMe and disk temperatures (`node_hwmon_temp_celsius`). This is set up by hand on each host, not GitOps-managed:
+
+```bash
+apt update && apt install -y prometheus-node-exporter lm-sensors
+sensors-detect --auto                                   # detects board sensor chips
+echo drivetemp > /etc/modules-load.d/drivetemp.conf     # SATA disk temperatures
+systemctl restart systemd-modules-load
+```
+
+`sensors-detect` only prints the chip drivers it found (e.g. `nct6775`) and does not persist them. Add each one to `/etc/modules-load.d/sensors.conf` so the board sensors survive a reboot (`/etc/modules` is obsolete). `coretemp` and NVMe temperatures load on their own.
+
+Both hosts are listed in the `node_exporter` job in `scrape.yml` and show up in the Node Exporter dashboard under "Hardware temperature monitor".
 
 ### 4. Provision Grafana
 

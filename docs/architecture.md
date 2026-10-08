@@ -87,13 +87,13 @@ Guests are spread over two standalone Proxmox hosts. Each VM is isolated to sepa
 | `services-node` | `phil` | NixOS VM | ✅ Running |
 | HAOS | `phil` | Appliance VM | ✅ Running |
 | `hermes-node` | `phil` | NixOS VM | ✅ Running |
-| `frigate-node` | `phil` | NixOS VM (Iris Xe + dedicated SSD passthrough) | 🔲 Planned |
+| `frigate-node` | `phil` | NixOS VM (🔲 planned: Iris Xe + dedicated SSD passthrough) | ✅ Running |
 | Proxmox Datacenter Manager | `phil` | Appliance VM | ✅ Running |
-| `work-tools-node` | `phil` | NixOS VM | 🔲 Planned |
-| `storage-node` | `vault` | NixOS VM (HDD + UHD 770 passthrough) | 🔲 Planned |
+| `work-tools-node` | `phil` | NixOS VM | ✅ Running |
+| `storage-node` | `vault` | NixOS VM (🔲 planned: HDD + UHD 770 passthrough) | ✅ Running |
 | `runner-node` | `vault` | NixOS VM | ✅ Running |
-| `agent-node` | `vault` | NixOS VM | 🔲 Planned — supersedes `hermes-node` |
-| `agent-tools-node` | `vault` | NixOS VM | 🔲 Planned |
+| `agent-node` | `vault` | NixOS VM | ✅ Running — 🔲 planned to supersede `hermes-node` |
+| `agent-tools-node` | `vault` | NixOS VM | ✅ Running |
 
 ### Workload Placement
 
@@ -151,7 +151,7 @@ The runner lives on `runner-node` on `vault`, declared in the flake (`services.g
 
 #### Storage Node (NixOS VM)
 
-**Status:** 🔲 Planned, on `vault`.
+**Status:** ✅ Running on `vault`, with NextExplorer. 🔲 Planned: disk and iGPU passthrough and the remaining services below.
 
 Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity scheme (Unraid or SnapRAID) needs the 6 TB disk as parity and leaves only 3 TB usable, so Unraid's mixed-size array brings no benefit here.
 
@@ -177,7 +177,7 @@ Storage and Jellyfin share one VM because Jellyfin needs both the disks and the 
 
 #### Agent Tools Node (`agent-tools-node`, NixOS VM)
 
-**Status:** 🔲 Planned, on `vault`.
+**Status:** ✅ Running on `vault`, with the Compose services below. 🔲 Planned: Garage, artifact hosting and pilot.
 
 The services the AI agents and workflows rely on, kept apart from the general apps on `services-node` and from the agents themselves on `agent-node`.
 
@@ -193,7 +193,7 @@ The services the AI agents and workflows rely on, kept apart from the general ap
 
 #### Work Tools Node (`work-tools-node`, NixOS VM)
 
-**Status:** 🔲 Planned, on `phil`.
+**Status:** ✅ Running on `phil`.
 
 Tooling for work, on its own VM and its own host so that it shares neither data nor a memory store with the private setup on `vault`.
 
@@ -203,7 +203,7 @@ Tooling for work, on its own VM and its own host so that it shares neither data 
 
 #### Frigate Node (NixOS VM)
 
-**Status:** 🔲 Planned, on `phil`.
+**Status:** ✅ Running on `phil` as a bare VM. 🔲 Planned: the passthrough and Frigate itself, as described below.
 
 Runs [Frigate](https://frigate.video/) as its own Docker Compose stack (`frigate-stack`) via Hawser.
 
@@ -218,7 +218,7 @@ Runs [Frigate](https://frigate.video/) as its own Docker Compose stack (`frigate
 
 #### Agent Node (NixOS VM)
 
-**Status:** 🔲 Planned, on `vault`.
+**Status:** ✅ Running on `vault` as a bare VM. 🔲 Planned: the setup described below.
 
 Home of the AI agents and the knowledge base; supersedes `hermes-node`. Headless: reached over SSH/Mosh, with herdr as the workspace for the agents.
 

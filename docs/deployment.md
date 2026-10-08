@@ -117,7 +117,7 @@ The application stacks are split across VMs to prevent monolithic failures:
 - **`storage-stack/`** → Storage Node on `vault` — NextExplorer. 🔲 Planned: Jellyfin, BamBuddy, scanner service.
 - **`agent-tools-stack/`** → Agent Tools Node on `vault` — Hindsight, Parakeet, Open-WebUI, NocoDB.
 - **`work-tools-stack/`** → Work Tools Node on `phil` — Hindsight (work instance).
-- **`frigate-stack/`** (🔲 planned) → Frigate Node on `phil` — Frigate.
+- **`frigate-stack/`** → Frigate Node on `phil` — empty so far. 🔲 Planned: Frigate.
 
 See [architecture.md](architecture.md) for the full service-to-node mapping.
 

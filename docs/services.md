@@ -64,6 +64,6 @@ The `services-node` runs declarative **Samba (SMB)** and **WSDD** services to ex
 > [!NOTE]
 > **Paperless-GPT** is the sole active AI document processor running alongside Paperless-ngx. It handles document parsing, tagging, and metadata extraction via the `gpu-worker`'s llama-swap backend.
 >
-> **Paperless-AI** has been dropped — it did not provide enough additional benefit to justify running alongside Paperless-GPT. Its commented-out block in the compose file is still to be removed.
+> **Paperless-AI** has been dropped — it did not provide enough additional benefit to justify running alongside Paperless-GPT.
 
 See [home-assistant.md](home-assistant.md) for the full Home Assistant ecosystem details.

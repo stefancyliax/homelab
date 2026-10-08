@@ -74,40 +74,7 @@ services:
       timeout: 5s
       retries: 10
 
-
-
-  # stirling-pdf:
-  #   image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
-  #   container_name: stirling-pdf
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8084:8080"
-  #   volumes:
-  #     - stirlingpdf_data:/configs
-
-  # tududi:
-  #   image: chrisvel/tududi:latest
-  #   container_name: tududi
-  #   environment:
-  #     - TUDUDI_USER_EMAIL=${TUDUDI_USER_EMAIL:-admin@example.com}
-  #     - TUDUDI_USER_PASSWORD=${TUDUDI_USER_PASSWORD:-changeme}
-  #     - TUDUDI_SESSION_SECRET=${TUDUDI_SESSION_SECRET:-changeme-please-use-openssl}
-  #     - TUDUDI_ALLOWED_ORIGINS=https://tududi.home.stefancyliax.de
-  #     - TUDUDI_TRUST_PROXY=true
-  #     - TUDUDI_UPLOAD_PATH=/app/backend/uploads
-  #     - PUID=1000
-  #     - PGID=100
-  #   volumes:
-  #     - tududi_db:/app/backend/db
-  #     - tududi_uploads:/app/backend/uploads
-  #   restart: unless-stopped
-
 volumes:
-  grimoire_data:
   zerobyte_data:
-  hf-hub-cache:
   grimmory_data:
   grimmory_mariadb:
-  stirlingpdf_data:
-  tududi_db:
-  tududi_uploads:
