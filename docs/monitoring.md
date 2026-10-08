@@ -41,6 +41,7 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 | Comin Status | VictoriaMetrics / Prometheus | Pull-based deployment status and revision history (`comin.json`) |
 | NixOS Versions | VictoriaMetrics / Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
 | Proxmox Cluster | VictoriaMetrics | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
+| Proxmox Host Hardware | VictoriaMetrics | CPU usage next to temperatures and fan speed for `vault` and `phil` (`proxmox_hardware.json`) |
 | Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |
 
 ### Loki & Promtail
