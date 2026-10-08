@@ -131,7 +131,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
     - [ ] Only after that verification: remove the virtual disk, destroy `ZFS-Store`, pass the 860 EVO through whole, format it ext4, copy the data back and verify again.
     - [ ] Switch `fileSystems."/mnt/data"` in `services-node/configuration.nix` to the new UUID, reboot, and check Paperless (document count, open a few documents), the Samba shares and the next ZeroByte run.
     - [ ] Keep the SanDisk copy as rollback for at least two weeks; it can sit unplugged on the shelf. Afterwards it is a spare.
-- [ ] **iGPU passthrough spike:** Validate Iris Xe → VM on `phil` and UHD 770 → VM on `vault` (OVMF, `intel_gpu_top`, VAAPI/QSV test) before building on it. Fallback: CT with `/dev/dri`.
+- [ ] **iGPU passthrough spike:** Validate Iris Xe → VM on `phil` (OVMF, `intel_gpu_top`, VAAPI/QSV test) before building on it. Fallback: CT with `/dev/dri`. UHD 770 → `storage-node` on `vault` is done, see [proxmox-setup.md](docs/proxmox-setup.md#igpu-passthrough).
 - [x] **`vault` baseline:** `vault` is online with its Caddy route, OIDC login, metric server → VictoriaMetrics and ntfy webhook.
 - [x] **Proxmox Datacenter Manager:** Running as a VM on `phil` at `proxmox.home.stefancyliax.de`, with both hosts as remotes.
 - [ ] **`vault` RAM:** Install the second 16 GB stick (32 → 48 GB).

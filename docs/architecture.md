@@ -20,7 +20,7 @@ Runs the control plane and the light application VMs. See [proxmox-setup.md](pro
 | Component | Spec |
 |---|---|
 | CPU | Intel Core i5-12600K |
-| iGPU | UHD 770 (32 EU) — 🔲 planned passthrough to `storage-node` for Jellyfin |
+| iGPU | UHD 770 (32 EU) — ✅ passed through to `storage-node` for Jellyfin |
 | RAM | 32 GB — 🔲 planned: 48 GB (one more 16 GB stick) |
 | Storage | NVMe SSD (Proxmox and VM disks), SATA SSD (unassigned for now); HDDs: 6 TB, 2 TB, 1 TB (9 TB total, carrying some existing data) |
 
@@ -90,7 +90,7 @@ Guests are spread over two standalone Proxmox hosts. Each VM is isolated to sepa
 | `frigate-node` | `phil` | NixOS VM (🔲 planned: Iris Xe + dedicated SSD passthrough) | ✅ Running |
 | Proxmox Datacenter Manager | `phil` | Appliance VM | ✅ Running |
 | `work-tools-node` | `phil` | NixOS VM | ✅ Running |
-| `storage-node` | `vault` | NixOS VM (🔲 planned: HDD + UHD 770 passthrough) | ✅ Running |
+| `storage-node` | `vault` | NixOS VM with the UHD 770 passed through (🔲 planned: HDD passthrough) | ✅ Running |
 | `runner-node` | `vault` | NixOS VM | ✅ Running |
 | `agent-node` | `vault` | NixOS VM | ✅ Running — 🔲 planned to supersede `hermes-node` |
 | `agent-tools-node` | `vault` | NixOS VM | ✅ Running |
@@ -151,7 +151,7 @@ The runner lives on `runner-node` on `vault`, declared in the flake (`services.g
 
 #### Storage Node (NixOS VM)
 
-**Status:** ✅ Running on `vault`, with NextExplorer. 🔲 Planned: disk and iGPU passthrough and the remaining services below.
+**Status:** ✅ Running on `vault`, with NextExplorer and the UHD 770 passed through (see [proxmox-setup.md](proxmox-setup.md#igpu-passthrough)). 🔲 Planned: disk passthrough and the remaining services below.
 
 Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity scheme (Unraid or SnapRAID) needs the 6 TB disk as parity and leaves only 3 TB usable, so Unraid's mixed-size array brings no benefit here.
 

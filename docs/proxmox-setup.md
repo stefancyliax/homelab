@@ -55,14 +55,77 @@ Proxmox is installed with ext4/LVM; the 100 GB root (and with it `local`) is set
 
 The HDDs are passed through individually (`/dev/disk/by-id/...`), not via the SATA controller, which keeps the SATA SSD on that controller available to the host.
 
-## iGPU Passthrough (Planned)
+## iGPU Passthrough
 
-| Host | iGPU | Target VM | Consumer |
-|---|---|---|---|
-| `phil` | Iris Xe (80 EU) | `frigate-node` | Frigate (decode + OpenVINO detection) |
-| `vault` | UHD 770 (32 EU) | `storage-node` | Jellyfin (QuickSync transcoding) |
+| Host | iGPU | Target VM | Consumer | Status |
+|---|---|---|---|---|
+| `phil` | Iris Xe (80 EU) | `frigate-node` | Frigate (decode + OpenVINO detection) | 🔲 Planned |
+| `vault` | UHD 770 (32 EU) | `storage-node` | Jellyfin (QuickSync transcoding) | ✅ Passed through (VM 891), VAAPI validated with `vainfo` |
 
-Full passthrough gives the iGPU to one VM and the host loses its local console. It is not yet validated on either host and is the first thing to test. Fallback: run the consumer in a CT with `/dev/dri` shared from the host.
+Full passthrough gives the iGPU to one VM and the host loses its local console. It works on `vault` and is not yet validated on `phil`. Fallback: run the consumer in a CT with `/dev/dri` shared from the host.
+
+The host side is set up by hand, not GitOps-managed. The steps below are for `vault`; `phil` works the same with its own device ID.
+
+### Host
+
+1. BIOS: enable VT-d (Advanced → System Agent (SA) Configuration).
+2. Kernel command line in `/etc/default/grub`, then `update-grub`. `vault` boots with GRUB (ext4/LVM install), so `/etc/kernel/cmdline` and `proxmox-boot-tool refresh` do not apply:
+
+   ```
+   GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt initcall_blacklist=sysfb_init"
+   ```
+
+   `initcall_blacklist=sysfb_init` keeps the host from claiming the boot framebuffer on the iGPU, which is what costs the local console.
+3. Load the VFIO modules, in `/etc/modules`:
+
+   ```
+   vfio
+   vfio_iommu_type1
+   vfio_pci
+   ```
+
+4. Hand the iGPU to `vfio-pci` instead of `i915`, in `/etc/modprobe.d/vfio.conf`. The ID comes from `lspci -nn -s 00:02.0` (`8086:4680` for the UHD 770 of the i5-12600K):
+
+   ```
+   options vfio-pci ids=8086:4680
+   softdep i915 pre: vfio-pci
+   blacklist i915
+   ```
+
+5. `update-initramfs -u -k all` and reboot the host. This stops every guest on it.
+6. Check:
+
+   ```bash
+   dmesg | grep -e DMAR -e IOMMU    # "IOMMU enabled"
+   lspci -nnk -s 00:02.0            # "Kernel driver in use: vfio-pci"
+   ```
+
+### VM
+
+The VM has to be OVMF/`q35` (the NixOS template is) and loses memory ballooning, since passthrough pins all of its RAM. The virtual display stays, so the Proxmox console keeps working.
+
+```bash
+qm set <vmid> --hostpci0 0000:00:02.0,pcie=1 --balloon 0
+qm shutdown <vmid> && qm start <vmid>   # a reboot from inside the guest does not pick up the device
+```
+
+### Guest
+
+`storage-node` carries the firmware, the VAAPI driver and the test tools in its `configuration.nix`. Validate with:
+
+```bash
+lspci -nnk | grep -A3 VGA                                   # second VGA device, driver i915
+ls /dev/dri                                                 # card0 (virtual), card1 + renderD128 (iGPU)
+sudo dmesg | grep -i -E "i915|guc|huc"                      # firmware loaded, no errors
+vainfo --display drm --device /dev/dri/renderD128           # lists H.264/HEVC/AV1 profiles
+sudo intel_gpu_top                                          # shows load during a transcode
+```
+
+The iGPU shows up at `01:00.0` in the guest. `Failed to find VBIOS tables (VBT)`, `ROM ... can't assign` and `Cannot find any crtc or sizes` in `dmesg` are expected: there is no display attached and none is needed for transcoding.
+
+### Rollback
+
+`qm set <vmid> --delete hostpci0`, remove `/etc/modprobe.d/vfio.conf`, take the three parameters off the kernel command line, then `update-grub`, `update-initramfs -u -k all` and reboot.
 
 > [!NOTE]
 > Exact mount points and LVM configurations will be documented here once fully finalized.
