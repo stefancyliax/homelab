@@ -27,6 +27,7 @@ services:
       - "-storageDataPath=/victoria-metrics-data"
       - "-promscrape.config=/etc/victoriametrics/scrape.yml"
       - "-promscrape.config.strictParse=false"
+      - "-promscrape.suppressScrapeErrorsDelay=1h" # offline nodes (gpu-worker etc.) would otherwise log every 15s
       - "-retentionPeriod=36M"
 
   grafana:
