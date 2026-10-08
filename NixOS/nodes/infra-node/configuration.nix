@@ -13,6 +13,9 @@
 
   networking.hostName = "infra-node";
 
+  # Fewer ext4 journal commits (default 5s): the monitoring stack writes a constant trickle
+  fileSystems."/".options = [ "noatime" "commit=20" ];
+
   # Open HTTP/HTTPS for Caddy (needed for container-to-host traffic, e.g., Dockhand → Authelia OIDC)
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
