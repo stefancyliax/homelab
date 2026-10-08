@@ -10,6 +10,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 |---|---|---|
 | [Home Assistant](https://www.home-assistant.io/) | Dedicated HAOS VM | ✅ Running |
 | [ntfy](https://ntfy.sh/) | Docker Compose (`infra-stack`) | ✅ Functional |
+| [Pi-hole](https://pi-hole.net/) | Docker Compose (`infra-stack`) | 🔲 Planned |
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | ✅ Functional |
 | Samba & WSDD | Native NixOS service (`services-node`) | ✅ Functional |
@@ -23,7 +24,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | ~~[Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)~~ | Docker Compose (`services-stack`) | ❌ Dropped |
-| [Grimmory](https://github.com/grimmory-tools/grimmory) | Docker Compose (`services-stack`) | 🚧 Deployed |
+| [Grimmory](https://github.com/grimmory-tools/grimmory) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | ~~[ESPHome](https://esphome.io/)~~ | ~~Docker Compose (`services-stack`)~~ | ❌ Dropped |
 | ~~[Tududi](https://github.com/chrisvel/tududi)~~ | Docker Compose (`services-stack`) | ❌ Dropped |

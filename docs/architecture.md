@@ -86,7 +86,7 @@ Guests are spread over two standalone Proxmox hosts. Each VM is isolated to sepa
 | `infra-node` | `phil` | NixOS VM | ✅ Running |
 | `services-node` | `phil` | NixOS VM | ✅ Running |
 | HAOS | `phil` | Appliance VM | ✅ Running |
-| `hermes-node` | `phil` | NixOS VM | ✅ Running |
+| `hermes-node` | `vault` | NixOS VM | ✅ Running — migrated from `phil`, 🔲 to be retired |
 | `frigate-node` | `phil` | NixOS VM (🔲 planned: Iris Xe + dedicated SSD passthrough) | ✅ Running |
 | Proxmox Datacenter Manager | `phil` | Appliance VM | ✅ Running |
 | `work-tools-node` | `phil` | NixOS VM | ✅ Running |
