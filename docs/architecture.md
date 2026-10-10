@@ -184,12 +184,14 @@ The services the AI agents and workflows rely on, kept apart from the general ap
 | Service | Type |
 |---|---|
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`), ✅ moved |
-| [Parakeet](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`), ✅ moved. API at `10.1.23.12:8000` |
+| [Parakeet (STT)](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`), ✅ moved. Whisper-compatible STT API at `10.1.23.12:8000` for Hermes Telegram voice notes |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`). Data location is open: the 1 TB HDD passed through to this VM, or the VM disk on the NVMe |
 | Artifact hosting (Claude/Gemini HTML artifacts) | One Garage website bucket behind one Caddy route on `infra-node`; each artifact is a path, published by an S3 upload. No authentication |
 | pilot | To be defined |
+| Embedding Service (`google/embeddinggemma-2`) | Docker Compose (`agent-tools-stack`), 🔲 planned sidecar for Hindsight |
+| Extraction SLM (`Qwen2.5-3B-Instruct`) | Docker Compose (`agent-tools-stack`), 🔲 planned CPU-based extraction LLM for Hindsight |
 
 #### Work Tools Node (`work-tools-node`, NixOS VM)
 
