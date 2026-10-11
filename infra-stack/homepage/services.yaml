@@ -44,6 +44,10 @@
         href: https://victoriametrics.home.stefancyliax.de
         icon: victoriametrics
         description: Unified Metrics & TSDB
+    - Service Placement:
+        href: https://artifacts.home.stefancyliax.de/homelab-service-placement.html
+        icon: mdi-view-dashboard-outline
+        description: Planning board for where each service runs
 
 - Applications:
     - Home Assistant:
