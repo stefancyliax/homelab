@@ -22,7 +22,7 @@ Runs the control plane and the light application VMs. See [proxmox-setup.md](pro
 | CPU | Intel Core i5-12600K |
 | iGPU | UHD 770 (32 EU) — ✅ passed through to `storage-node` for Jellyfin |
 | RAM | 32 GB — 🔲 planned: 48 GB (one more 16 GB stick) |
-| Storage | NVMe SSD (Proxmox and VM disks), SATA SSD (🔲 Garage data, passed through to `agent-tools-node`); HDDs: 6 TB, 2 TB, 1 TB (9 TB total, carrying some existing data) |
+| Storage | NVMe SSD (Proxmox and VM disks), SATA SSD (Garage data, passed through to `agent-tools-node`); HDDs: 6 TB, 2 TB, 1 TB (9 TB total, carrying some existing data) |
 
 The NAS box: a standalone Proxmox host that holds the HDDs and runs the storage, media and compute-heavy VMs. The NAS shares themselves are 🔲 planned as the [`storage-node`](#storage-node-nixos-vm) VM. Not clustered with `phil` — see [proxmox-setup.md](proxmox-setup.md#multi-host-management).
 
@@ -177,7 +177,7 @@ Storage and Jellyfin share one VM because Jellyfin needs both the disks and the 
 
 #### Agent Tools Node (`agent-tools-node`, NixOS VM)
 
-**Status:** ✅ Running on `vault`, with the Compose services below. 🔲 Planned: Garage, artifact hosting and pilot.
+**Status:** ✅ Running on `vault`, with the Compose services below, Garage and artifact hosting. 🔲 Planned: pilot.
 
 The services the AI agents and workflows rely on, kept apart from the general apps on `services-node` and from the agents themselves on `agent-node`.
 

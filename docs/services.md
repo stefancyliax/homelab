@@ -17,8 +17,8 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🔲 Planned |
 | [Frigate](https://frigate.video/) | Docker Compose (`frigate-stack`, `frigate-node` on `phil`) | 🔲 Planned |
 | NAS shares (Samba/NFS) | Native NixOS service (`storage-node`) | 🔲 Planned |
-| [Garage](https://garagehq.deuxfleurs.fr/) S3 | Native NixOS service (`agent-tools-node`) | 🔲 Planned |
-| Artifact hosting (Claude/Gemini) | Garage website bucket (`agent-tools-node`) + Caddy route | 🔲 Planned |
+| [Garage](https://garagehq.deuxfleurs.fr/) S3 | Native NixOS service (`agent-tools-node`) | ✅ Running |
+| Artifact hosting (Claude/Gemini) | Garage website bucket (`agent-tools-node`) + Caddy route | ✅ Running |
 | [Proxmox Datacenter Manager](https://pdm.proxmox.com/docs/) | Appliance VM (`phil`) | ✅ Running |
 | Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`services-node`) | ✅ Running — 🔲 move to `storage-node` planned |
 | ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |

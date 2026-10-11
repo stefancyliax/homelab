@@ -46,7 +46,7 @@ The conversion of the 860 EVO from ZFS to ext4 is tracked as a task in the [READ
 | Drive | Role |
 |---|---|
 | NVMe SSD | Proxmox OS, `local` (100 GB) and `local-lvm` (~400 GB, all guest disks) |
-| SATA SSD | 🔲 Planned: passed through by-id to `agent-tools-node` (Garage data), XFS |
+| SATA SSD | Passed through by-id to `agent-tools-node` (Garage data), XFS |
 | 6 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (bulk/media), btrfs |
 | 1 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (scratch), XFS |
 | 2 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (local backup copy of important shares), btrfs |

@@ -26,6 +26,8 @@ in
   "secrets/hawser-token.age".publicKeys = users ++ systems;
   "secrets/rclone-conf.age".publicKeys = users ++ [ services-node ];
   "secrets/garage-rpc-secret.age".publicKeys = users ++ [ agent-tools-node ];
+  # Garage S3 write key of agent-node, as an AWS credentials file with a [garage] profile
+  "secrets/garage-agent-node-key.age".publicKeys = users ++ [ agent-node ];
   
   # Comin deploy key, readable by the user and all systems that might run Comin
   "secrets/github-pat.age".publicKeys = users ++ systems ++ [ runner-node agent-node ];
