@@ -36,38 +36,17 @@ docker exec scanner scan-flatbed     # Trigger a single-page scan from the flatb
 
 ---
 
-## Open Points / Checklist (Deployment on `storage-node`)
+## Deployment (`storage-node` on `vault`)
 
-To bring the service up on `storage-node` on `vault`, where the scanner stands, complete the following steps:
+The service is part of the `storage-stack` ([docker-compose.yml](../docker-compose.yml)) and is built from this directory on deployment.
 
-- [ ] **1. Physical USB Connection & Passthrough**:
-  - Connect the HP ScanJet Pro 2600 f1 to a USB port on `vault`.
-  - Pass the USB device (Vendor ID `03f0`) through to the `storage-node` VM.
-- [ ] **2. Dynamic USB Bus Mapping in `docker-compose.yaml`**:
-  - In `scanner/docker-compose.yaml`, change `/dev/bus/usb/002:/dev/bus/usb/002` to:
-    ```yaml
-    volumes:
-      - /dev/bus/usb:/dev/bus/usb
-    ```
-    This ensures `lsusb` and `ipp-usb` detect the scanner regardless of which USB bus or port it is assigned to on the new host.
-- [ ] **3. Ingestion Network Mount (`/output`)**:
-  - Since this container runs on a different node than `services-node` (`10.1.23.224`), mount the Samba share on the host:
-    ```bash
-    //10.1.23.224/paperless-consume -> /mnt/paperless-consume
-    ```
-  - Update `docker-compose.yaml` to bind-mount the network share:
-    ```yaml
-    volumes:
-      - /mnt/paperless-consume:/output
-    ```
-- [ ] **4. Atomic Copy to Prevent Race Conditions**:
-  - When copying across a network share, Paperless might try to consume an incomplete PDF while `cp` is still writing.
-  - In `scanner/scripts/scan.sh` and `scanner/scripts/scan-flatbed.sh`, use an atomic copy:
-    ```bash
-    cp "${TEMP_DIR}/${FILENAME}.pdf" "${OUTPUT_DIR}/.${FILENAME}.pdf.tmp"
-    mv "${OUTPUT_DIR}/.${FILENAME}.pdf.tmp" "${OUTPUT_DIR}/${FILENAME}.pdf"
-    ```
-- [ ] **5. Deploy & Verify**:
-  - Start the stack: `docker compose up -d --build`.
-  - Check startup logs: `docker compose logs -f`.
-  - Place a test sheet in the ADF to verify automatic scan and Paperless ingestion.
+- **USB**: the scanner is plugged into `vault` and passed through to the `storage-node` VM by vendor/product ID, so it does not matter which port it is on (see [proxmox-setup.md](../../docs/proxmox-setup.md#usb-passthrough)). The container gets the whole `/dev/bus/usb` tree, so it finds the scanner on whichever bus and address the VM assigns.
+- **Output**: `storage-node` automounts the `paperless-consume` Samba share of `services-node` at `/mnt/paperless-consume` (`fileSystems` in `NixOS/nodes/storage-node/configuration.nix`), and the container binds it to `/output`. The bind uses `rslave` propagation: the share is only mounted on first access, and without it the mount would not reach an already running container.
+- **Atomic delivery**: `scan.sh` and `scan-flatbed.sh` copy the PDF to the share as `.<name>.pdf.tmp` and rename it, so Paperless never consumes a half-written file. If the share is unreachable the scan is reported as failed instead of saved.
+
+### Bring-up
+
+- [ ] Pass the scanner through to the VM on `vault` (see [proxmox-setup.md](../../docs/proxmox-setup.md#usb-passthrough)) and check it shows up in the guest: `grep -H . /sys/bus/usb/devices/*/idVendor | grep 03f0`.
+- [ ] After Comin has applied the NixOS change, check the share: `ls /mnt/paperless-consume`.
+- [ ] After Dockhand has deployed the stack, check `docker logs scanner` and `docker exec scanner scanner-status`.
+- [ ] Place a test sheet in the ADF and confirm the PDF arrives in Paperless.

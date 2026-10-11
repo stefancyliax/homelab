@@ -137,6 +137,19 @@ The iGPU shows up at `01:00.0` in the guest. `Failed to find VBIOS tables (VBT)`
 > [!NOTE]
 > Exact mount points and LVM configurations will be documented here once fully finalized.
 
+## USB Passthrough
+
+The HP ScanJet Pro 2600 f1 is plugged into `vault` and passed through to `storage-node` (VM 891) for the scanner service. Like the other passthroughs it is set up by hand on the host.
+
+It is passed by vendor/product ID rather than by port, so it keeps working when it is moved to another port:
+
+```bash
+lsusb | grep 03f0                 # on vault: 03f0:6105 HP ScanJet Pro 2600 f1
+qm set 891 --usb0 host=03f0:6105
+```
+
+USB is hotpluggable, so the VM does not need a restart. The scanner may be switched off or asleep when the VM starts; QEMU attaches it as soon as it appears. To bind a physical port instead of the device, use `host=<bus>-<port>` (from `lsusb -t`).
+
 ## Virtual Networks
 
 Proxmox uses a standard bridge network (`vmbr0`) by default.

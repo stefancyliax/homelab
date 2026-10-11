@@ -35,4 +35,23 @@
     "d /mnt/data 0755 stefan users -"
     "d /mnt/data/media 0755 stefan users -"
   ];
+
+  # Paperless consume hot-folder on services-node, the output directory of the
+  # scanner container. Automounted on first access, so a services-node that is
+  # down at boot neither blocks the boot nor leaves scans on the local disk.
+  fileSystems."/mnt/paperless-consume" = {
+    device = "//10.1.23.224/paperless-consume";
+    fsType = "cifs";
+    options = [
+      "guest"
+      "uid=1000"
+      "gid=100"
+      "file_mode=0644"
+      "dir_mode=0755"
+      "_netdev"
+      "nofail"
+      "x-systemd.automount"
+      "x-systemd.mount-timeout=15s"
+    ];
+  };
 }

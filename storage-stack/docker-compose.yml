@@ -43,6 +43,25 @@ services:
     environment:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.home.stefancyliax.de
 
+  scanner:
+    # HP ScanJet Pro 2600 f1, passed through by USB from vault (see scanner/README.md)
+    build: ./scanner
+    container_name: scanner
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - SCAN_DPI=300
+      - ADF_POLL_INTERVAL=2
+      - ADF_LOAD_DELAY=2
+    volumes:
+      # paperless-consume share on services-node, automounted on the VM.
+      # rslave lets the CIFS mount reach the container when it is (re)established after start
+      - /mnt/paperless-consume:/output:rslave
+      # Whole tree, so the scanner is found on whichever bus and address it gets
+      - /dev/bus/usb:/dev/bus/usb
+    device_cgroup_rules:
+      - 'c 189:* rwm'  # USB device nodes
+
 volumes:
   nextexplorer_config:
   nextexplorer_cache:

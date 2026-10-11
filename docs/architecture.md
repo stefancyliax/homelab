@@ -161,7 +161,7 @@ Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity sche
 | [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`), QuickSync via the passed-through UHD 770. Reads `/mnt/data/media`, which sits on the VM disk until the HDDs are passed through |
 | [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`), ✅ moved. Serves `/mnt/data`, which sits on the VM disk until the HDDs are passed through |
 | [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`storage-stack`) |
-| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`. 🔲 Planned, not running yet |
+| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`storage-stack`), built from `storage-stack/scanner`. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`, mounted at `/mnt/paperless-consume` |
 
 Disk roles (no parity; important shares are backed up instead, media is re-acquirable). The 6 TB and 2 TB disks are passed through by-id to `storage-node`. Garage lives on `agent-tools-node` and has its own SSD there, so the 1 TB disk is plain scratch:
 

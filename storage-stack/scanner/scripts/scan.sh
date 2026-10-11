@@ -74,7 +74,14 @@ find "$TEMP_DIR" -maxdepth 1 -name "page_*.tiff" | sort -V | \
     xargs img2pdf --pillow-limit-break -o "${TEMP_DIR}/${FILENAME}.pdf" 2>&1 | \
     grep -v "DecompressionBomb\|warnings.warn" || true
 
-# Move final PDF to output (Paperless-ngx handles OCR)
-cp "${TEMP_DIR}/${FILENAME}.pdf" "${OUTPUT_DIR}/${FILENAME}.pdf"
+# Move final PDF to output (Paperless-ngx handles OCR).
+# The output is a network share: copy under a temporary name and rename, so
+# Paperless never picks up a half-written PDF.
+if ! cp "${TEMP_DIR}/${FILENAME}.pdf" "${OUTPUT_DIR}/.${FILENAME}.pdf.tmp" || \
+   ! mv "${OUTPUT_DIR}/.${FILENAME}.pdf.tmp" "${OUTPUT_DIR}/${FILENAME}.pdf"; then
+    rm -f "${OUTPUT_DIR}/.${FILENAME}.pdf.tmp"
+    echo "  ⚠ Could not write ${FILENAME}.pdf to ${OUTPUT_DIR}"
+    exit 1
+fi
 
 echo "  ✓ Saved: ${FILENAME}.pdf (${PAGE_COUNT} pages)"

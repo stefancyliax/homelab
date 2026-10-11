@@ -51,6 +51,13 @@ fi
 img2pdf --pillow-limit-break -o "${TEMP_DIR}/${FILENAME}.pdf" "${TEMP_DIR}/page.tiff" 2>&1 | \
     grep -v "DecompressionBomb\|warnings.warn" || true
 
-cp "${TEMP_DIR}/${FILENAME}.pdf" "${OUTPUT_DIR}/${FILENAME}.pdf"
+# The output is a network share: copy under a temporary name and rename, so
+# Paperless never picks up a half-written PDF.
+if ! cp "${TEMP_DIR}/${FILENAME}.pdf" "${OUTPUT_DIR}/.${FILENAME}.pdf.tmp" || \
+   ! mv "${OUTPUT_DIR}/.${FILENAME}.pdf.tmp" "${OUTPUT_DIR}/${FILENAME}.pdf"; then
+    rm -f "${OUTPUT_DIR}/.${FILENAME}.pdf.tmp"
+    echo "⚠ Could not write ${FILENAME}.pdf to ${OUTPUT_DIR}"
+    exit 1
+fi
 
 echo "✓ Saved: ${FILENAME}.pdf"

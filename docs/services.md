@@ -14,13 +14,13 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | ✅ Functional |
 | Samba & WSDD | Native NixOS service (`services-node`) | ✅ Functional |
-| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🚧 Deployed |
+| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | ✅ Running |
 | [Frigate](https://frigate.video/) | Docker Compose (`frigate-stack`, `frigate-node` on `phil`) | 🔲 Planned |
 | NAS shares (Samba/NFS) | Native NixOS service (`storage-node`) | 🔲 Planned |
 | [Garage](https://garagehq.deuxfleurs.fr/) S3 | Native NixOS service (`agent-tools-node`) | ✅ Running |
 | Artifact hosting (Claude/Gemini) | Garage website bucket (`agent-tools-node`) + Caddy route | ✅ Running |
 | [Proxmox Datacenter Manager](https://pdm.proxmox.com/docs/) | Appliance VM (`phil`) | ✅ Running |
-| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🔲 Planned |
+| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🚧 Deployed |
 | ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | ✅ Running |
 | ~~[Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)~~ | Docker Compose (`services-stack`) | ❌ Dropped |
@@ -59,7 +59,7 @@ Several application workloads are supported by dedicated background containers:
 ### File Sharing & Ingestion
 
 The `services-node` runs declarative **Samba (SMB)** and **WSDD** services to expose ingestion directories directly to local network clients (macOS, Windows, mobile):
-- **`paperless-consume`**: Mounted to `/home/stefan/paperless-consume`, automatically ingested by Paperless-ngx.
+- **`paperless-consume`**: Mounted to `/home/stefan/paperless-consume`, automatically ingested by Paperless-ngx. `storage-node` mounts this share at `/mnt/paperless-consume` as the output directory of the scanner service.
 - **`grimmory-bookdrop`**: Mounted to `/mnt/data/grimmory/bookdrop`, for dropping digital books directly into Grimmory.
 
 ### Paperless AI Integrations
