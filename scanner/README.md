@@ -36,13 +36,13 @@ docker exec scanner scan-flatbed     # Trigger a single-page scan from the flatb
 
 ---
 
-## Open Points / Checklist (When the New Proxmox Node is Online)
+## Open Points / Checklist (Deployment on `storage-node`)
 
-When the secondary Proxmox physical node is provisioned and online, complete the following setup steps:
+To bring the service up on `storage-node` on `vault`, where the scanner stands, complete the following steps:
 
 - [ ] **1. Physical USB Connection & Passthrough**:
-  - Connect the HP ScanJet Pro 2600 f1 to a USB port on the new Proxmox host.
-  - If running in an LXC container or VM on Proxmox, pass through the USB device (Vendor ID `03f0`).
+  - Connect the HP ScanJet Pro 2600 f1 to a USB port on `vault`.
+  - Pass the USB device (Vendor ID `03f0`) through to the `storage-node` VM.
 - [ ] **2. Dynamic USB Bus Mapping in `docker-compose.yaml`**:
   - In `scanner/docker-compose.yaml`, change `/dev/bus/usb/002:/dev/bus/usb/002` to:
     ```yaml

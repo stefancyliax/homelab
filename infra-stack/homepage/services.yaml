@@ -74,6 +74,10 @@
         href: https://nextexplorer.home.stefancyliax.de
         icon: files
         description: File Explorer
+    - Jellyfin:
+        href: https://jellyfin.home.stefancyliax.de
+        icon: jellyfin
+        description: Media Server
     - Syncthing (Hermes):
         href: https://syncthing-hermes-node.home.stefancyliax.de
         icon: syncthing

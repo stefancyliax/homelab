@@ -7,7 +7,8 @@ This document describes the backup strategy for the homelab — how data is back
 | Data | Backup Method | Notes |
 |---|---|---|
 | This repository | GitHub | The Git repo is the source of truth for all NixOS configs, Docker Compose files, and documentation. Inherently backed up by being hosted on GitHub. |
-| Application volumes | ZeroByte → Google Drive | Databases and bind mounts: Paperless data, NocoDB tables, Home Assistant state, Nextcloud/Seafile files. |
+| Application volumes on `services-node` | ZeroByte → Google Drive | Databases and bind mounts under `/mnt/data`, such as the Paperless data. |
+| Application volumes on `vault` | Not backed up | NocoDB, Open-WebUI, Hindsight and Garage on `agent-tools-node`, and the other guests on `vault`. 🔲 Planned, see the to-do in the [README](../README.md#implementation-1). |
 | Proxmox host config | Manual | Network interfaces, storage definitions, `/etc/pve` backups. |
 | Full VM images | Not backed up | NixOS VMs are rebuilt from this repository; only their data is backed up. See [Local Backups](#local-backups). |
 | NAS shares | Local copy + cloud (planned) | See [NAS Data](#nas-data--planned). |

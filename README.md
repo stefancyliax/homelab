@@ -31,13 +31,13 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | Dashboard (Homepage) | ✅ Done | [architecture.md](docs/architecture.md) |
 | Cloud Backups (ZeroByte) | ✅ Done | [backup.md](docs/backup.md) |
 | ~~Local Backups (PBS)~~ | ❌ Dropped | [backup.md](docs/backup.md#local-backups) |
-| Monitoring (Prometheus/Grafana/InfluxDB) | ✅ Done | [monitoring.md](docs/monitoring.md) |
+| Monitoring (VictoriaMetrics/Grafana/Loki) | ✅ Done | [monitoring.md](docs/monitoring.md) |
 | GPU Worker / AI Stack (llama-swap) | ✅ Done | [gpu-worker.md](docs/gpu-worker.md) |
 | Hermes Node (Remote AI Agent) | ✅ Done | [architecture.md](docs/architecture.md) |
 | ~~Ollama Node (LLM Inference)~~ | ❌ Deprecated | GPU Worker handles all inference |
 | Services (Paperless, Grimmory, etc.) | 🚧 Ongoing | [services.md](docs/services.md) |
 | Home Assistant | ✅ Done | [home-assistant.md](docs/home-assistant.md) |
-| NAS & Media on `vault` | 🔲 Planned | [architecture.md](docs/architecture.md#workload-placement) |
+| NAS & Media on `vault` | 🚧 Ongoing | [architecture.md](docs/architecture.md#workload-placement) |
 | Ingress & SSL (Caddy + Porkbun DNS) | ✅ Done | [deployment.md](docs/deployment.md) |
 | Single Sign-On (Authelia OIDC & Proxy) | ✅ Done | [deployment.md](docs/deployment.md) |
 | Scanner Service (HP ScanJet Pro 2600 f1) | 🔲 Planned | [scanner/README.md](scanner/README.md) |
@@ -60,7 +60,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [x] **Dozzle:** Evaluated and dropped — too little functionality to justify deployment.
 - [x] **Nemoclaw:** Decided against it; Hermes is the agent.
 - [ ] **GLM-OCR on `vault`:** Benchmark GLM-OCR on `vault`'s CPU (llama.cpp, quantized GGUF, a few real scans) to see whether it can serve as an always-on OCR backend for Paperless-GPT when the `gpu-worker` is off. The iGPU is reserved for Jellyfin, so CPU only. Runs as a temporary test in `vault`'s unallocated RAM, not as a planned resident of a VM.
-- [ ] **Hindsight Local Models on `vault` (Embedding & SLM):** Both run as llama.cpp sidecars on `agent-tools-node` (see the two items under Implementation). Still to measure: CPU inference latency and RAM use on the i5-12600K, extraction fidelity of the SLM against the `gpu-worker` model, and a calibrated `HINDSIGHT_API_SEMANTIC_LINK_MIN_SIMILARITY` for EmbeddingGemma 2 (default 0.7).
+- [x] **Hindsight Local Models on `vault` (Embedding & SLM):** Both run as llama.cpp sidecars on `agent-tools-node` (see the two items under Implementation). Measured on the i5-12600K with 6 threads: Gemma 4 E2B generates about 17 tokens/s, so retaining a short note takes 46–81 s in the background; recall needs no LLM and answers instantly. The embedding sidecar uses about 0.7 GB RAM. Reflect stays on the `gpu-worker`. Not pursued unless recall quality gives a reason: calibrating `HINDSIGHT_API_SEMANTIC_LINK_MIN_SIMILARITY` (default 0.7), a multilingual reranker, and pinning the VM to P-cores.
 - [x] **GLM-OCR VM Migration:** Ollama node deprecated — too slow for inference. GPU Worker now handles all OCR and tagging tasks via llama-swap.
 ### Implementation
 
@@ -79,13 +79,12 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 - [ ] **ComfyUI Deployment:** Deploy [ComfyUI](https://github.com/comfyanonymous/ComfyUI) on the `gpu-worker` for GPU-accelerated image generation workflows.
 - [x] **Cloud Backups:** Configure ZeroByte with Rclone for encrypted backups to Google Drive.
 - [x] **Local Backups:** Decided against Proxmox Backup Server. VMs are rebuilt from the repo; data is covered by ZeroByte and the NAS copies. See [backup.md](docs/backup.md#local-backups).
-- [ ] **Service Deployment:** Write Docker Compose files and deploy planned apps (Paperless-ngx, Frigate, NocoDB, etc.). See [services.md](docs/services.md).
+- [ ] **Pi-hole Deployment:** Deploy [Pi-hole](https://pi-hole.net/) to the `infra-stack`. See [services.md](docs/services.md).
 - [x] **Tududi Deployment:** Docker Compose definition drafted in `services-stack` (later dropped and removed).
 - [ ] **BamBuddy Deployment:** Write the Docker Compose definitions to deploy the [BamBuddy](https://bambuddy.cool/index.html) service to the `storage-stack` on `storage-node`.
 - [ ] **Pilot Deployment:** Deploy [Pilot](https://pilot.quantflow.studio/) (`ghcr.io/qf-studio/pilot`, gateway on `:9090`) to the `agent-tools-stack` on `agent-tools-node` as an autonomous ticket-to-PR agent. Spike outcome: GitHub issue polling (label `pilot`, no public ingress needed), Claude Pro subscription via `CLAUDE_CODE_OAUTH_TOKEN` from `claude setup-token`, state and repo checkouts bind-mounted on the VM, Caddy route behind Authelia, `/metrics` scraped by VictoriaMetrics. Open points: Pilot's intent classifier and epic decomposition expect an `ANTHROPIC_API_KEY`; there is no Gemini backend (only via `opencode` with a Gemini API key); target repo still to be chosen.
 - [x] **Host `google/embeddinggemma-2` for Hindsight:** `hindsight-embeddings` in the `agent-tools-stack` serves EmbeddingGemma 2 (Q8_0 GGUF, 768 dimensions) through llama.cpp's OpenAI-compatible `/v1/embeddings`, and both Hindsight instances use it via `HINDSIGHT_API_EMBEDDINGS_PROVIDER=openai` (port 8082). This replaced the built-in `bge-small-en-v1.5` (384 dimensions, English only); the memory store was started fresh, because Hindsight cannot change the dimension of stored memories.
 - [x] **Host Extraction SLM on `vault` for Hindsight:** `hindsight-llm` in the `agent-tools-stack` runs Gemma 4 E2B (Q4_K_M) on llama.cpp with 6 threads, CPU only. Hindsight sends retain and consolidation to it, so background memory work no longer needs the `gpu-worker`; reflect stays on the `gpu-worker`. The work instance uses it for all LLM calls (port 8081).
-- [ ] **Parakeet STT Verification & Hermes Telegram Integration:** Verify the Parakeet Speech-to-Text container (`ghcr.io/achetronic/parakeet`, port 8000:5092) on `agent-tools-node`, test audio transcription via its OpenAI Whisper-compatible `/v1/audio/transcriptions` API, validate ONNX CPU latency on `vault`'s i5-12600K, and connect it to the Telegram interface of Hermes (on `hermes-node` / `agent-node`) for voice message transcription.
 - [x] **ntfy Service Integrations:** Connect services to the self-hosted ntfy instance:
     - [x] ZeroByte backup notifications (configured via ZeroByte UI).
     - [x] Comin deployment notifications via `postDeploymentCommand` in `modules/comin.nix`.
@@ -98,7 +97,6 @@ For full hardware specs, networking, and service placement details, see [docs/ar
     - [ ] Home Assistant long-lived access token for entity telemetry.
     - [ ] Paperless-ngx API token for inbox count badges.
     - [ ] Grafana & SSO metrics via the Homepage REST parser.
-- [ ] **Scanner Service Deployment:** Deploy the HP ScanJet Pro 2600 f1 container stack (`scanner/`) on the secondary Proxmox node once online. See [scanner/README.md](scanner/README.md) for open checklist items.
 - [ ] **`vault` DMI ASPM:** The CPU package on `vault` idles at 2.3 W but never gets past package C3 (limit is C10, PCIe L1 is on everywhere, SATA, USB, chipset LTR and the iGPU driver are ruled out). Next time in the BIOS, check the DMI entries under Advanced → Platform Misc Configuration (DMI Link ASPM Control, DMI ASPM, DMI Gen3 ASPM) and set them to enabled / L1. Verify with `powertop` (Idle stats): the Pkg column should show time in C6 or deeper. Worth about 2 W at most.
 - [ ] **Grafana Dashboards:** Set up proper Grafana dashboards for monitoring, covering both Proxmox hosts (`phil`, `vault`) and all nodes. See [monitoring.md](docs/monitoring.md).
 
@@ -129,24 +127,30 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 #### Implementation
 
 - [x] **Migrate the `services-node` data disk:** Done on 2026-10-11. The 860 EVO is passed through whole with one ext4 partition at `/mnt/data`; `ZFS-Store` is destroyed. Staged on the SanDisk 512 GB SSD and verified by checksum in both directions; Paperless's sanity checker found no issues on all 508 documents. The filesystem UUID was kept, so `services-node/configuration.nix` is unchanged. See [proxmox-setup.md](docs/proxmox-setup.md#storage-configuration).
-    - [ ] Confirm the next ZeroByte run succeeds against the new disk.
+    - [x] The next ZeroByte run succeeded against the new disk.
     - [ ] Rollback copies: the SanDisk still holds one at `/mnt/staging` on `services-node`, and there is an archive on the MacBook (`~/homelab-backups/`). Remove both once the new disk has run for a while; the SanDisk then goes to `frigate-node`.
 - [ ] **iGPU passthrough spike:** Validate Iris Xe → VM on `phil` (OVMF, `intel_gpu_top`, VAAPI/QSV test) before building on it. Fallback: CT with `/dev/dri`. UHD 770 → `storage-node` on `vault` is done, see [proxmox-setup.md](docs/proxmox-setup.md#igpu-passthrough).
 - [x] **`vault` baseline:** `vault` is online with its Caddy route, OIDC login, metric server → VictoriaMetrics and ntfy webhook.
 - [x] **Proxmox Datacenter Manager:** Running as a VM on `phil` at `proxmox.home.stefancyliax.de`, with both hosts as remotes.
 - [x] **`vault` RAM:** Second 16 GB stick installed (32 → 48 GB).
-- [ ] **`storage-node`:** NixOS VM on `vault` with the 6 TB and 2 TB HDDs passed through by-id (btrfs), plus the 1 TB (XFS); add to the flake with Comin and Hawser; Samba/NFS shares.
+- [x] **`storage-node` VM:** NixOS VM on `vault`, in the flake with Comin and Hawser, with the UHD 770 passed through.
+- [ ] **`storage-node` disks and shares:** Pass the 6 TB and 2 TB HDDs (btrfs) and the 1 TB (XFS) through by-id, then set up the Samba/NFS shares.
 - [ ] **Data migration:** Inventory the existing data on the three HDDs and fix the shuffle order before any disk is reformatted.
 - [ ] **NAS backups:** Local restic copy of the important shares on the 2 TB disk plus offsite via ZeroByte/restic; media stays unprotected by design.
+- [ ] **Backups for services on `vault`:** ZeroByte runs on `services-node` on `phil` and only covers `/mnt/data` there, so the guests on `vault` are not backed up. Go through every guest (`agent-tools-node` with NocoDB, Open-WebUI, Hindsight and Garage; `storage-node`; `agent-node`; `hermes-node`; `runner-node`), decide which data is worth keeping, and set up a backup for it.
 - [ ] **HAOS backups:** Point Home Assistant's built-in backups at a NAS share so they are covered without PBS.
 - [x] **`agent-tools-node` / `agent-tools-stack`:** NixOS VM on `vault`; add to the flake with Comin and Hawser and a `dockhand-agent-tools.yml` workflow. Move Hindsight, Parakeet, Open-WebUI and NocoDB over from the `services-stack` including their volumes, then repoint their Caddy routes, Homepage entries and the Hindsight URLs the agents use.
 - [x] **`work-tools-node` / `work-tools-stack`:** NixOS VM on `phil` with a second Hindsight instance for work, with its own Caddy routes and a `dockhand-work-tools.yml` workflow.
 - [x] **Garage:** `services.garage` on `agent-tools-node` (single node, data on the passed-through SATA SSD, metadata on the VM disk, RPC secret via Agenix). Config is in `modules/garage.nix`.
 - [x] **Artifact hosting:** One Garage bucket (`artifacts`) in website mode behind a single Caddy route (`artifacts.home.stefancyliax.de` → Garage web endpoint, no Authelia). Each artifact is a path in the bucket, so pushing a file publishes it without touching Caddy or DNS. The S3 API is exposed at `s3.home.stefancyliax.de` for uploads, with one write key per machine (`agent-node`, `desktop`); the `agent-node` key comes from Agenix as `~/.aws/credentials`. Uploads go through the `publish-s3` agent skill, which uploads and prints the URL.
-- [ ] **`storage-stack` / Jellyfin:** New Compose stack on `storage-node` with QuickSync, a `dockhand-storage.yml` workflow, and Authelia via the SSO plugin.
+- [ ] **Jellyfin:** Runs in the `storage-stack` on `storage-node` at `jellyfin.home.stefancyliax.de`, with the UHD 770 render node mapped in and `/mnt/data/media` as the library.
+    - [ ] First-run wizard, and add `10.1.23.184` (Caddy) under Networking → Known proxies.
+    - [ ] Enable Intel QuickSync under Playback → Transcoding and confirm a transcode shows up in `intel_gpu_top`.
+    - [ ] Authelia via the SSO plugin: OIDC client in `infra-stack/authelia/configuration.yml` and the provider in the plugin settings.
+    - [ ] Point the library at the 6 TB disk once the HDDs are passed through.
 - [x] **NextExplorer move:** NextExplorer runs in the `storage-stack` with a `dockhand-storage.yml` workflow, and its Caddy route points at `storage-node`. No data moved: it only gave access to `/mnt/data` on `services-node`.
 - [x] **Remove dropped services:** Delete the commented-out Stirling PDF, Tududi and Paperless-AI blocks and their volumes from the `services-stack` compose files.
-- [ ] **Scanner service:** Move the HP ScanJet Pro 2600 f1 container from `services-node` to `storage-node` on `vault`, where the scanner physically stands: merge the `setup_scanner_raspberry_pi` branch (in progress), pass the scanner through by USB to the VM, map `/dev/bus/usb` in the Compose file, and mount the `paperless-consume` share from `services-node` as the output directory.
+- [ ] **Scanner service:** Bring the HP ScanJet Pro 2600 f1 container up on `storage-node` on `vault`, where the scanner physically stands: pass the scanner through by USB to the VM, configure the right USB port (map `/dev/bus/usb` in the Compose file), and mount the `paperless-consume` share from `services-node` as the output directory. See [scanner/README.md](scanner/README.md) for the checklist.
 - [ ] **`frigate-node` / `frigate-stack`:** NixOS VM on `phil` with Iris Xe and the 512 GB SanDisk SSD passed through (SMART checked on 2026-10-09: no errors, about 3% wear; detach it from `services-node` first) and a NIC on the IoT VLAN; ballooning disabled; OpenVINO detector; 1–2 cameras with motion/event-based retention sized to the SSD; Home Assistant integration; ntfy `homelab-security`; Authelia forward_auth.
 - [ ] **`agent-node` headless check:** Verify Obsidian Sync runs headless (official headless client) and how Antigravity is used without a desktop (remote SSH from the laptop or CLI).
 - [ ] **`agent-node`:** Headless NixOS VM on `vault` with Hermes, Claude Code, Antigravity, herdr, the Obsidian vault (Obsidian Sync) and systemd timers for the maintenance flows.

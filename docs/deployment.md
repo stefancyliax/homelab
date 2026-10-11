@@ -114,7 +114,7 @@ The application stacks are split across VMs to prevent monolithic failures:
 
 - **`infra-stack/`** → Infrastructure Node — foundational services (ZeroByte, Homepage, monitoring).
 - **`services-stack/`** → Services Node — user-facing applications (Paperless, Grimmory, etc.).
-- **`storage-stack/`** → Storage Node on `vault` — NextExplorer. 🔲 Planned: Jellyfin, BamBuddy, scanner service.
+- **`storage-stack/`** → Storage Node on `vault` — NextExplorer, Jellyfin. 🔲 Planned: BamBuddy, scanner service.
 - **`agent-tools-stack/`** → Agent Tools Node on `vault` — Hindsight with its embedding service (EmbeddingGemma 2) and extraction SLM (Gemma 4 E2B), Parakeet, Open-WebUI, NocoDB. 🔲 Planned: pilot.
 - **`work-tools-stack/`** → Work Tools Node on `phil` — Hindsight (work instance).
 - **`frigate-stack/`** → Frigate Node on `phil` — empty so far. 🔲 Planned: Frigate.

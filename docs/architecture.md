@@ -137,7 +137,7 @@ Dockhand is deployed natively via NixOS modules (`virtualisation.oci-containers`
 
 Hosts user-facing application workloads via Docker Compose, orchestrated by Dockhand through the [Hawser](https://github.com/nicotsx/hawser) agent. See [services.md](services.md) for the full list. Also hosts local Samba network shares (`paperless-consume` and `grimmory-bookdrop`) discoverable via WSDD.
 
-🔲 Planned: the scanner service moves to [`storage-node`](#storage-node-nixos-vm) (NextExplorer already has). The AI-supporting services (Open-WebUI, NocoDB, Parakeet, Hindsight) already run on [`agent-tools-node`](#agent-tools-node-nixos-vm). Paperless, ZeroByte and Grimmory stay.
+NextExplorer has moved to [`storage-node`](#storage-node-nixos-vm). The AI-supporting services (Open-WebUI, NocoDB, Parakeet, Hindsight) already run on [`agent-tools-node`](#agent-tools-node-nixos-vm). Paperless, ZeroByte and Grimmory stay.
 
 #### GitHub Runner (NixOS VM)
 
@@ -158,10 +158,10 @@ Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity sche
 | Service | Type |
 |---|---|
 | Samba / NFS shares | Native NixOS service |
-| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`), QuickSync via the passed-through UHD 770 |
+| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`), QuickSync via the passed-through UHD 770. Reads `/mnt/data/media`, which sits on the VM disk until the HDDs are passed through |
 | [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`), ✅ moved. Serves `/mnt/data`, which sits on the VM disk until the HDDs are passed through |
 | [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`storage-stack`) |
-| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`. Currently runs on `services-node` |
+| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`. 🔲 Planned, not running yet |
 
 Disk roles (no parity; important shares are backed up instead, media is re-acquirable). The 6 TB and 2 TB disks are passed through by-id to `storage-node`. Garage lives on `agent-tools-node` and has its own SSD there, so the 1 TB disk is plain scratch:
 
@@ -184,7 +184,7 @@ The services the AI agents and workflows rely on, kept apart from the general ap
 | Service | Type |
 |---|---|
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`), ✅ moved |
-| [Parakeet (STT)](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`), ✅ moved. Whisper-compatible STT API at `10.1.23.12:8000` for Hermes Telegram voice notes |
+| [Parakeet (STT)](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`), ✅ moved. Whisper-compatible STT API at `10.1.23.12:8000` for the agents |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`, `modules/garage.nix`). Data on the SATA SSD passed through from `vault` (XFS, `/mnt/garage`), metadata on the VM disk |

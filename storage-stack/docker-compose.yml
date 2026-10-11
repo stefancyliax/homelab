@@ -26,6 +26,25 @@ services:
       - OIDC_AUTO_CREATE_USERS=true
       - OIDC_ADMIN_GROUPS=admins
 
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    ports:
+      - "8096:8096"
+    # UHD 770 render node for QuickSync (see docs/proxmox-setup.md)
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    volumes:
+      - jellyfin_config:/config
+      - jellyfin_cache:/cache
+      # Sits on the VM disk until the HDDs are passed through
+      - /mnt/data/media:/media:ro
+    environment:
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.home.stefancyliax.de
+
 volumes:
   nextexplorer_config:
   nextexplorer_cache:
+  jellyfin_config:
+  jellyfin_cache:

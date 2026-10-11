@@ -9,6 +9,13 @@ services:
     restart: unless-stopped
     ports:
       - 8000:5092
+    healthcheck:
+      # The image ships without curl or wget
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/5092 && printf 'GET /health HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q '200 OK' <&3"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 1m
 
   nocodb:
     image: nocodb/nocodb:latest
@@ -16,8 +23,16 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
+    environment:
+      NC_PUBLIC_URL: "https://nocodb.home.stefancyliax.de"
     volumes:
       - nocodb_data:/usr/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/api/v1/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 1m
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main

@@ -29,8 +29,10 @@
     libva-utils     # vainfo
   ];
 
-  # Data root served by NextExplorer. Lives on the VM disk until the HDDs are passed through.
+  # Data root served by NextExplorer, with the media library Jellyfin reads.
+  # Lives on the VM disk until the HDDs are passed through.
   systemd.tmpfiles.rules = [
     "d /mnt/data 0755 stefan users -"
+    "d /mnt/data/media 0755 stefan users -"
   ];
 }

@@ -166,6 +166,12 @@
 		reverse_proxy 10.1.23.65:3001
 	}
 
+	# Jellyfin (own login; no forward_auth, the TV and mobile apps cannot pass it)
+	@jellyfin host jellyfin.home.stefancyliax.de
+	handle @jellyfin {
+		reverse_proxy 10.1.23.65:8096
+	}
+
 	# NocoDB (Protected by Authelia)
 	@nocodb host nocodb.home.stefancyliax.de
 	handle @nocodb {

@@ -14,15 +14,15 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | ✅ Functional |
 | Samba & WSDD | Native NixOS service (`services-node`) | ✅ Functional |
-| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🔲 Planned |
+| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🚧 Deployed |
 | [Frigate](https://frigate.video/) | Docker Compose (`frigate-stack`, `frigate-node` on `phil`) | 🔲 Planned |
 | NAS shares (Samba/NFS) | Native NixOS service (`storage-node`) | 🔲 Planned |
 | [Garage](https://garagehq.deuxfleurs.fr/) S3 | Native NixOS service (`agent-tools-node`) | ✅ Running |
 | Artifact hosting (Claude/Gemini) | Garage website bucket (`agent-tools-node`) + Caddy route | ✅ Running |
 | [Proxmox Datacenter Manager](https://pdm.proxmox.com/docs/) | Appliance VM (`phil`) | ✅ Running |
-| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`services-node`) | ✅ Running — 🔲 move to `storage-node` planned |
+| Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🔲 Planned |
 | ~~[n8n](https://n8n.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
-| [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
+| [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | ✅ Running |
 | ~~[Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF)~~ | Docker Compose (`services-stack`) | ❌ Dropped |
 | [Grimmory](https://github.com/grimmory-tools/grimmory) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
@@ -34,7 +34,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`, `storage-node` on `vault`) | 🚧 Deployed |
 | ~~[Ollama](https://ollama.com/)~~ | ~~Dedicated NixOS VM (`ollama-node`)~~ | ❌ Deprecated |
 | [llama-swap](https://github.com/mostlygeek/llama-swap) | Native NixOS service (`gpu-worker`) | ✅ Functional |
-| [Parakeet (STT)](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
+| [Parakeet (STT)](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | ✅ Running |
 | ~~[Kestra](https://kestra.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`, `work-tools-node` on `phil`) | 🚧 Deployed |
