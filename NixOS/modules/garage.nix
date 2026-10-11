@@ -24,9 +24,19 @@
   };
   users.groups.garage = { };
 
-  systemd.tmpfiles.rules = [
-    "d /mnt/garage/data 0750 garage garage -"
-  ];
+  # Not a tmpfiles rule: tmpfiles does not wait for the mount and would create
+  # the directory underneath it, on the VM disk
+  systemd.services.garage-data-dir = {
+    description = "Create the Garage data directory on the SSD";
+    requiredBy = [ "garage.service" ];
+    before = [ "garage.service" ];
+    unitConfig.RequiresMountsFor = [ "/mnt/garage" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.coreutils}/bin/install -d -o garage -g garage -m 0750 /mnt/garage/data";
+    };
+  };
 
   services.garage = {
     enable = true;
