@@ -53,11 +53,94 @@ services:
       - HINDSIGHT_API_LLM_BASE_URL=http://100.90.253.20:8080/v1
       - HINDSIGHT_API_LLM_API_KEY=sk-dummy-key
       - HINDSIGHT_API_LLM_MODEL=qwen3.6-35b
+      # Retain and consolidation run in the background, so they use the CPU model on this
+      # VM and keep working while the gpu-worker sleeps. Reflect stays on the gpu-worker.
+      - HINDSIGHT_API_RETAIN_LLM_BASE_URL=http://hindsight-llm:8080/v1
+      - HINDSIGHT_API_RETAIN_LLM_MODEL=gemma-4-e2b-it
+      - HINDSIGHT_API_RETAIN_LLM_MAX_CONCURRENT=1
+      - HINDSIGHT_API_RETAIN_LLM_TIMEOUT=600
+      - HINDSIGHT_API_RETAIN_MAX_COMPLETION_TOKENS=8192
+      - HINDSIGHT_API_CONSOLIDATION_LLM_BASE_URL=http://hindsight-llm:8080/v1
+      - HINDSIGHT_API_CONSOLIDATION_LLM_MODEL=gemma-4-e2b-it
+      - HINDSIGHT_API_CONSOLIDATION_LLM_MAX_CONCURRENT=1
+      - HINDSIGHT_API_CONSOLIDATION_LLM_TIMEOUT=600
+      # EmbeddingGemma 2 (768 dimensions). The prefixes are the task instructions the model
+      # was trained with; the model and dimension cannot change once memories are stored.
+      - HINDSIGHT_API_EMBEDDINGS_PROVIDER=openai
+      - HINDSIGHT_API_EMBEDDINGS_OPENAI_BASE_URL=http://hindsight-embeddings:8080/v1
+      - HINDSIGHT_API_EMBEDDINGS_OPENAI_API_KEY=sk-dummy-key
+      - HINDSIGHT_API_EMBEDDINGS_OPENAI_MODEL=embeddinggemma-2
+      - "HINDSIGHT_API_EMBEDDINGS_QUERY_PREFIX=task: search result | query: "
+      - "HINDSIGHT_API_EMBEDDINGS_PASSAGE_PREFIX=title: none | text: "
+      - HINDSIGHT_API_EMBEDDINGS_MAX_INPUT_TOKENS=2048
       - HINDSIGHT_CP_DATAPLANE_API_URL=https://hindsight-api.home.stefancyliax.de
     volumes:
       - hindsight_data:/home/hindsight/.pg0
+    depends_on:
+      hindsight-llm:
+        condition: service_healthy
+      hindsight-embeddings:
+        condition: service_healthy
+
+  # Extraction SLM for Hindsight, CPU only. Downloads the GGUF (~3.5 GB) on first start.
+  # Published so the work instance on work-tools-node can use it too.
+  hindsight-llm:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    container_name: hindsight-llm
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      LLAMA_ARG_HOST: 0.0.0.0
+      LLAMA_ARG_PORT: "8080"
+      LLAMA_ARG_HF_REPO: bartowski/google_gemma-4-E2B-it-GGUF
+      LLAMA_ARG_HF_FILE: google_gemma-4-E2B-it-Q4_K_M.gguf
+      LLAMA_ARG_ALIAS: gemma-4-e2b-it
+      LLAMA_ARG_CTX_SIZE: "16384"
+      LLAMA_ARG_N_PARALLEL: "1"
+      LLAMA_ARG_THREADS: "6"
+    volumes:
+      - llama_models:/root/.cache/huggingface
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      # Covers the model download on first start
+      start_period: 30m
+
+  # EmbeddingGemma 2 for Hindsight, OpenAI-compatible /v1/embeddings.
+  # Published so the work instance on work-tools-node can use it too.
+  hindsight-embeddings:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    container_name: hindsight-embeddings
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    environment:
+      LLAMA_ARG_HOST: 0.0.0.0
+      LLAMA_ARG_PORT: "8080"
+      LLAMA_ARG_HF_REPO: unsloth/embeddinggemma-2-GGUF:Q8_0
+      LLAMA_ARG_ALIAS: embeddinggemma-2
+      LLAMA_ARG_EMBEDDINGS: "true"
+      LLAMA_ARG_POOLING: mean
+      # Each input has to fit in one physical batch, so the three sizes move together
+      LLAMA_ARG_CTX_SIZE: "2048"
+      LLAMA_ARG_BATCH: "2048"
+      LLAMA_ARG_UBATCH: "2048"
+      LLAMA_ARG_N_PARALLEL: "1"
+      LLAMA_ARG_THREADS: "2"
+    volumes:
+      - llama_models:/root/.cache/huggingface
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10m
 
 volumes:
   nocodb_data:
   open-webui_data:
   hindsight_data:
+  llama_models:

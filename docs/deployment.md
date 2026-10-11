@@ -115,7 +115,7 @@ The application stacks are split across VMs to prevent monolithic failures:
 - **`infra-stack/`** → Infrastructure Node — foundational services (ZeroByte, Homepage, monitoring).
 - **`services-stack/`** → Services Node — user-facing applications (Paperless, Grimmory, etc.).
 - **`storage-stack/`** → Storage Node on `vault` — NextExplorer. 🔲 Planned: Jellyfin, BamBuddy, scanner service.
-- **`agent-tools-stack/`** → Agent Tools Node on `vault` — Hindsight, Parakeet, Open-WebUI, NocoDB. 🔲 Planned: pilot, embedding service (EmbeddingGemma 2), extraction SLM (Qwen2.5-3B).
+- **`agent-tools-stack/`** → Agent Tools Node on `vault` — Hindsight with its embedding service (EmbeddingGemma 2) and extraction SLM (Gemma 4 E2B), Parakeet, Open-WebUI, NocoDB. 🔲 Planned: pilot.
 - **`work-tools-stack/`** → Work Tools Node on `phil` — Hindsight (work instance).
 - **`frigate-stack/`** → Frigate Node on `phil` — empty so far. 🔲 Planned: Frigate.
 
@@ -319,7 +319,7 @@ Mark the service as enrolled in the table below.
 | **Services** | | | | |
 | Paperless-ngx | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Via `allauth.socialaccount.providers.openid_connect`, `client_secret_basic`, no PKCE |
 | Paperless-GPT | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
-| ZeroByte | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
+| ZeroByte | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Provider registered in the UI (Settings → Organization → Single Sign-On), provider ID `authelia`. Needs `BASE_URL` on HTTPS and Authelia in `TRUSTED_ORIGINS`; `client_secret_basic`, PKCE |
 | Open-WebUI | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
 | NocoDB | ✅ Native | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth (OIDC Enterprise-only) |
 | Grimmory | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |

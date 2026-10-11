@@ -17,29 +17,28 @@ PDM runs as a VM on `phil` with both hosts added as remotes, reachable at `https
 
 ### `phil`
 
-The host has two SSDs, each with an independent role and no redundancy. Proxmox storages (`/etc/pve/storage.cfg`):
+The host has three SSDs, each with an independent role and no redundancy. Proxmox storages (`/etc/pve/storage.cfg`) live on the boot disk only:
 
 | Storage | Type | Backing | Content |
 |---|---|---|---|
 | `local` | Directory (`/var/lib/vz`) | Boot disk, root filesystem | ISOs, CT templates, import images |
 | `local-lvm` | LVM-thin (`pve/data`) | Boot disk, remaining space | VM disks, CT root disks |
-| `ZFS-Store` | ZFS pool, single disk | Samsung 860 EVO M.2 500 GB (SATA) | VM disks, CT root disks — holds the data disk of `services-node` |
 
-- `ZFS-Store` has no redundancy: ZFS detects corruption there but cannot repair it.
+- No ZFS on this host: the former `ZFS-Store` pool was destroyed on 2026-10-11, which also frees the memory ZFS used for caching.
 - No storage has `backup` content enabled, in line with the decision against VM image backups.
 - BTRFS is not used for Proxmox storage: its integration is still a technology preview, while LVM-thin and ZFS are fully supported.
 
-`services-node` gets its application data disk (Paperless etc.) as a virtual disk on `ZFS-Store`, formatted ext4 inside the VM and mounted at `/mnt/data`. The SSD itself is not passed through.
-
-🔲 Planned layout: no ZFS, data disks passed through whole.
+Data disks are passed through whole, by-id, to the VM that uses them:
 
 | Disk | Target |
 |---|---|
 | Boot disk | `local` + `local-lvm` (all VM and CT OS disks) |
-| Samsung 860 EVO M.2 500 GB | `services-node`, ext4 at `/mnt/data` |
-| Samsung 250 GB SSD (not yet installed) | `frigate-node`, recordings |
+| Samsung 860 EVO M.2 500 GB | `services-node` (`scsi1`), one ext4 partition at `/mnt/data` |
+| SanDisk Ultra 3D 512 GB | 🔲 `frigate-node`, recordings. Until then attached to `services-node` (`scsi2`) with the rollback copy of `/mnt/data` from the migration |
 
-The conversion of the 860 EVO from ZFS to ext4 is tracked as a task in the [README](../README.md).
+`/mnt/data` is mounted by filesystem UUID (`fileSystems."/mnt/data"` in `nodes/services-node/configuration.nix`). When the 860 EVO replaced the old virtual disk, the new filesystem was created with the same UUID (`mkfs.ext4 -U`), so the NixOS config did not change.
+
+Passed-through disks cannot be snapshotted by Proxmox; a VM with one attached only snapshots if that disk is excluded.
 
 ### `vault`
 
@@ -54,6 +53,14 @@ The conversion of the 860 EVO from ZFS to ext4 is tracked as a task in the [READ
 Proxmox is installed with ext4/LVM; the 100 GB root (and with it `local`) is set through the installer's `maxroot` option, and `local-lvm` takes the rest.
 
 The disks are passed through individually (`/dev/disk/by-id/...`), not via the SATA controller, so they can go to different VMs: the HDDs to `storage-node`, the SATA SSD to `agent-tools-node`.
+
+Passing a disk through is done by hand on the host; the guest then mounts it by filesystem label, so its NixOS config does not depend on the disk's ID. For the Garage SSD:
+
+```bash
+ls -l /dev/disk/by-id/ | grep -v part                                              # on vault: find the disk
+qm set <vmid> --scsi1 /dev/disk/by-id/ata-<model>_<serial>,discard=on,ssd=1,backup=0
+nix shell nixpkgs#xfsprogs -c sudo mkfs.xfs -L garage-data /dev/sdX                # in the guest, once; wipes the disk
+```
 
 ## iGPU Passthrough
 

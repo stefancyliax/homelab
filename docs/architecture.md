@@ -11,7 +11,7 @@ This document describes the physical and virtual infrastructure of the homelab, 
 | CPU | Intel Core i5-1235U |
 | iGPU | Iris Xe (80 EU) — 🔲 planned passthrough to `frigate-node` |
 | RAM | 32 GB |
-| Storage | Boot SSD (`local`, `local-lvm`) and a 500 GB Samsung 860 EVO (`ZFS-Store`). 🔲 Planned: a 250 GB Samsung SSD for Frigate. See [proxmox-setup.md](proxmox-setup.md#storage-configuration) |
+| Storage | Boot SSD (`local`, `local-lvm`), a 500 GB Samsung 860 EVO passed through to `services-node`, and a 512 GB SanDisk Ultra 3D (🔲 for Frigate). See [proxmox-setup.md](proxmox-setup.md#storage-configuration) |
 
 Runs the control plane and the light application VMs. See [proxmox-setup.md](proxmox-setup.md) for the hypervisor configuration details.
 
@@ -21,7 +21,7 @@ Runs the control plane and the light application VMs. See [proxmox-setup.md](pro
 |---|---|
 | CPU | Intel Core i5-12600K |
 | iGPU | UHD 770 (32 EU) — ✅ passed through to `storage-node` for Jellyfin |
-| RAM | 32 GB — 🔲 planned: 48 GB (one more 16 GB stick) |
+| RAM | 48 GB (32 GB + 16 GB) |
 | Storage | NVMe SSD (Proxmox and VM disks), SATA SSD (Garage data, passed through to `agent-tools-node`); HDDs: 6 TB, 2 TB, 1 TB (9 TB total, carrying some existing data) |
 
 The NAS box: a standalone Proxmox host that holds the HDDs and runs the storage, media and compute-heavy VMs. The NAS shares themselves are 🔲 planned as the [`storage-node`](#storage-node-nixos-vm) VM. Not clustered with `phil` — see [proxmox-setup.md](proxmox-setup.md#multi-host-management).
@@ -102,7 +102,7 @@ Guests are spread over two standalone Proxmox hosts. Each VM is isolated to sepa
 - **`phil`** — control plane and light apps: ingress, SSO, monitoring, Home Assistant, the `services-stack`. Also Frigate, because its iGPU is the stronger one for OpenVINO detection and it sits next to HAOS, and `work-tools-node`, which keeps the work tooling apart from the private one on `vault`.
 - **`vault`** — anything that needs the HDDs, CPU for builds, or a device physically attached to it: NAS, Jellyfin, the scanner service, the GitHub runner, `agent-node`, and `agent-tools-node` with the services the agents rely on (Hindsight, Parakeet, Garage and others).
 
-`phil` has 32 GB of RAM. `vault` has 32 GB and gets a second stick (🔲 48 GB); at least 16 GB of that stay unallocated, because `vault` is also the box for trying things out.
+`phil` has 32 GB of RAM. `vault` has 48 GB; at least 16 GB of that stay unallocated, because `vault` is also the box for trying things out.
 
 Each iGPU is passed through to exactly one VM, so Frigate (`phil`) and Jellyfin (`vault`) never compete for it.
 
@@ -190,8 +190,28 @@ The services the AI agents and workflows rely on, kept apart from the general ap
 | [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`, `modules/garage.nix`). Data on the SATA SSD passed through from `vault` (XFS, `/mnt/garage`), metadata on the VM disk |
 | Artifact hosting (Claude/Gemini HTML artifacts) | One Garage website bucket behind one Caddy route on `infra-node`; each artifact is a path, published by an S3 upload. No authentication |
 | pilot | To be defined |
-| Embedding Service (`google/embeddinggemma-2`) | Docker Compose (`agent-tools-stack`), 🔲 planned sidecar for Hindsight |
-| Extraction SLM (`Qwen2.5-3B-Instruct`) | Docker Compose (`agent-tools-stack`), 🔲 planned CPU-based extraction LLM for Hindsight |
+| Embedding Service (`google/embeddinggemma-2`) | Docker Compose (`agent-tools-stack`), `hindsight-embeddings`: llama.cpp sidecar at `10.1.23.12:8082`, used by both Hindsight instances |
+| Extraction SLM (Gemma 4 E2B) | Docker Compose (`agent-tools-stack`), `hindsight-llm`: llama.cpp sidecar on CPU at `10.1.23.12:8081`. Serves retain and consolidation for the private Hindsight and all LLM calls of the work instance |
+
+**Garage** is a single node without redundancy and without backup (dev data). The service, its disk and its RPC secret are declared in `modules/garage.nix`; layout, buckets and keys live in Garage's own metadata and are set by hand on the node:
+
+| | |
+|---|---|
+| S3 API | `https://s3.home.stefancyliax.de` → port 3900, region `garage`, path-style |
+| Website endpoint | `https://artifacts.home.stefancyliax.de` → port 3902; the host name selects the bucket (`artifacts`) |
+| Bucket | `artifacts`, website access on. A file uploaded as `demo/index.html` is served at `https://artifacts.home.stefancyliax.de/demo/` |
+| Keys | One read/write key per machine: `agent-node`, `desktop` |
+
+```bash
+sudo garage status                                            # node ID and health
+sudo garage layout assign -z dc1 -c 230G <node-id>            # once, after the first start
+sudo garage layout apply --version 1                          # the number is the layout revision: current + 1
+sudo garage bucket create artifacts && sudo garage bucket website --allow artifacts
+sudo garage key create <machine> && sudo garage bucket allow --read --write artifacts --key <machine>
+sudo garage key info <machine> --show-secret                  # show a key's secret again
+```
+
+The `garage` package follows nixpkgs, so minor updates arrive with a `flake.lock` bump. A new major version is a deliberate change of `pkgs.garage_2` in the module and needs the upstream migration notes.
 
 #### Work Tools Node (`work-tools-node`, NixOS VM)
 
@@ -201,7 +221,7 @@ Tooling for work, on its own VM and its own host so that it shares neither data 
 
 | Service | Type |
 |---|---|
-| [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`). UI at `hindsight-work.home.stefancyliax.de` (Authelia), API at `hindsight-work-api.home.stefancyliax.de`. Uses a hosted LLM provider (still to be chosen), configured through the Dockhand stack environment; agents reach the API directly at `10.1.23.47:8888` |
+| [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`). UI at `hindsight-work.home.stefancyliax.de` (Authelia), API at `hindsight-work-api.home.stefancyliax.de`. Uses the embedding service and the extraction SLM on `agent-tools-node` (`vault`), so it only works while `vault` is up; agents reach the API directly at `10.1.23.47:8888` |
 
 #### Frigate Node (NixOS VM)
 
@@ -210,7 +230,7 @@ Tooling for work, on its own VM and its own host so that it shares neither data 
 Runs [Frigate](https://frigate.video/) as its own Docker Compose stack (`frigate-stack`) via Hawser.
 
 - **iGPU:** Iris Xe passed through for hardware decoding and OpenVINO detection.
-- **Storage:** dedicated 250 GB Samsung SSD passed through for recordings and the database, so NVR writes don't touch the other VMs' disks.
+- **Storage:** dedicated 512 GB SanDisk Ultra 3D passed through for recordings and the database, so NVR writes don't touch the other VMs' disks. It is already installed in `phil`.
 - **Network:** second NIC on the IoT VLAN to reach the cameras, like HAOS.
 - **Scope:** 1–2 cameras. Retention is motion/event-based with only a short continuous window, since every 1 Mbit/s of camera bitrate recorded around the clock costs about 11 GB per day.
 
@@ -230,6 +250,7 @@ Home of the AI agents and the knowledge base; supersedes `hermes-node`. Headless
 | herdr | Terminal workspace for running the agents |
 | Obsidian vault | Kept current via Obsidian Sync with a headless client (replaces the Syncthing copy on `hermes-node`) |
 | Automatic maintenance flows | Scheduled agent runs, declared as systemd timers |
+| Artifact publishing | ✅ Garage write key from Agenix, linked as `~/.aws/credentials` (profile `garage`); the agents upload with the `publish-s3` skill. Other AWS profiles on this node have to go into the same secret |
 
 Antigravity and Obsidian Sync are GUI-first; their headless use is not yet verified.
 

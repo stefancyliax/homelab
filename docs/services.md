@@ -39,8 +39,8 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`, `work-tools-node` on `phil`) | 🚧 Deployed |
 | pilot | To be defined (`agent-tools-node`) | 🔲 Planned |
-| Embedding Service (`google/embeddinggemma-2`) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🔲 Planned |
-| Extraction SLM (`Qwen2.5-3B-Instruct`) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🔲 Planned |
+| Embedding Service (`google/embeddinggemma-2`) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
+| Extraction SLM (Gemma 4 E2B) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed — 🔲 move to `agent-node` planned |
 | [nvtop](https://github.com/Syllo/nvtop) | Native NixOS package (`gpu-worker`) | ✅ Deployed |
 

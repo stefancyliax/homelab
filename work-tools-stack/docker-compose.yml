@@ -13,10 +13,25 @@ services:
       - "9999:9999"
     environment:
       - HINDSIGHT_API_WORKER_ID=hindsight-work
-      # Hosted LLM provider, set in the Dockhand stack environment
-      - HINDSIGHT_API_LLM_PROVIDER=${HINDSIGHT_LLM_PROVIDER}
-      - HINDSIGHT_API_LLM_API_KEY=${HINDSIGHT_LLM_API_KEY}
-      - HINDSIGHT_API_LLM_MODEL=${HINDSIGHT_LLM_MODEL}
+      # LLM and embeddings come from the llama.cpp sidecars in the agent-tools-stack on
+      # agent-tools-node (vault). The LLM is a small CPU model serving one request at a time.
+      - HINDSIGHT_API_LLM_PROVIDER=openai
+      - HINDSIGHT_API_LLM_BASE_URL=http://10.1.23.12:8081/v1
+      - HINDSIGHT_API_LLM_API_KEY=sk-dummy-key
+      - HINDSIGHT_API_LLM_MODEL=gemma-4-e2b-it
+      - HINDSIGHT_API_LLM_MAX_CONCURRENT=1
+      - HINDSIGHT_API_LLM_TIMEOUT=600
+      - HINDSIGHT_API_REFLECT_LLM_TIMEOUT=600
+      - HINDSIGHT_API_RETAIN_MAX_COMPLETION_TOKENS=8192
+      # EmbeddingGemma 2 (768 dimensions). The prefixes are the task instructions the model
+      # was trained with; the model and dimension cannot change once memories are stored.
+      - HINDSIGHT_API_EMBEDDINGS_PROVIDER=openai
+      - HINDSIGHT_API_EMBEDDINGS_OPENAI_BASE_URL=http://10.1.23.12:8082/v1
+      - HINDSIGHT_API_EMBEDDINGS_OPENAI_API_KEY=sk-dummy-key
+      - HINDSIGHT_API_EMBEDDINGS_OPENAI_MODEL=embeddinggemma-2
+      - "HINDSIGHT_API_EMBEDDINGS_QUERY_PREFIX=task: search result | query: "
+      - "HINDSIGHT_API_EMBEDDINGS_PASSAGE_PREFIX=title: none | text: "
+      - HINDSIGHT_API_EMBEDDINGS_MAX_INPUT_TOKENS=2048
       - HINDSIGHT_CP_DATAPLANE_API_URL=https://hindsight-work-api.home.stefancyliax.de
     volumes:
       - hindsight_data:/home/hindsight/.pg0
