@@ -22,7 +22,7 @@ Runs the control plane and the light application VMs. See [proxmox-setup.md](pro
 | CPU | Intel Core i5-12600K |
 | iGPU | UHD 770 (32 EU) — ✅ passed through to `storage-node` for Jellyfin |
 | RAM | 32 GB — 🔲 planned: 48 GB (one more 16 GB stick) |
-| Storage | NVMe SSD (Proxmox and VM disks), SATA SSD (unassigned for now); HDDs: 6 TB, 2 TB, 1 TB (9 TB total, carrying some existing data) |
+| Storage | NVMe SSD (Proxmox and VM disks), SATA SSD (🔲 Garage data, passed through to `agent-tools-node`); HDDs: 6 TB, 2 TB, 1 TB (9 TB total, carrying some existing data) |
 
 The NAS box: a standalone Proxmox host that holds the HDDs and runs the storage, media and compute-heavy VMs. The NAS shares themselves are 🔲 planned as the [`storage-node`](#storage-node-nixos-vm) VM. Not clustered with `phil` — see [proxmox-setup.md](proxmox-setup.md#multi-host-management).
 
@@ -163,15 +163,15 @@ Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity sche
 | [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`storage-stack`) |
 | Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`. Currently runs on `services-node` |
 
-Disk roles (no parity; important shares are backed up instead, media is re-acquirable). The 6 TB and 2 TB disks are passed through by-id to `storage-node`. The 1 TB disk was meant for Garage, which now lives on `agent-tools-node`; where its data goes is still open:
+Disk roles (no parity; important shares are backed up instead, media is re-acquirable). The 6 TB and 2 TB disks are passed through by-id to `storage-node`. Garage lives on `agent-tools-node` and has its own SSD there, so the 1 TB disk is plain scratch:
 
 | Disk | Role | Filesystem |
 |---|---|---|
 | 6 TB | Bulk storage: media and general shares | btrfs |
-| 1 TB | Scratch. Garage data only if the disk follows Garage to `agent-tools-node` (open) | XFS |
+| 1 TB | Scratch | XFS |
 | 2 TB | Local backup copy of the important shares | btrfs |
 
-btrfs is used where there is no second copy on the same disk set: its checksums reveal which file went bad so it can be restored. XFS is what Garage recommends for its data directory, since Garage checksums its own data.
+btrfs is used where there is no second copy on the same disk set: its checksums reveal which file went bad so it can be restored. XFS is what Garage recommends for its data directory, since Garage checksums its own data; the Garage SSD on `agent-tools-node` uses it too.
 
 Storage and Jellyfin share one VM because Jellyfin needs both the disks and the iGPU — this avoids NFS/virtiofs hops between VMs.
 
@@ -187,7 +187,7 @@ The services the AI agents and workflows rely on, kept apart from the general ap
 | [Parakeet (STT)](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`), ✅ moved. Whisper-compatible STT API at `10.1.23.12:8000` for Hermes Telegram voice notes |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`), ✅ moved |
-| [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`). Data location is open: the 1 TB HDD passed through to this VM, or the VM disk on the NVMe |
+| [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`, `modules/garage.nix`). Data on the SATA SSD passed through from `vault` (XFS, `/mnt/garage`), metadata on the VM disk |
 | Artifact hosting (Claude/Gemini HTML artifacts) | One Garage website bucket behind one Caddy route on `infra-node`; each artifact is a path, published by an S3 upload. No authentication |
 | pilot | To be defined |
 | Embedding Service (`google/embeddinggemma-2`) | Docker Compose (`agent-tools-stack`), 🔲 planned sidecar for Hindsight |

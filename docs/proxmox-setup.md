@@ -46,14 +46,14 @@ The conversion of the 860 EVO from ZFS to ext4 is tracked as a task in the [READ
 | Drive | Role |
 |---|---|
 | NVMe SSD | Proxmox OS, `local` (100 GB) and `local-lvm` (~400 GB, all guest disks) |
-| SATA SSD | Unassigned |
+| SATA SSD | 🔲 Planned: passed through by-id to `agent-tools-node` (Garage data), XFS |
 | 6 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (bulk/media), btrfs |
-| 1 TB HDD | 🔲 Planned: scratch, XFS. Open whether it goes to `storage-node` or follows Garage to `agent-tools-node` |
+| 1 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (scratch), XFS |
 | 2 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (local backup copy of important shares), btrfs |
 
 Proxmox is installed with ext4/LVM; the 100 GB root (and with it `local`) is set through the installer's `maxroot` option, and `local-lvm` takes the rest.
 
-The HDDs are passed through individually (`/dev/disk/by-id/...`), not via the SATA controller, which keeps the SATA SSD on that controller available to the host.
+The disks are passed through individually (`/dev/disk/by-id/...`), not via the SATA controller, so they can go to different VMs: the HDDs to `storage-node`, the SATA SSD to `agent-tools-node`.
 
 ## iGPU Passthrough
 

@@ -102,6 +102,7 @@
         modules = baseModules ++ [
           ./nodes/agent-tools-node/configuration.nix
           ./modules/hawser.nix
+          ./modules/garage.nix
         ];
       };
 

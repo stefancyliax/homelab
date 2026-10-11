@@ -111,12 +111,12 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **Frigate on `phil`:** Uses the stronger Iris Xe iGPU (80 EU vs. 32 EU on `vault`) and a dedicated 250 GB Samsung SSD.
 - [x] **Garage scope:** Dev use only, ~100 GB, no redundancy needed.
 - [x] **No cluster:** `phil` and `vault` are standalone and managed through Proxmox Datacenter Manager, which runs as a VM on `phil` (a two-node cluster needs a QDevice for quorum).
-- [x] **HDD layout:** No parity. 6 TB bulk/media, 1 TB scratch (and Garage data, if the disk follows Garage), 2 TB local backup copy of important shares.
+- [x] **HDD layout:** No parity. 6 TB bulk/media, 1 TB scratch, 2 TB local backup copy of important shares.
 - [x] **No PBS:** No Proxmox Backup Server and no VM image backups.
 - [x] **`agent-node`:** Supersedes `hermes-node`; headless with herdr. Planned as `chiefofstaff-node` before the rename.
 - [x] **Artifact hosting:** Garage website bucket with one path per artifact. No Authelia in front; sharing the `home.stefancyliax.de` parent domain with the other services is accepted.
 - [x] **`services-node` data disk:** Replace the virtual disk on `ZFS-Store` with an SSD passed through whole (ext4) and retire the ZFS pool on `phil`. Leaner (no ZFS cache on a 32 GB host) and consistent with the Frigate SSD and the `vault` HDDs; costs Proxmox-side snapshots of that disk.
-- [x] **`vault` disks:** Proxmox on the NVMe SSD only for now (`local` 100 GB, `local-lvm` ~400 GB); the SATA SSD stays unassigned. HDD filesystems: btrfs on the 6 TB and 2 TB, XFS on the 1 TB (Garage's recommended filesystem for its data directory).
+- [x] **`vault` disks:** Proxmox on the NVMe SSD only for now (`local` 100 GB, `local-lvm` ~400 GB); the SATA SSD goes to `agent-tools-node` for Garage. HDD filesystems: btrfs on the 6 TB and 2 TB, XFS on the 1 TB (Garage's recommended filesystem for its data directory).
 - [x] **Frigate VM:** Dedicated `frigate-node` VM. Not a CT: Frigate does not officially support LXC, and nothing else on `phil` needs to share the iGPU.
 - [x] **GitHub runner exposure:** `nixos-check.yml` runs on `pull_request` on the self-hosted runner. Covered: the repo requires approval for all outside contributors before workflows run.
 - [ ] **NAS share layout:** Define which shares `storage-node` offers and which count as important for backup (ties in with the Volume Layout Design item above).
@@ -125,7 +125,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **Dropped services:** ESPHome as a standalone container, Stirling PDF, Tududi and Paperless-AI.
 - [x] **`vault` RAM reserve:** `vault` goes from 32 GB to 48 GB and keeps at least 16 GB unallocated for experiments.
 - [ ] **VM sizing:** Allocate RAM and CPU per guest. `phil` runs fine at about 26 GB allocated. First draft for `vault` (30 GB of 48 GB): `storage-node` 6 GB (pinned by the passthrough), `runner-node` 6 GB, `agent-node` 6 GB, `agent-tools-node` 10 GB, host 2 GB. Estimates, to be checked against real use.
-- [ ] **Garage data disk:** Garage moved from `storage-node` to `agent-tools-node`. Decide whether the 1 TB HDD is passed through to `agent-tools-node` instead, or Garage's ~100 GB live on the VM disk on the NVMe.
+- [x] **Garage data disk:** Garage moved from `storage-node` to `agent-tools-node` and gets the SATA SSD in `vault`, passed through whole (XFS, mounted by label `garage-data` at `/mnt/garage`). The 1 TB HDD stays with `storage-node` as scratch.
 #### Implementation
 
 - [ ] **⚠️ Migrate the `services-node` data disk (important data):** `/mnt/data` holds the Paperless documents and the Grimmory books. Convert the 860 EVO from the `ZFS-Store` pool to a whole-disk ext4 passthrough, using a spare SanDisk Ultra 500 GB SSD as staging copy so there is always at least one verified local copy besides the cloud backup:
@@ -139,13 +139,13 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **`vault` baseline:** `vault` is online with its Caddy route, OIDC login, metric server → VictoriaMetrics and ntfy webhook.
 - [x] **Proxmox Datacenter Manager:** Running as a VM on `phil` at `proxmox.home.stefancyliax.de`, with both hosts as remotes.
 - [ ] **`vault` RAM:** Install the second 16 GB stick (32 → 48 GB).
-- [ ] **`storage-node`:** NixOS VM on `vault` with the 6 TB and 2 TB HDDs passed through by-id (btrfs), plus the 1 TB (XFS) unless it goes to `agent-tools-node`; add to the flake with Comin and Hawser; Samba/NFS shares.
+- [ ] **`storage-node`:** NixOS VM on `vault` with the 6 TB and 2 TB HDDs passed through by-id (btrfs), plus the 1 TB (XFS); add to the flake with Comin and Hawser; Samba/NFS shares.
 - [ ] **Data migration:** Inventory the existing data on the three HDDs and fix the shuffle order before any disk is reformatted.
 - [ ] **NAS backups:** Local restic copy of the important shares on the 2 TB disk plus offsite via ZeroByte/restic; media stays unprotected by design.
 - [ ] **HAOS backups:** Point Home Assistant's built-in backups at a NAS share so they are covered without PBS.
 - [x] **`agent-tools-node` / `agent-tools-stack`:** NixOS VM on `vault`; add to the flake with Comin and Hawser and a `dockhand-agent-tools.yml` workflow. Move Hindsight, Parakeet, Open-WebUI and NocoDB over from the `services-stack` including their volumes, then repoint their Caddy routes, Homepage entries and the Hindsight URLs the agents use.
 - [x] **`work-tools-node` / `work-tools-stack`:** NixOS VM on `phil` with a second Hindsight instance for work, with its own Caddy routes and a `dockhand-work-tools.yml` workflow.
-- [ ] **Garage:** `services.garage` on `agent-tools-node` (single node, data per the Garage data disk decision, metadata on the VM disk, secrets via Agenix).
+- [ ] **Garage:** `services.garage` on `agent-tools-node` (single node, data on the passed-through SATA SSD, metadata on the VM disk, RPC secret via Agenix). Config is in `modules/garage.nix`; open: pass the SSD through, format it, create the secret, apply the layout.
 - [ ] **Artifact hosting:** One Garage bucket (`artifacts`) in website mode behind a single Caddy route (`artifacts.home.stefancyliax.de` → Garage web endpoint, no Authelia). Each artifact is a path in the bucket, so pushing a file publishes it without touching Caddy or DNS. Also expose the S3 API (`s3.home.stefancyliax.de`) for uploads, create one write key per machine (Agenix on `agent-node`), and add a small `publish-artifact` helper that uploads and prints the URL.
 - [ ] **`storage-stack` / Jellyfin:** New Compose stack on `storage-node` with QuickSync, a `dockhand-storage.yml` workflow, and Authelia via the SSO plugin.
 - [x] **NextExplorer move:** NextExplorer runs in the `storage-stack` with a `dockhand-storage.yml` workflow, and its Caddy route points at `storage-node`. No data moved: it only gave access to `/mnt/data` on `services-node`.

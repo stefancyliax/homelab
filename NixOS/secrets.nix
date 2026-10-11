@@ -25,6 +25,7 @@ in
   # How this works: The hawser token can be decrypted by Stefan and (eventually) the nodes that run Hawser.
   "secrets/hawser-token.age".publicKeys = users ++ systems;
   "secrets/rclone-conf.age".publicKeys = users ++ [ services-node ];
+  "secrets/garage-rpc-secret.age".publicKeys = users ++ [ agent-tools-node ];
   
   # Comin deploy key, readable by the user and all systems that might run Comin
   "secrets/github-pat.age".publicKeys = users ++ systems ++ [ runner-node agent-node ];
