@@ -44,15 +44,15 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 | Proxmox Host Hardware | VictoriaMetrics | CPU usage next to temperatures and fan speed for `vault` and `phil` (`proxmox_hardware.json`) |
 | Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |
 
-### Loki & Promtail
+### Loki & Alloy
 
 **Role:** Centralized Log Aggregation.
 
-Loki provides log storage and indexing (similar to Prometheus/VictoriaMetrics but for logs). Promtail runs on every node as an agent to collect and forward logs to Loki.
+Loki provides log storage and indexing (similar to Prometheus/VictoriaMetrics but for logs). Grafana Alloy runs on every node as an agent (`services.alloy` in `NixOS/common.nix`) to collect and forward logs to Loki. It replaced Promtail, which was removed in nixos-26.05.
 
 **Sources:**
-- **systemd-journal**: Captures all host-level logs from NixOS services (SSH, Comin, Node Exporter, Hermes, etc.).
-- **Docker**: Captures JSON logs from all running containers.
+- **systemd-journal** (`job="systemd-journal"`, labels `host`, `unit`, `level`): Captures all host-level logs from NixOS services (SSH, Comin, Node Exporter, Hermes, etc.).
+- **Docker** (`job="docker"`, labels `host`, `container`): Captures logs from all running containers via the Docker socket.
 
 Logs are retained for 14 days by default. The Hermes agent programmatically queries the Loki HTTP API at `http://10.1.23.184:3100` to access cluster logs without requiring SSH.
 

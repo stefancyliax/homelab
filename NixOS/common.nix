@@ -13,7 +13,6 @@
   # Enable Docker daemon
   virtualisation.docker = {
     enable = true;
-    package = pkgs.docker_29; # nixos-25.11 defaults to docker_28, which is marked insecure
     autoPrune.enable = true;
     daemon.settings = {
       metrics-addr = "0.0.0.0:9323";
@@ -30,60 +29,66 @@
     port = 9100;
   };
 
-  # Enable Promtail for Log Shipping
-  services.promtail = {
-    enable = true;
-    configuration = {
-      server = {
-        http_listen_port = 9080;
-        grpc_listen_port = 0;
-      };
-      clients = [{
-        url = "http://10.1.23.184:3100/loki/api/v1/push";
-      }];
-      scrape_configs = [
-        {
-          job_name = "journal";
-          journal = {
-            max_age = "12h";
-            labels = {
-              job = "systemd-journal";
-            };
-          };
-          relabel_configs = [
-            {
-              source_labels = ["__journal__systemd_unit"];
-              target_label = "unit";
-            }
-            {
-              source_labels = ["__journal__hostname"];
-              target_label = "host";
-            }
-            {
-              source_labels = ["__journal_priority_keyword"];
-              target_label = "level";
-            }
-          ];
-        }
-        {
-          job_name = "docker";
-          static_configs = [{
-            targets = ["localhost"];
-            labels = {
-              job = "docker";
-              __path__ = "/var/lib/docker/containers/*/*-json.log";
-            };
-          }];
-          pipeline_stages = [{
-            docker = {};
-          }];
-        }
-      ];
-    };
-  };
+  # Enable Grafana Alloy for Log Shipping (replaces Promtail, removed in nixos-26.05)
+  services.alloy.enable = true;
+  # Read container logs through the Docker socket (the log files under /var/lib/docker are root-only)
+  systemd.services.alloy.serviceConfig.SupplementaryGroups = [ "docker" ];
+  environment.etc."alloy/config.alloy".text = ''
+    loki.write "default" {
+      endpoint {
+        url = "http://10.1.23.184:3100/loki/api/v1/push"
+      }
+    }
 
-  # Open Docker metrics and Promtail ports
-  networking.firewall.allowedTCPPorts = [ 9323 9080 ];
+    loki.relabel "journal" {
+      forward_to = []
+
+      rule {
+        source_labels = ["__journal__systemd_unit"]
+        target_label  = "unit"
+      }
+      rule {
+        source_labels = ["__journal__hostname"]
+        target_label  = "host"
+      }
+      rule {
+        source_labels = ["__journal_priority_keyword"]
+        target_label  = "level"
+      }
+    }
+
+    loki.source.journal "journal" {
+      max_age       = "12h"
+      labels        = { job = "systemd-journal" }
+      relabel_rules = loki.relabel.journal.rules
+      forward_to    = [loki.write.default.receiver]
+    }
+
+    discovery.docker "containers" {
+      host = "unix:///var/run/docker.sock"
+    }
+
+    discovery.relabel "docker" {
+      targets = []
+
+      rule {
+        source_labels = ["__meta_docker_container_name"]
+        regex         = "/(.*)"
+        target_label  = "container"
+      }
+    }
+
+    loki.source.docker "docker" {
+      host          = "unix:///var/run/docker.sock"
+      targets       = discovery.docker.containers.targets
+      labels        = { job = "docker", host = constants.hostname }
+      relabel_rules = discovery.relabel.docker.rules
+      forward_to    = [loki.write.default.receiver]
+    }
+  '';
+
+  # Open Docker metrics port
+  networking.firewall.allowedTCPPorts = [ 9323 ];
 
   environment.systemPackages = with pkgs; [
     vim

@@ -2,7 +2,7 @@
   description = "Homelab NixOS Hive";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     # Only provides the github-runner package; bumped independently of the other inputs
     nixpkgs-runner.url = "github:NixOS/nixpkgs/nixos-unstable";
