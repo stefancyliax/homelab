@@ -44,9 +44,13 @@ The service is part of the `storage-stack` ([docker-compose.yml](../docker-compo
 - **Output**: `storage-node` automounts the `paperless-consume` Samba share of `services-node` at `/mnt/paperless-consume` (`fileSystems` in `NixOS/nodes/storage-node/configuration.nix`), and the container binds it to `/output`. The bind uses `rslave` propagation: the share is only mounted on first access, and without it the mount would not reach an already running container.
 - **Atomic delivery**: `scan.sh` and `scan-flatbed.sh` copy the PDF to the share as `.<name>.pdf.tmp` and rename it, so Paperless never consumes a half-written file. If the share is unreachable the scan is reported as failed instead of saved.
 
-### Bring-up
+### Troubleshooting
 
-- [ ] Pass the scanner through to the VM on `vault` (see [proxmox-setup.md](../../docs/proxmox-setup.md#usb-passthrough)) and check it shows up in the guest: `grep -H . /sys/bus/usb/devices/*/idVendor | grep 03f0`.
-- [ ] After Comin has applied the NixOS change, check the share: `ls /mnt/paperless-consume`.
-- [ ] After Dockhand has deployed the stack, check `docker logs scanner` and `docker exec scanner scanner-status`.
-- [ ] Place a test sheet in the ADF and confirm the PDF arrives in Paperless.
+On `storage-node`, in the order the pieces depend on each other:
+
+```bash
+grep -H . /sys/bus/usb/devices/*/idVendor | grep 03f0   # scanner passed through to the VM
+findmnt /mnt/paperless-consume                          # share mounted (after first access)
+docker exec scanner scanner-status                      # container sees the scanner
+docker logs scanner                                     # scan and delivery log
+```

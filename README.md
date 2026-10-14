@@ -40,7 +40,7 @@ For full hardware specs, networking, and service placement details, see [docs/ar
 | NAS & Media on `vault` | 🚧 Ongoing | [architecture.md](docs/architecture.md#workload-placement) |
 | Ingress & SSL (Caddy + Porkbun DNS) | ✅ Done | [deployment.md](docs/deployment.md) |
 | Single Sign-On (Authelia OIDC & Proxy) | ✅ Done | [deployment.md](docs/deployment.md) |
-| Scanner Service (HP ScanJet Pro 2600 f1) | 🚧 Ongoing | [scanner/README.md](storage-stack/scanner/README.md) |
+| Scanner Service (HP ScanJet Pro 2600 f1) | ✅ Done | [scanner/README.md](storage-stack/scanner/README.md) |
 
 ## To-Do
 
@@ -151,10 +151,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
     - [ ] Point the library at the 6 TB disk once the HDDs are passed through.
 - [x] **NextExplorer move:** NextExplorer runs in the `storage-stack` with a `dockhand-storage.yml` workflow, and its Caddy route points at `storage-node`. No data moved: it only gave access to `/mnt/data` on `services-node`.
 - [x] **Remove dropped services:** Delete the commented-out Stirling PDF, Tududi and Paperless-AI blocks and their volumes from the `services-stack` compose files.
-- [ ] **Scanner service:** The HP ScanJet Pro 2600 f1 container is part of the `storage-stack` on `storage-node` on `vault`, where the scanner physically stands. It gets the whole `/dev/bus/usb` tree and writes to the `paperless-consume` share of `services-node`, which `storage-node` automounts at `/mnt/paperless-consume`. See [scanner/README.md](storage-stack/scanner/README.md).
-    - [ ] Pass the scanner through by USB to the VM on `vault` (see [proxmox-setup.md](docs/proxmox-setup.md#usb-passthrough)).
-    - [ ] Confirm that Dockhand builds the image on `storage-node` through Hawser; it is the first stack there with a `build:`.
-    - [ ] Test scan from the ADF through to Paperless.
+- [x] **Scanner service:** The HP ScanJet Pro 2600 f1 container runs in the `storage-stack` on `storage-node` on `vault`, where the scanner physically stands. The scanner is passed through by USB (see [proxmox-setup.md](docs/proxmox-setup.md#usb-passthrough)); the container gets the whole `/dev/bus/usb` tree and writes to the `paperless-consume` share of `services-node`, which `storage-node` automounts at `/mnt/paperless-consume`. See [scanner/README.md](storage-stack/scanner/README.md).
 - [ ] **`frigate-node` / `frigate-stack`:** NixOS VM on `phil` with Iris Xe and the 512 GB SanDisk SSD passed through (SMART checked on 2026-10-09: no errors, about 3% wear; detach it from `services-node` first) and a NIC on the IoT VLAN; ballooning disabled; OpenVINO detector; 1–2 cameras with motion/event-based retention sized to the SSD; Home Assistant integration; ntfy `homelab-security`; Authelia forward_auth.
 - [ ] **`agent-node` headless check:** Verify Obsidian Sync runs headless (official headless client) and how Antigravity is used without a desktop (remote SSH from the laptop or CLI).
 - [ ] **`agent-node`:** Headless NixOS VM on `vault` with Hermes, Claude Code, Antigravity, herdr, the Obsidian vault (Obsidian Sync) and systemd timers for the maintenance flows.

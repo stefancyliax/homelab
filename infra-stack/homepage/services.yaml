@@ -48,6 +48,10 @@
         href: https://artifacts.home.stefancyliax.de/homelab-service-placement.html
         icon: mdi-view-dashboard-outline
         description: Planning board for where each service runs
+    - HA Migration:
+        href: https://artifacts.home.stefancyliax.de/home-assistant-migration/
+        icon: mdi-home-switch-outline
+        description: Home Assistant Migration Tracker
 
 - Applications:
     - Home Assistant:
