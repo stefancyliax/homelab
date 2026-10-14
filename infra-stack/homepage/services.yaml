@@ -52,6 +52,10 @@
         href: https://artifacts.home.stefancyliax.de/home-assistant-migration/
         icon: mdi-home-switch-outline
         description: Home Assistant Migration Tracker
+    - NixOS 26.05 Rollout:
+        href: https://artifacts.home.stefancyliax.de/reports/nixos-2605-rollout.html
+        icon: nixos
+        description: Deployment report for the 26.05 upgrade
 
 - Applications:
     - Home Assistant:
