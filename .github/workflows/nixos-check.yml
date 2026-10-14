@@ -1,9 +1,5 @@
 name: Check NixOS Configuration
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'NixOS/**'
   pull_request:
     paths:
       - 'NixOS/**'
