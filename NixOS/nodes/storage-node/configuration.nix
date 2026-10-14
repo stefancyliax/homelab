@@ -23,6 +23,18 @@
     extraPackages = [ pkgs.intel-media-driver ];
   };
 
+  # i915 creates the render node late in boot, and Docker gives up on a container whose
+  # device is missing instead of retrying, so Jellyfin stayed down after a reboot. Expose
+  # the node as a systemd device unit and start Docker only once it exists. Wants (not
+  # Requires): if the passthrough is gone, Docker still starts after the device timeout.
+  services.udev.extraRules = ''
+    SUBSYSTEM=="drm", KERNEL=="renderD128", TAG+="systemd"
+  '';
+  systemd.services.docker = {
+    wants = [ "dev-dri-renderD128.device" ];
+    after = [ "dev-dri-renderD128.device" ];
+  };
+
   environment.systemPackages = with pkgs; [
     pciutils        # lspci
     intel-gpu-tools # intel_gpu_top
