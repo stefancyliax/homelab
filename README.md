@@ -161,7 +161,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 ### Completed
 
 
-- [x] **Centralized Logging:** Deployed Loki in infra-stack and Promtail via NixOS common module for shipping journald and Docker logs from all nodes.
+- [x] **Centralized Logging:** Deployed Loki in infra-stack and Promtail (now Grafana Alloy) via NixOS common module for shipping journald and Docker logs from all nodes.
 - [x] **Monitoring Stack:** Consolidated onto VictoriaMetrics, Grafana, and Loki with node exporters and fully declarative dashboards!
 - [x] **Comin Migration:** Natively implemented Comin across all nodes, removing all traces of Colmena.
 - [x] **Dockhand & Hawser Migration:** Migrated away from Komodo to natively defined Dockhand and Hawser nodes via NixOS.

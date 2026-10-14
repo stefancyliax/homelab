@@ -21,8 +21,6 @@ in
     # stable channels stop receiving bumps once they are EOL. The package therefore comes
     # from its own nixos-unstable input, kept current by .github/workflows/update-runner.yml
     package = pkgs-runner.github-runner;
-    # The nixos-25.11 module still defaults to node20 as well, which the current package dropped
-    nodeRuntimes = [ "node24" ];
 
     # Workflows select this runner via `runs-on: [ self-hosted, nixos ]`
     extraLabels = [ "nixos" ];
