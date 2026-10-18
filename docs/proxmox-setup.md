@@ -48,7 +48,7 @@ Passed-through disks cannot be snapshotted by Proxmox; a VM with one attached on
 | SATA SSD | Passed through by-id to `agent-tools-node` (Garage data), XFS |
 | 6 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (bulk/media), btrfs |
 | 1 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (scratch), XFS |
-| 2 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (local backup copy of important shares), btrfs |
+| 2 TB HDD | Passed through by-id to `storage-node` (local backup copy of important shares), btrfs labelled `backup`, mounted at `/mnt/backup` |
 
 Proxmox is installed with ext4/LVM; the 100 GB root (and with it `local`) is set through the installer's `maxroot` option, and `local-lvm` takes the rest.
 

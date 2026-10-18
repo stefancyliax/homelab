@@ -23,6 +23,18 @@
     extraPackages = [ pkgs.intel-media-driver ];
   };
 
+  # i915 creates the render node late in boot, and Docker gives up on a container whose
+  # device is missing instead of retrying, so Jellyfin stayed down after a reboot. Expose
+  # the node as a systemd device unit and start Docker only once it exists. Wants (not
+  # Requires): if the passthrough is gone, Docker still starts after the device timeout.
+  services.udev.extraRules = ''
+    SUBSYSTEM=="drm", KERNEL=="renderD128", TAG+="systemd"
+  '';
+  systemd.services.docker = {
+    wants = [ "dev-dri-renderD128.device" ];
+    after = [ "dev-dri-renderD128.device" ];
+  };
+
   environment.systemPackages = with pkgs; [
     pciutils        # lspci
     intel-gpu-tools # intel_gpu_top
@@ -34,7 +46,22 @@
   systemd.tmpfiles.rules = [
     "d /mnt/data 0755 stefan users -"
     "d /mnt/data/media 0755 stefan users -"
+    "d /mnt/backup 0755 stefan users -"
   ];
+
+  # 2 TB WD Red, passed through by-id from vault: local backup copy of the important
+  # shares. btrfs so that a scrub reveals which file went bad. nofail: a missing disk
+  # must not block the boot.
+  fileSystems."/mnt/backup" = {
+    device = "/dev/disk/by-label/backup";
+    fsType = "btrfs";
+    options = [ "noatime" "nofail" ];
+  };
+  services.btrfs.autoScrub = {
+    enable = true;
+    fileSystems = [ "/mnt/backup" ];
+    interval = "monthly";
+  };
 
   # Paperless consume hot-folder on services-node, the output directory of the
   # scanner container. Automounted on first access, so a services-node that is

@@ -134,8 +134,11 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **Proxmox Datacenter Manager:** Running as a VM on `phil` at `proxmox.home.stefancyliax.de`, with both hosts as remotes.
 - [x] **`vault` RAM:** Second 16 GB stick installed (32 → 48 GB).
 - [x] **`storage-node` VM:** NixOS VM on `vault`, in the flake with Comin and Hawser, with the UHD 770 passed through.
-- [ ] **`storage-node` disks and shares:** Pass the 6 TB and 2 TB HDDs (btrfs) and the 1 TB (XFS) through by-id, then set up the Samba/NFS shares.
+- [ ] **`storage-node` disks and shares:** Pass the 6 TB and 2 TB HDDs (btrfs) and the 1 TB (XFS) through by-id, then set up the Samba/NFS shares. The 2 TB is done: btrfs `backup` at `/mnt/backup`, with a monthly scrub.
 - [ ] **Data migration:** Inventory the existing data on the three HDDs and fix the shuffle order before any disk is reformatted.
+    - [x] 2 TB (`sdc`, WD20EFRX): one XFS partition, empty apart from an empty `isos` folder (240 KB used). Free to reformat. SMART on 2026-10-18: PASSED, 22,827 power-on hours (~2.6 years), no reallocated, pending or uncorrectable sectors.
+    - [ ] 6 TB: not checked yet.
+    - [ ] 1 TB (`sdb`, WD10EACS): holds an old encrypted backup. Check on another machine whether anything on it is still needed before reformatting. SMART on 2026-10-18: PASSED, 34,172 power-on hours (~3.9 years), no reallocated, pending or uncorrectable sectors. Healthy but old; fit for scratch, not for anything important.
 - [ ] **NAS backups:** Local restic copy of the important shares on the 2 TB disk plus offsite via ZeroByte/restic; media stays unprotected by design.
 - [ ] **Backups for services on `vault`:** ZeroByte runs on `services-node` on `phil` and only covers `/mnt/data` there, so the guests on `vault` are not backed up. Go through every guest (`agent-tools-node` with NocoDB, Open-WebUI, Hindsight and Garage; `storage-node`; `agent-node`; `hermes-node`; `runner-node`), decide which data is worth keeping, and set up a backup for it.
 - [ ] **HAOS backups:** Point Home Assistant's built-in backups at a NAS share so they are covered without PBS.

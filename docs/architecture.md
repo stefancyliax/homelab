@@ -169,7 +169,7 @@ Disk roles (no parity; important shares are backed up instead, media is re-acqui
 |---|---|---|
 | 6 TB | Bulk storage: media and general shares | btrfs |
 | 1 TB | Scratch | XFS |
-| 2 TB | Local backup copy of the important shares | btrfs |
+| 2 TB | Local backup copy of the important shares, at `/mnt/backup` (monthly scrub) | btrfs |
 
 btrfs is used where there is no second copy on the same disk set: its checksums reveal which file went bad so it can be restored. XFS is what Garage recommends for its data directory, since Garage checksums its own data; the Garage SSD on `agent-tools-node` uses it too.
 
