@@ -41,7 +41,7 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 | Comin Status | VictoriaMetrics / Prometheus | Pull-based deployment status and revision history (`comin.json`) |
 | NixOS Versions | VictoriaMetrics / Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
 | Proxmox Cluster | VictoriaMetrics | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
-| Proxmox Host Hardware | VictoriaMetrics | CPU usage next to temperatures and fan speed for `vault` and `phil` (`proxmox_hardware.json`) |
+| Proxmox Host Hardware | VictoriaMetrics | CPU usage next to temperatures and fan speed for `vault` and `phil`, plus the SATA disk temperatures of `vault` with warning lines at 45 and 50 °C (`proxmox_hardware.json`) |
 | Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |
 
 ### Loki & Alloy
@@ -112,7 +112,7 @@ Cluster-wide push notifications are handled by a self-hosted [ntfy](https://ntfy
 
 | Topic | Source | Description |
 |---|---|---|
-| `homelab-alerts` | Grafana | Infrastructure alerts (CPU, disk, container health) |
+| `homelab-alerts` | Grafana / btrfs scrub | Infrastructure alerts (CPU, disk, container health), scrub results |
 | `homelab-deployments` | Comin / Dockhand / GitHub Actions | Deployment status events |
 | `homelab-backups` | ZeroByte | Backup success/failure reports |
 | `homelab-documents` | Paperless-ngx (via n8n) | New document consumption events |
@@ -127,6 +127,7 @@ Cluster-wide push notifications are handled by a self-hosted [ntfy](https://ntfy
 - **Dockhand → ntfy:** ✅ Configured via the Dockhand web UI. Reports deployment events to `homelab-deployments`.
 - **ZeroByte → ntfy:** ✅ Built-in ntfy notification provider, configured via the ZeroByte dashboard to publish to `homelab-backups`.
 - **GitHub Actions → ntfy:** ✅ `nixos-check.yml` sends failure notifications to `homelab-deployments` on CI build failures.
+- **btrfs scrub → ntfy:** ✅ `ExecStopPost` hook on the scrub service in `nodes/storage-node/configuration.nix`. Reports each monthly scrub of `/mnt/backup` to `homelab-alerts`: low priority when it passes, high when it finds errors, default when it was cancelled.
 - **Grafana → ntfy:** 🔲 Planned. Webhook contact point targeting `homelab-alerts`.
 - **Home Assistant → ntfy:** 🔲 Planned. Will likely use Telegram instead.
 

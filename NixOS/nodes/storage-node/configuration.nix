@@ -63,6 +63,26 @@
     interval = "monthly";
   };
 
+  # Report every scrub result to ntfy. ExecStopPost also runs when the scrub fails or is
+  # cancelled (e.g. by a shutdown), so a missing message means the scrub never ran.
+  systemd.services."btrfs-scrub-mnt-backup".serviceConfig.ExecStopPost =
+    toString (pkgs.writeShellScript "btrfs-scrub-notify" ''
+      status=$(${pkgs.btrfs-progs}/bin/btrfs scrub status /mnt/backup 2>&1)
+      if echo "$status" | ${pkgs.gnugrep}/bin/grep -q "Status:.*aborted"; then
+        title="Scrub cancelled"; priority=default; tags=warning
+      elif [ "$SERVICE_RESULT" = success ] && echo "$status" | ${pkgs.gnugrep}/bin/grep -q "no errors found"; then
+        title="Scrub passed"; priority=low; tags=white_check_mark
+      else
+        title="❌ Scrub found errors"; priority=high; tags=x
+      fi
+      ${pkgs.curl}/bin/curl -s --max-time 10 \
+        -H "Title: $title: ${config.networking.hostName} /mnt/backup" \
+        -H "Tags: $tags" \
+        -H "Priority: $priority" \
+        --data-binary "$status" \
+        http://10.1.23.184:2586/homelab-alerts || true
+    '');
+
   # Paperless consume hot-folder on services-node, the output directory of the
   # scanner container. Automounted on first access, so a services-node that is
   # down at boot neither blocks the boot nor leaves scans on the local disk.

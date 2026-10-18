@@ -62,6 +62,32 @@ qm set <vmid> --scsi1 /dev/disk/by-id/ata-<model>_<serial>,discard=on,ssd=1,back
 nix shell nixpkgs#xfsprogs -c sudo mkfs.xfs -L garage-data /dev/sdX                # in the guest, once; wipes the disk
 ```
 
+The HDDs go the same way, without `discard`/`ssd`. Passing the drive's serial makes it recognisable in the guest under `/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_<serial>`. For the 2 TB backup disk:
+
+```bash
+qm set <vmid> --scsi1 /dev/disk/by-id/ata-<model>_<serial>,backup=0,iothread=1,serial=<serial>
+sudo wipefs -a /dev/sdX                                                            # in the guest, once; wipes the disk
+sudo nix shell nixpkgs#btrfs-progs -c mkfs.btrfs -L backup /dev/sdX
+```
+
+#### HDD Spin-Down
+
+The guest only sees an emulated QEMU disk, so spin-down commands from inside the VM never reach the drive. Spin-down is set on `vault` itself, per disk in `/etc/hdparm.conf` (applied at boot by the `hdparm` package). `spindown_time = 240` means 20 minutes idle:
+
+```
+/dev/disk/by-id/ata-<model>_<serial> {
+    spindown_time = 240
+}
+```
+
+| Disk | Spin-down |
+|---|---|
+| 6 TB (bulk) | 20 minutes |
+| 2 TB (backup) | 20 minutes |
+| 1 TB (scratch) | 20 minutes |
+
+`hdparm -C /dev/sdX` shows whether a drive is active or in standby; `hdparm -S 240 /dev/sdX` applies the setting immediately without a reboot. `smartd` on `vault` must run with `-n standby` in `/etc/smartd.conf`, otherwise its periodic checks wake the disks.
+
 ## iGPU Passthrough
 
 | Host | iGPU | Target VM | Consumer | Status |
