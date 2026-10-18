@@ -46,7 +46,22 @@
   systemd.tmpfiles.rules = [
     "d /mnt/data 0755 stefan users -"
     "d /mnt/data/media 0755 stefan users -"
+    "d /mnt/backup 0755 stefan users -"
   ];
+
+  # 2 TB WD Red, passed through by-id from vault: local backup copy of the important
+  # shares. btrfs so that a scrub reveals which file went bad. nofail: a missing disk
+  # must not block the boot.
+  fileSystems."/mnt/backup" = {
+    device = "/dev/disk/by-label/backup";
+    fsType = "btrfs";
+    options = [ "noatime" "nofail" ];
+  };
+  services.btrfs.autoScrub = {
+    enable = true;
+    fileSystems = [ "/mnt/backup" ];
+    interval = "monthly";
+  };
 
   # Paperless consume hot-folder on services-node, the output directory of the
   # scanner container. Automounted on first access, so a services-node that is
