@@ -134,7 +134,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **Proxmox Datacenter Manager:** Running as a VM on `phil` at `proxmox.home.stefancyliax.de`, with both hosts as remotes.
 - [x] **`vault` RAM:** Second 16 GB stick installed (32 → 48 GB).
 - [x] **`storage-node` VM:** NixOS VM on `vault`, in the flake with Comin and Hawser, with the UHD 770 passed through.
-- [ ] **`storage-node` disks and shares:** Pass the 6 TB and 2 TB HDDs (btrfs) and the 1 TB (XFS) through by-id, then set up the Samba/NFS shares. The 2 TB is done: btrfs `backup` at `/mnt/backup`, with a monthly scrub.
+- [ ] **`storage-node` disks and shares:** Pass the 6 TB and 2 TB HDDs (btrfs) and the 1 TB (XFS) through by-id, then set up the Samba/NFS shares. The 2 TB and 6 TB are done: btrfs `backup` at `/mnt/backup` and `data` at `/mnt/data`, each with a monthly scrub.
 - [ ] **Data migration:** Inventory the existing data on the three HDDs and fix the shuffle order before any disk is reformatted.
     - [x] 2 TB (`sdc`, WD20EFRX): one XFS partition, empty apart from an empty `isos` folder (240 KB used). Free to reformat. SMART on 2026-10-18: PASSED, 22,827 power-on hours (~2.6 years), no reallocated, pending or uncorrectable sectors.
     - [ ] 6 TB: an NTFS partition with data to keep and an encrypted partition (check its contents like the 1 TB). About 1.5 TB of it is still needed, which fits on the 2 TB: copy it there inside `storage-node`, verify with a checksum pass, wipe the 6 TB as one btrfs filesystem and copy the data onto it. The important part stays on the 2 TB as the local backup copy; the rest is deleted there.
@@ -146,12 +146,13 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **`work-tools-node` / `work-tools-stack`:** NixOS VM on `phil` with a second Hindsight instance for work, with its own Caddy routes and a `dockhand-work-tools.yml` workflow.
 - [x] **Garage:** `services.garage` on `agent-tools-node` (single node, data on the passed-through SATA SSD, metadata on the VM disk, RPC secret via Agenix). Config is in `modules/garage.nix`.
 - [x] **Artifact hosting:** One Garage bucket (`artifacts`) in website mode behind a single Caddy route (`artifacts.home.stefancyliax.de` → Garage web endpoint, no Authelia). Each artifact is a path in the bucket, so pushing a file publishes it without touching Caddy or DNS. The S3 API is exposed at `s3.home.stefancyliax.de` for uploads, with one write key per machine (`agent-node`, `desktop`); the `agent-node` key comes from Agenix as `~/.aws/credentials`. Uploads go through the `publish-s3` agent skill, which uploads and prints the URL.
-- [ ] **Jellyfin:** Runs in the `storage-stack` on `storage-node` at `jellyfin.home.stefancyliax.de`, with the UHD 770 render node mapped in and `/mnt/data/media` as the library.
+- [ ] **Jellyfin:** Runs in the `storage-stack` on `storage-node` at `jellyfin.home.stefancyliax.de`, with the UHD 770 render node mapped in and `/mnt/backup/media` (on the 2 TB disk for now) as the library.
     - [x] First-run wizard.
     - [ ] Add `10.1.23.184` (Caddy) under Networking → Known proxies.
     - [ ] Enable Intel QuickSync under Playback → Transcoding and confirm a transcode shows up in `intel_gpu_top`.
     - [ ] Authelia via the SSO plugin: OIDC client in `infra-stack/authelia/configuration.yml` and the provider in the plugin settings.
-    - [ ] Point the library at the 6 TB disk once the HDDs are passed through.
+    - [ ] Libraries under `/media` in Jellyfin, which is `/mnt/backup/media` on the 2 TB disk.
+    - [ ] Later: move the media library to the 6 TB; only the host path in the compose file changes.
 - [x] **NextExplorer move:** NextExplorer runs in the `storage-stack` with a `dockhand-storage.yml` workflow, and its Caddy route points at `storage-node`. No data moved: it only gave access to `/mnt/data` on `services-node`.
 - [x] **Remove dropped services:** Delete the commented-out Stirling PDF, Tududi and Paperless-AI blocks and their volumes from the `services-stack` compose files.
 - [x] **Scanner service:** The HP ScanJet Pro 2600 f1 container runs in the `storage-stack` on `storage-node` on `vault`, where the scanner physically stands. The scanner is passed through by USB (see [proxmox-setup.md](docs/proxmox-setup.md#usb-passthrough)); the container gets the whole `/dev/bus/usb` tree and writes to the `paperless-consume` share of `services-node`, which `storage-node` automounts at `/mnt/paperless-consume`. See [scanner/README.md](storage-stack/scanner/README.md).

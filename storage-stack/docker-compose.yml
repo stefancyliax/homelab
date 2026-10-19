@@ -38,8 +38,8 @@ services:
     volumes:
       - jellyfin_config:/config
       - jellyfin_cache:/cache
-      # Sits on the VM disk until the HDDs are passed through
-      - /mnt/data/media:/media:ro
+      # Media library, on the 2 TB disk for now; moving it later only changes the host path
+      - /mnt/backup/media:/media:ro
     environment:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.home.stefancyliax.de
 

@@ -1,5 +1,25 @@
 { config, pkgs, ... }:
 
+let
+  # Report a scrub result to ntfy. Runs as ExecStopPost, so also when the scrub fails
+  # or is cancelled (e.g. by a shutdown): a missing message means the scrub never ran.
+  scrubNotify = fs: toString (pkgs.writeShellScript "btrfs-scrub-notify" ''
+    status=$(${pkgs.btrfs-progs}/bin/btrfs scrub status ${fs} 2>&1)
+    if echo "$status" | ${pkgs.gnugrep}/bin/grep -q "Status:.*aborted"; then
+      title="Scrub cancelled"; priority=default; tags=warning
+    elif [ "$SERVICE_RESULT" = success ] && echo "$status" | ${pkgs.gnugrep}/bin/grep -q "no errors found"; then
+      title="Scrub passed"; priority=low; tags=white_check_mark
+    else
+      title="❌ Scrub found errors"; priority=high; tags=x
+    fi
+    ${pkgs.curl}/bin/curl -s --max-time 10 \
+      -H "Title: $title: ${config.networking.hostName} ${fs}" \
+      -H "Tags: $tags" \
+      -H "Priority: $priority" \
+      --data-binary "$status" \
+      http://10.1.23.184:2586/homelab-alerts || true
+  '');
+in
 {
   imports = [
     ../../common.nix
@@ -30,9 +50,11 @@
   services.udev.extraRules = ''
     SUBSYSTEM=="drm", KERNEL=="renderD128", TAG+="systemd"
   '';
+  # The same for the HDDs: a container started before its disk is mounted would bind the
+  # empty directory underneath and write to the VM disk.
   systemd.services.docker = {
-    wants = [ "dev-dri-renderD128.device" ];
-    after = [ "dev-dri-renderD128.device" ];
+    wants = [ "dev-dri-renderD128.device" "mnt-data.mount" "mnt-backup.mount" ];
+    after = [ "dev-dri-renderD128.device" "mnt-data.mount" "mnt-backup.mount" ];
   };
 
   environment.systemPackages = with pkgs; [
@@ -41,17 +63,22 @@
     libva-utils     # vainfo
   ];
 
-  # Data root served by NextExplorer, with the media library Jellyfin reads.
-  # Lives on the VM disk until the HDDs are passed through.
+  # Data root served by NextExplorer, and the backup disk, which for now also holds the
+  # media library Jellyfin reads.
   systemd.tmpfiles.rules = [
     "d /mnt/data 0755 stefan users -"
-    "d /mnt/data/media 0755 stefan users -"
     "d /mnt/backup 0755 stefan users -"
   ];
 
-  # 2 TB WD Red, passed through by-id from vault: local backup copy of the important
-  # shares. btrfs so that a scrub reveals which file went bad. nofail: a missing disk
-  # must not block the boot.
+  # HDDs passed through by-id from vault, btrfs so that a scrub reveals which file went
+  # bad. nofail: a missing disk must not block the boot.
+  # 6 TB Seagate: bulk storage, media and general shares.
+  fileSystems."/mnt/data" = {
+    device = "/dev/disk/by-label/data";
+    fsType = "btrfs";
+    options = [ "noatime" "nofail" ];
+  };
+  # 2 TB WD Red: local backup copy of the important shares.
   fileSystems."/mnt/backup" = {
     device = "/dev/disk/by-label/backup";
     fsType = "btrfs";
@@ -59,29 +86,12 @@
   };
   services.btrfs.autoScrub = {
     enable = true;
-    fileSystems = [ "/mnt/backup" ];
+    fileSystems = [ "/mnt/data" "/mnt/backup" ];
     interval = "monthly";
   };
 
-  # Report every scrub result to ntfy. ExecStopPost also runs when the scrub fails or is
-  # cancelled (e.g. by a shutdown), so a missing message means the scrub never ran.
-  systemd.services."btrfs-scrub-mnt-backup".serviceConfig.ExecStopPost =
-    toString (pkgs.writeShellScript "btrfs-scrub-notify" ''
-      status=$(${pkgs.btrfs-progs}/bin/btrfs scrub status /mnt/backup 2>&1)
-      if echo "$status" | ${pkgs.gnugrep}/bin/grep -q "Status:.*aborted"; then
-        title="Scrub cancelled"; priority=default; tags=warning
-      elif [ "$SERVICE_RESULT" = success ] && echo "$status" | ${pkgs.gnugrep}/bin/grep -q "no errors found"; then
-        title="Scrub passed"; priority=low; tags=white_check_mark
-      else
-        title="❌ Scrub found errors"; priority=high; tags=x
-      fi
-      ${pkgs.curl}/bin/curl -s --max-time 10 \
-        -H "Title: $title: ${config.networking.hostName} /mnt/backup" \
-        -H "Tags: $tags" \
-        -H "Priority: $priority" \
-        --data-binary "$status" \
-        http://10.1.23.184:2586/homelab-alerts || true
-    '');
+  systemd.services."btrfs-scrub-mnt-data".serviceConfig.ExecStopPost = scrubNotify "/mnt/data";
+  systemd.services."btrfs-scrub-mnt-backup".serviceConfig.ExecStopPost = scrubNotify "/mnt/backup";
 
   # Paperless consume hot-folder on services-node, the output directory of the
   # scanner container. Automounted on first access, so a services-node that is

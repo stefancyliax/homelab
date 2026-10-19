@@ -46,9 +46,9 @@ Passed-through disks cannot be snapshotted by Proxmox; a VM with one attached on
 |---|---|
 | NVMe SSD | Proxmox OS, `local` (100 GB) and `local-lvm` (~400 GB, all guest disks) |
 | SATA SSD | Passed through by-id to `agent-tools-node` (Garage data), XFS |
-| 6 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (bulk/media), btrfs |
+| 6 TB HDD | Passed through by-id to `storage-node` (bulk/media), btrfs labelled `data`, mounted at `/mnt/data` |
 | 1 TB HDD | 🔲 Planned: passed through by-id to `storage-node` (scratch), XFS |
-| 2 TB HDD | Passed through by-id to `storage-node` (local backup copy of important shares), btrfs labelled `backup`, mounted at `/mnt/backup` |
+| 2 TB HDD | Passed through by-id to `storage-node` (local backup copy of important shares, for now also the media library), btrfs labelled `backup`, mounted at `/mnt/backup` |
 
 Proxmox is installed with ext4/LVM; the 100 GB root (and with it `local`) is set through the installer's `maxroot` option, and `local-lvm` takes the rest.
 
@@ -62,7 +62,7 @@ qm set <vmid> --scsi1 /dev/disk/by-id/ata-<model>_<serial>,discard=on,ssd=1,back
 nix shell nixpkgs#xfsprogs -c sudo mkfs.xfs -L garage-data /dev/sdX                # in the guest, once; wipes the disk
 ```
 
-The HDDs go the same way, without `discard`/`ssd`. Passing the drive's serial makes it recognisable in the guest under `/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_<serial>`. For the 2 TB backup disk:
+The HDDs go the same way, without `discard`/`ssd`. Passing the drive's serial makes it recognisable in the guest: `lsblk -o NAME,SIZE,SERIAL` shows it, while `/dev/disk/by-id/` names the disk after its slot (`scsi-0QEMU_QEMU_HARDDISK_drive-scsi1`). For the 2 TB backup disk:
 
 ```bash
 qm set <vmid> --scsi1 /dev/disk/by-id/ata-<model>_<serial>,backup=0,iothread=1,serial=<serial>

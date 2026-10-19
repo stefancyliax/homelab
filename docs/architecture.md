@@ -158,8 +158,8 @@ Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity sche
 | Service | Type |
 |---|---|
 | Samba / NFS shares | Native NixOS service |
-| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`), QuickSync via the passed-through UHD 770. Reads `/mnt/data/media`, which sits on the VM disk until the HDDs are passed through |
-| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`), ✅ moved. Serves `/mnt/data`, which sits on the VM disk until the HDDs are passed through |
+| [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`), QuickSync via the passed-through UHD 770. Reads `/mnt/backup/media` on the 2 TB disk for now |
+| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`), ✅ moved. Serves `/mnt/data` on the 6 TB disk |
 | [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`storage-stack`) |
 | Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`storage-stack`), built from `storage-stack/scanner`. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`, mounted at `/mnt/paperless-consume` |
 
@@ -167,9 +167,9 @@ Disk roles (no parity; important shares are backed up instead, media is re-acqui
 
 | Disk | Role | Filesystem |
 |---|---|---|
-| 6 TB | Bulk storage: media and general shares | btrfs |
+| 6 TB | Bulk storage: media and general shares, at `/mnt/data` (monthly scrub) | btrfs |
 | 1 TB | Scratch | XFS |
-| 2 TB | Local backup copy of the important shares, at `/mnt/backup` (monthly scrub) | btrfs |
+| 2 TB | Local backup copy of the important shares, at `/mnt/backup` (monthly scrub). For now also holds the media library (`/mnt/backup/media`) | btrfs |
 
 btrfs is used where there is no second copy on the same disk set: its checksums reveal which file went bad so it can be restored. XFS is what Garage recommends for its data directory, since Garage checksums its own data; the Garage SSD on `agent-tools-node` uses it too.
 
