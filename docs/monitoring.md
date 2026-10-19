@@ -41,7 +41,7 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 | Comin Status | VictoriaMetrics / Prometheus | Pull-based deployment status and revision history (`comin.json`) |
 | NixOS Versions | VictoriaMetrics / Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
 | Proxmox Cluster | VictoriaMetrics | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
-| Proxmox Host Hardware | VictoriaMetrics | CPU usage next to temperatures and fan speed for `vault` and `phil`, plus the SATA disk temperatures of `vault` with warning lines at 45 and 50 °C (`proxmox_hardware.json`) |
+| Proxmox Host Hardware | VictoriaMetrics | CPU usage next to temperatures and fan speed for `vault` and `phil` (`proxmox_hardware.json`) |
 | Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |
 
 ### Loki & Alloy
@@ -83,6 +83,12 @@ systemctl restart systemd-modules-load
 ```
 
 `sensors-detect` only prints the chip drivers it found (e.g. `nct6775`) and does not persist them. Add each one to `/etc/modules-load.d/sensors.conf` so the board sensors survive a reboot (`/etc/modules` is obsolete). `coretemp` and NVMe temperatures load on their own.
+
+On `vault`, node_exporter skips the SATA drives. Reading a drive's temperature can reset its spin-down timer (see the [drivetemp docs](https://docs.kernel.org/hwmon/drivetemp.html)), and with a scrape every 15 seconds the HDDs never went to standby. The exclusion is set in `/etc/default/prometheus-node-exporter`:
+
+```bash
+ARGS="--collector.hwmon.chip-exclude=^target"
+```
 
 Both hosts are listed in the `node_exporter` job in `scrape.yml` and show up in the Node Exporter dashboard under "Hardware temperature monitor".
 
