@@ -160,7 +160,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **`agent-node` headless check:** Verify Obsidian Sync runs headless (official headless client) and how Antigravity is used without a desktop (remote SSH from the laptop or CLI).
 - [ ] **`agent-node`:** Headless NixOS VM on `vault` with Hermes, Claude Code, Antigravity, herdr, the Obsidian vault (Obsidian Sync) and systemd timers for the maintenance flows.
 - [ ] **Retire `hermes-node`:** After migrating to `agent-node`, remove the node from the flake, its Syncthing route in Caddy and its scrape targets.
-- [ ] **`nuc`:** Bare-metal NixOS node for development (i3-8109U, 16 GB), scaffolded in the flake (`nodes/nuc/`) with Comin. Install NixOS, swap in the generated `hardware-configuration.nix`, add its host key to `secrets.nix` for the Comin PAT, create the Wi-Fi secret `nuc-wifi.age` and bootstrap it. See [deployment.md](docs/deployment.md#provisioning-the-nuc).
+- [ ] **`nuc`:** Bare-metal NixOS node for development (i3-8109U, 16 GB), scaffolded in the flake (`nodes/nuc/`) with Comin. Install NixOS, swap in the generated `hardware-configuration.nix`, add its host key to `secrets.nix` for the Comin PAT and bootstrap it. Runs on Ethernet only. See [deployment.md](docs/deployment.md#provisioning-the-nuc).
 - [ ] **Observability & ingress for new guests:** Scrape targets, Homepage entries and Caddy routes for `vault` and every new node.
 
 ### Completed

@@ -15,7 +15,8 @@
   # Bare metal: no hypervisor to talk to, so drop the guest agent from common.nix.
   services.qemuGuest.enable = lib.mkForce false;
 
-  # CPU microcode and the firmware blobs for the iGPU, NIC and Wi-Fi.
+  # CPU microcode and the firmware blobs for the iGPU and NIC. The node runs on Ethernet
+  # only: Wi-Fi dropped out under USB 3 interference and broke routing next to Ethernet.
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.intel.updateMicrocode = true;
 
@@ -36,33 +37,4 @@
     herdr # from the herdr flake input, see flake.nix
     pkgs.lm_sensors # `sensors`, to see which chips and fans the board exposes
   ];
-
-  # Wi-Fi, as a declarative NetworkManager profile. SSID and passphrase come from the
-  # agenix env file (WIFI_SSID=..., WIFI_PSK=...) so neither lands in the public repo.
-  networking.networkmanager.ensureProfiles = {
-    environmentFiles = [ config.age.secrets."nuc-wifi".path ];
-    profiles.home-wifi = {
-      connection = {
-        id = "home-wifi";
-        type = "wifi";
-      };
-      wifi = {
-        mode = "infrastructure";
-        ssid = "$WIFI_SSID";
-      };
-      wifi-security = {
-        key-mgmt = "wpa-psk";
-        psk = "$WIFI_PSK";
-      };
-      ipv4.method = "auto";
-      ipv6.method = "auto";
-    };
-  };
-
-  age.secrets."nuc-wifi" = {
-    file = ../../secrets/nuc-wifi.age;
-    owner = "root";
-    group = "root";
-    mode = "0400";
-  };
 }

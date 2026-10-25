@@ -191,7 +191,7 @@ nix flake update nixpkgs-runner
 
 ### Provisioning the NUC
 
-`nuc` is a bare-metal node, so its `hardware-configuration.nix` comes from the machine itself. Until then `nodes/nuc/hardware-configuration.nix` is a placeholder that only keeps the flake evaluating. `configuration.nix` turns off the QEMU guest agent from `common.nix`, enables microcode and firmware, and adds a NetworkManager Wi-Fi profile. SSID and passphrase are read from the agenix secret `nuc-wifi.age`, an env file with `WIFI_SSID` and `WIFI_PSK`, so neither is in the repo.
+`nuc` is a bare-metal node, so its `hardware-configuration.nix` comes from the machine itself. Until then `nodes/nuc/hardware-configuration.nix` is a placeholder that only keeps the flake evaluating. `configuration.nix` turns off the QEMU guest agent from `common.nix` and enables microcode and firmware. The node runs on Ethernet only; don't connect Wi-Fi alongside it (see [architecture.md](architecture.md#intel-nuc-nuc-physical-node)).
 
 1. Install NixOS on the NUC from the installer ISO (UEFI, systemd-boot) and enable SSH so you can reach it.
 2. Replace the placeholder with the generated hardware config and read the host key:
@@ -204,10 +204,6 @@ nix flake update nixpkgs-runner
    ```bash
    cd NixOS
    nix run github:ryantm/agenix -- -r
-   ```
-   Then create the Wi-Fi secret. The flake does not evaluate for `nuc` until this file exists. In the editor, write two lines, `WIFI_SSID=<ssid>` and `WIFI_PSK=<passphrase>`:
-   ```bash
-   nix run github:ryantm/agenix -- -e secrets/nuc-wifi.age
    ```
 4. Commit and push to `main`, then bootstrap the node. From here on Comin keeps it up to date:
    ```bash

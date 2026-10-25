@@ -18,7 +18,7 @@ let
   agent-tools-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN8/bila9Zj1kB1204Jv72H/bX+9j6j/6xr71+bgJ1h4";
   work-tools-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMalIA//5lvQBFDWIWVf7jbKmvf0DKpwPhxC+qIXwoHI";
   frigate-node = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDrdRmrQ21s1wYCd/PmvPa5HqfEASqkyE6MB2sCGRBxh";
-  # Kept out of `systems` like the runner: only needs the Comin PAT and its Wi-Fi.
+  # Kept out of `systems` like the runner: only needs the Comin PAT.
   nuc = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIbdbrcniZxx/XIZXm0NzZnd+ard2In1X7pZ4RnQkU7C";
 
   systems = [ infra-node services-node another-node gpu-worker hermes-node storage-node agent-tools-node work-tools-node frigate-node ]; 
@@ -30,8 +30,6 @@ in
   "secrets/garage-rpc-secret.age".publicKeys = users ++ [ agent-tools-node ];
   # Garage S3 write key of agent-node, as an AWS credentials file with a [garage] profile
   "secrets/garage-agent-node-key.age".publicKeys = users ++ [ agent-node nuc ];
-  # Wi-Fi credentials of nuc, as an env file with WIFI_SSID and WIFI_PSK
-  "secrets/nuc-wifi.age".publicKeys = users ++ [ nuc ];
   
   # Comin deploy key, readable by the user and all systems that might run Comin
   "secrets/github-pat.age".publicKeys = users ++ systems ++ [ runner-node agent-node nuc ];
