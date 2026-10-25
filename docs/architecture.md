@@ -46,7 +46,7 @@ A dedicated physical node for AI inference. Not always online — powers on when
 | OS | NixOS (managed via Comin) |
 | Network | Ethernet (`10.1.23.5`), Wi-Fi via a NetworkManager profile |
 
-Bare-metal NixOS node for development, with Claude Code (from `nixpkgs-unstable`), [herdr](https://github.com/herdrdev/herdr) (from its own flake, pinned to a release tag in `flake.nix`) and git installed. A webcam and an ESP32 hang off it by USB; `stefan` is in the `video` and `dialout` groups to use them without sudo, and their tools come from `nix-shell` when needed. 🔲 Planned: the flake entry (`nodes/nuc/`) is scaffolded and waits for the real hardware configuration. See [deployment.md](deployment.md#provisioning-the-nuc).
+Bare-metal NixOS node for development, with Claude Code (from its own `nixpkgs-claude` input, see [deployment.md](deployment.md#claude-code-version)), [herdr](https://github.com/herdrdev/herdr) (from its own flake, pinned to a release tag in `flake.nix`) and git installed. A webcam and an ESP32 hang off it by USB; `stefan` is in the `video` and `dialout` groups to use them without sudo, and their tools come from `nix-shell` when needed. 🔲 Planned: the flake entry (`nodes/nuc/`) is scaffolded and waits for the real hardware configuration. See [deployment.md](deployment.md#provisioning-the-nuc).
 
 ## Networking
 

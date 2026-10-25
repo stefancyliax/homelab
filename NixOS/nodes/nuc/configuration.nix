@@ -1,4 +1,4 @@
-{ config, lib, pkgs, pkgs-unstable, herdr, ... }:
+{ config, lib, pkgs, pkgs-claude, herdr, ... }:
 
 {
   imports = [
@@ -27,11 +27,12 @@
   # The tools for them (v4l-utils, esptool, ...) come from nix-shell when needed.
   users.users.stefan.extraGroups = [ "video" "dialout" ];
 
-  # Development tools. Claude Code from unstable: it ships new versions far more often
-  # than the stable channel picks them up, and it can't self-update from the Nix store.
+  # Development tools. Claude Code from its own nixos-unstable input (nixpkgs-claude): it
+  # ships new versions far more often than the stable channel picks them up, and it can't
+  # self-update from the Nix store. Bump with `nix flake update nixpkgs-claude`.
   environment.systemPackages = [
     pkgs.git
-    pkgs-unstable.claude-code
+    pkgs-claude.claude-code
     herdr # from the herdr flake input, see flake.nix
     pkgs.lm_sensors # `sensors`, to see which chips and fans the board exposes
   ];

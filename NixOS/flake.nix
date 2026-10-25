@@ -6,6 +6,9 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     # Only provides the github-runner package; bumped independently of the other inputs
     nixpkgs-runner.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Only provides the claude-code package; bumped independently, so updating it doesn't
+    # rebuild the CUDA packages the gpu-worker takes from nixpkgs-unstable
+    nixpkgs-claude.url = "github:NixOS/nixpkgs/nixos-unstable";
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
     comin.url = "github:nlewo/comin";
@@ -15,10 +18,15 @@
     herdr.url = "github:herdrdev/herdr/v0.9.5";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-runner, agenix, comin, herdr }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-runner, nixpkgs-claude, agenix, comin, herdr }:
   let
     # Import unstable nixpkgs for packages that need bleeding-edge versions
     pkgs-unstable = import nixpkgs-unstable {
+      system = "x86_64-linux";
+      config.allowUnfree = true;
+    };
+    # claude-code is unfree
+    pkgs-claude = import nixpkgs-claude {
       system = "x86_64-linux";
       config.allowUnfree = true;
     };
@@ -134,7 +142,7 @@
       "nuc" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
-          inherit pkgs-unstable;
+          inherit pkgs-claude;
           herdr = herdr-pkg;
         };
         modules = baseModules ++ [

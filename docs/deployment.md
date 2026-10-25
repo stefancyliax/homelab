@@ -218,6 +218,15 @@ nix flake update nixpkgs-runner
    journalctl -u comin.service -n 30 --no-pager
    ```
 
+#### Claude Code Version
+
+Claude Code on `nuc` comes from a dedicated `nixpkgs-claude` input (`nixos-unstable`), like the runner's `nixpkgs-runner`. Newer models need a recent Claude Code, and it can't update itself from the Nix store, so bump the input when models are missing. Updating the shared `nixpkgs-unstable` instead would also bump the CUDA builds on `gpu-worker`, which are not in the public binary cache.
+
+```bash
+cd NixOS
+nix flake update nixpkgs-claude
+```
+
 ## Deployment Commands
 
 ### Automated Deployment (Comin)
