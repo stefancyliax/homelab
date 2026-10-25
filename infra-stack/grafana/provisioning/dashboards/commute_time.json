@@ -359,8 +359,8 @@
       "interval": "15m",
       "maxDataPoints": 3000,
       "options": {
-        "from": "4",
-        "to": "0",
+        "from": "3",
+        "to": "23",
         "legendGradientQuality": "medium",
         "regions": [
           {
@@ -389,7 +389,7 @@
             "uid": "VictoriaMetrics"
           },
           "editorMode": "code",
-          "expr": "avg(avg_over_time(min_value{entity_id=\"travel_time_to_work\"}[$__interval]))",
+          "expr": "avg(avg_over_time(min_value{entity_id=\"travel_time_to_work\"}[$__interval] offset -$__interval))",
           "legendFormat": "Travel time",
           "range": true,
           "refId": "A"
@@ -432,8 +432,8 @@
       "interval": "15m",
       "maxDataPoints": 3000,
       "options": {
-        "from": "4",
-        "to": "0",
+        "from": "3",
+        "to": "23",
         "legendGradientQuality": "medium",
         "regions": [
           {
@@ -462,7 +462,7 @@
             "uid": "VictoriaMetrics"
           },
           "editorMode": "code",
-          "expr": "avg(avg_over_time(min_value{entity_id=\"travel_time_nach_hause\"}[$__interval]))",
+          "expr": "avg(avg_over_time(min_value{entity_id=\"travel_time_nach_hause\"}[$__interval] offset -$__interval))",
           "legendFormat": "Travel time",
           "range": true,
           "refId": "A"

@@ -50,6 +50,35 @@ Security and CCTV integration with AI-powered object detection. Frigate processe
 
 Planned as a dedicated `frigate-node` VM on `phil`, next to HAOS, with the Iris Xe iGPU and a dedicated 512 GB SSD. See [architecture.md](architecture.md#frigate-node-nixos-vm).
 
+## Commute Travel Time
+
+Two sensors from the **Google Maps Travel Time** integration track the drive to work and back: `sensor.travel_time_to_work` and `sensor.travel_time_nach_hause`. Their values land in VictoriaMetrics as `min_value` (travel time in minutes) and `min_distance` (km) and feed the Commute Time dashboard in Grafana.
+
+To stay in Google's free tier, the Google Cloud project behind the API key has a per-day request quota of about 165 requests (APIs & Services → the Maps API → Quotas & System Limits). The quota resets at midnight Pacific time, which is 08:00 or 09:00 German time depending on daylight saving time. Once it's used up, the sensors go unavailable until the reset.
+
+The updates are scheduled so they fit inside that quota:
+
+- **Polling is off** for both integration entries (Settings → Devices & services → Google Maps Travel Time → ⋮ → System options → "Enable polling for updates").
+- **The automation "Commute travel time updates"** refreshes both sensors every 15 minutes from 03:00 until 23:00: 2 × 80 = 160 requests per day.
+
+```yaml
+alias: Commute travel time updates
+triggers:
+  - trigger: time_pattern
+    minutes: /15
+conditions:
+  - condition: time
+    after: "03:00:00"
+    before: "23:00:00"
+actions:
+  - action: homeassistant.update_entity
+    target:
+      entity_id:
+        - sensor.travel_time_to_work
+        - sensor.travel_time_nach_hause
+mode: single
+```
+
 ## IoT VLAN
 
 The HAOS VM is attached to a dedicated IoT VLAN managed by the Unifi controller. This isolates IoT device traffic from the main network. The routing of service traffic across this VLAN boundary is still being defined.
