@@ -158,3 +158,20 @@ identity_providers:
         redirect_uris:
           - https://nextexplorer.home.stefancyliax.de/callback
 
+      - client_id: jellyfin
+        client_name: Jellyfin
+        client_secret: '$pbkdf2-sha512$310000$Han.Vbjz0QSuwpRZUTOSgQ$/1QIOMXWwfBJP/bh8KPtmM41sgoq1y66E9ZoOKoY9YkoMh7of0vH6//EBMjuP4wcSmSGQTFh4EtCs74zPavpfA'
+        public: false
+        token_endpoint_auth_method: client_secret_post
+        authorization_policy: one_factor
+        require_pkce: true
+        pkce_challenge_method: S256
+        response_types:
+          - code
+        scopes:
+          - openid
+          - profile
+          - groups
+        redirect_uris:
+          - https://jellyfin.home.stefancyliax.de/sso/OID/redirect/authelia
+
