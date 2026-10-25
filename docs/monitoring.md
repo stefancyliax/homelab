@@ -38,8 +38,7 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 |---|---|---|
 | Node Exporter | VictoriaMetrics / Prometheus | CPU, memory, network, and disk usage across all NixOS VMs, plus hardware temperatures of the Proxmox hosts (`node_exporter.json`) |
 | Docker Overview | VictoriaMetrics / Prometheus | Resource utilization and container status (`docker.json`) |
-| Comin Status | VictoriaMetrics / Prometheus | Pull-based deployment status and revision history (`comin.json`) |
-| NixOS Versions | VictoriaMetrics / Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
+| NixOS Fleet Versions | VictoriaMetrics | Flake rollout across the Comin nodes: commit per node (latest or behind), Comin failures, pending reboots, NixOS release, nixpkgs revision and kernel, plus nodes per commit over time (`nixos_versions.json`) |
 | Proxmox Cluster | VictoriaMetrics | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
 | Host Hardware | VictoriaMetrics | CPU usage, wall power draw, temperatures and fan speed of `vault`, `phil`, `nuc` and `gpu-worker`, one panel per metric (`proxmox_hardware.json`) |
 | Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |

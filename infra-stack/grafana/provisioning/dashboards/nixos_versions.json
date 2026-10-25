@@ -1,29 +1,118 @@
 {
   "annotations": {
-    "list": []
+    "list": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "VictoriaMetrics"
+        },
+        "enable": true,
+        "iconColor": "purple",
+        "name": "New commit",
+        "expr": "count by (commit) (label_replace(comin_deployment_info{commit_id!=\"\"}, \"commit\", \"$1\", \"commit_id\", \"^(.{7}).*\")) unless count by (commit) (label_replace(comin_deployment_info{commit_id!=\"\"}, \"commit\", \"$1\", \"commit_id\", \"^(.{7}).*\") offset 10m)",
+        "step": "60s",
+        "titleFormat": "Commit {{commit}} appeared",
+        "textFormat": "",
+        "tagKeys": "",
+        "useValueForTime": false
+      }
+    ]
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "links": [],
+  "links": [
+    {
+      "title": "Commits on main",
+      "type": "link",
+      "url": "https://github.com/stefancyliax/homelab/commits/main",
+      "targetBlank": true,
+      "icon": "external link"
+    }
+  ],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "VictoriaMetrics"
       },
+      "description": "Newest commit Comin has deployed anywhere in the fleet, and when it first landed. Comin deploys the head of main, so this is the rollout target.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
+          "unit": "dateTimeFromNow",
+          "links": [
+            {
+              "title": "Open commit on GitHub",
+              "url": "https://github.com/stefancyliax/homelab/commit/${__field.labels.commit_id}",
+              "targetBlank": true
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(topk(1, min by (commit_id) (tfirst_over_time(comin_deployment_info{commit_id!=\"\"}[90d]))), \"commit\", \"$1\", \"commit_id\", \"^(.{7}).*\")",
+          "legendFormat": "{{commit}}",
+          "range": false,
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Latest commit",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
+      },
+      "description": "Nodes whose current deployment is the latest commit.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
           },
           "mappings": [],
           "thresholds": {
@@ -31,6 +120,343 @@
             "steps": [
               {
                 "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 6,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "count((label_replace((((tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]) == on (instance) group_left () max by (instance) (tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]))) * 0 + 1) and on (commit_id) topk(1, min by (commit_id) (tfirst_over_time(comin_deployment_info{commit_id!=\"\"}[90d])))), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")))) or vector(0)",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Up to date",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
+      },
+      "description": "Online nodes still on an older commit. Briefly non-zero during a rollout; if it stays up, check the node's Comin status in the table.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 10,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "count((label_replace((((tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]) == on (instance) group_left () max by (instance) (tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]))) * 0 + 1) unless on (commit_id) topk(1, min by (commit_id) (tfirst_over_time(comin_deployment_info{commit_id!=\"\"}[90d])))), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))) and on (ip) label_replace(up{job=\"comin\"} == 1, \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) or vector(0)",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Behind",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
+      },
+      "description": "Nodes whose Comin exporter is not reachable. They catch up on the latest commit when they come back (gpu-worker is usually powered off).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 14,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "count((label_replace(up{job=\"comin\"} == 0, \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")))) or vector(0)",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Offline",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
+      },
+      "description": "Online nodes whose last Comin fetch, evaluation, build or deployment failed.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 17,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "count((label_replace(max by (instance) (label_replace(max by (instance) (comin_last_fetch_failed) * 1, \"stage\", \"fetch\", \"\", \"\") or label_replace(max by (instance) (comin_last_eval_failed) * 2, \"stage\", \"eval\", \"\", \"\") or label_replace(max by (instance) (comin_last_build_failed) * 3, \"stage\", \"build\", \"\", \"\") or label_replace(max by (instance) (comin_last_deployment_failed) * 4, \"stage\", \"deployment\", \"\", \"\")), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))) > 0) or vector(0)",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Failing",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
+      },
+      "description": "Nodes where the deployed generation changed the kernel or initrd and only takes full effect after a reboot.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "count((label_replace(comin_need_to_reboot, \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))) > 0) or vector(0)",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Reboot needed",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
+      },
+      "description": "Last known state of every Comin node, offline ones included. Rollout compares the node's commit with the latest one.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
                 "value": null
               }
             ]
@@ -40,283 +466,246 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "instance"
+              "options": "Online"
             },
             "properties": [
               {
-                "id": "displayName",
-                "value": "Node"
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "1": {
+                        "text": "online",
+                        "color": "green",
+                        "index": 0
+                      },
+                      "0": {
+                        "text": "offline",
+                        "color": "text",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
               },
               {
                 "id": "custom.width",
-                "value": 200
+                "value": 90
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "pretty_name"
+              "options": "Commit"
             },
             "properties": [
               {
-                "id": "displayName",
-                "value": "OS"
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Open commit on GitHub",
+                    "url": "https://github.com/stefancyliax/homelab/commit/${__data.fields.commit_id}",
+                    "targetBlank": true
+                  }
+                ]
               },
               {
                 "id": "custom.width",
-                "value": 300
+                "value": 90
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "version_id"
+              "options": "Rollout"
             },
             "properties": [
               {
-                "id": "displayName",
-                "value": "NixOS Version"
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "1": {
+                        "text": "latest",
+                        "color": "green",
+                        "index": 0
+                      },
+                      "0": {
+                        "text": "behind",
+                        "color": "orange",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
               },
               {
                 "id": "custom.width",
-                "value": 180
+                "value": 90
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "name"
+              "options": "Deployed"
             },
             "properties": [
               {
-                "id": "displayName",
-                "value": "Distribution"
+                "id": "unit",
+                "value": "dateTimeFromNow"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last report"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeFromNow"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Comin"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0": {
+                        "text": "ok",
+                        "color": "green",
+                        "index": 0
+                      },
+                      "1": {
+                        "text": "fetch failed",
+                        "color": "orange",
+                        "index": 1
+                      },
+                      "2": {
+                        "text": "eval failed",
+                        "color": "red",
+                        "index": 2
+                      },
+                      "3": {
+                        "text": "build failed",
+                        "color": "red",
+                        "index": 3
+                      },
+                      "4": {
+                        "text": "deploy failed",
+                        "color": "red",
+                        "index": 4
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "mode": "basic"
+                }
               },
               {
                 "id": "custom.width",
-                "value": 150
+                "value": 110
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Value"
+              "options": "Reboot"
             },
             "properties": [
               {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0": {
+                        "text": "no",
+                        "color": "text",
+                        "index": 0
+                      },
+                      "1": {
+                        "text": "needed",
+                        "color": "orange",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              },
               {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "__name__"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "job"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "id"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "id_like"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "image_id"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "image_version"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "variant"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "variant_id"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "version"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Full Version"
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
               },
               {
                 "id": "custom.width",
-                "value": 350
+                "value": 80
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "version_codename"
+              "options": "NixOS"
             },
             "properties": [
-              {
-                "id": "displayName",
-                "value": "Codename"
-              },
               {
                 "id": "custom.width",
-                "value": 150
+                "value": 70
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "build_id"
+              "options": "Booted"
             },
             "properties": [
               {
-                "id": "custom.hidden",
-                "value": true
+                "id": "unit",
+                "value": "dateTimeFromNow"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "home_url"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "support_url"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "bug_report_url"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "documentation_url"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "logo"
+              "options": "commit_id"
             },
             "properties": [
               {
@@ -328,22 +717,27 @@
         ]
       },
       "gridPos": {
-        "h": 10,
+        "h": 13,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 4
       },
-      "id": 1,
+      "id": 7,
       "options": {
         "cellHeight": "sm",
         "footer": {
-          "show": false
+          "show": false,
+          "reducer": [
+            "sum"
+          ],
+          "fields": "",
+          "countRows": false
         },
         "showHeader": true,
         "sortBy": [
           {
-            "desc": false,
-            "displayName": "Node"
+            "displayName": "Node",
+            "desc": false
           }
         ]
       },
@@ -351,195 +745,312 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "VictoriaMetrics"
           },
           "editorMode": "code",
-          "expr": "node_os_info",
-          "format": "table",
-          "instant": true,
+          "expr": "max by (nodename, commit, commit_id) ((label_replace(label_replace((tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]) == on (instance) group_left () max by (instance) (tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]))), \"commit\", \"$1\", \"commit_id\", \"^(.{7}).*\"), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))))",
           "legendFormat": "__auto",
           "range": false,
-          "refId": "A"
+          "instant": true,
+          "refId": "COMMIT",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "max by (nodename) ((label_replace(up{job=\"comin\"}, \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))))",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "ONLINE",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "max by (nodename) ((label_replace((((tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]) == on (instance) group_left () max by (instance) (tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]))) * 0 + 1) and on (commit_id) topk(1, min by (commit_id) (tfirst_over_time(comin_deployment_info{commit_id!=\"\"}[90d])))) or ((((tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]) == on (instance) group_left () max by (instance) (tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]))) * 0 + 1) unless on (commit_id) topk(1, min by (commit_id) (tfirst_over_time(comin_deployment_info{commit_id!=\"\"}[90d])))) * 0), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))))",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "STATUS",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "max by (nodename) ((label_replace(tfirst_over_time(comin_deployment_info{commit_id!=\"\"}[90d]) and on (instance, commit_id) (tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]) == on (instance) group_left () max by (instance) (tlast_over_time(comin_deployment_info{commit_id!=\"\"}[90d]))), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))))",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "DEPLOYED",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "max by (nodename) ((label_replace(max by (instance) (label_replace(max by (instance) (last_over_time(comin_last_fetch_failed[90d])) * 1, \"stage\", \"fetch\", \"\", \"\") or label_replace(max by (instance) (last_over_time(comin_last_eval_failed[90d])) * 2, \"stage\", \"eval\", \"\", \"\") or label_replace(max by (instance) (last_over_time(comin_last_build_failed[90d])) * 3, \"stage\", \"build\", \"\", \"\") or label_replace(max by (instance) (last_over_time(comin_last_deployment_failed[90d])) * 4, \"stage\", \"deployment\", \"\", \"\")), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))))",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "COMIN",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "max by (nodename) ((label_replace(last_over_time(comin_need_to_reboot[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))))",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "REBOOT",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "max by (nodename, version_id, build_id) ((label_replace((tlast_over_time(node_os_info[90d]) == on (instance) group_left () max by (instance) (tlast_over_time(node_os_info[90d]))), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))))",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "OS",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "max by (nodename, release) ((label_replace((tlast_over_time(node_uname_info[90d]) == on (instance) group_left () max by (instance) (tlast_over_time(node_uname_info[90d]))), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))))",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "KERNEL",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "max by (nodename) ((label_replace(last_over_time(node_boot_time_seconds[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\"))))",
+          "legendFormat": "__auto",
+          "range": false,
+          "instant": true,
+          "refId": "BOOT",
+          "format": "table"
         }
       ],
-      "title": "NixOS Versions by Node",
+      "title": "Fleet",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value #OS": true,
+              "Value #KERNEL": true
+            },
+            "indexByName": {
+              "nodename": 0,
+              "Value #ONLINE": 1,
+              "commit": 2,
+              "Value #STATUS": 3,
+              "Value #DEPLOYED": 4,
+              "Value #COMMIT": 5,
+              "Value #COMIN": 6,
+              "Value #REBOOT": 7,
+              "version_id": 8,
+              "build_id": 9,
+              "release": 10,
+              "Value #BOOT": 11,
+              "commit_id": 12
+            },
+            "renameByName": {
+              "nodename": "Node",
+              "Value #ONLINE": "Online",
+              "commit": "Commit",
+              "Value #STATUS": "Rollout",
+              "Value #DEPLOYED": "Deployed",
+              "Value #COMMIT": "Last report",
+              "Value #COMIN": "Comin",
+              "Value #REBOOT": "Reboot",
+              "version_id": "NixOS",
+              "build_id": "nixpkgs",
+              "release": "Kernel",
+              "Value #BOOT": "Booted"
+            }
+          }
+        }
+      ],
       "type": "table"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Prometheus"
+        "uid": "VictoriaMetrics"
       },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 2
-              },
-              {
-                "color": "red",
-                "value": 3
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 0,
-        "y": 10
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "count(count by (version_id) (node_os_info))",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Distinct NixOS Versions",
-      "description": "Number of unique NixOS versions across the fleet. Green = all nodes on the same version.",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 10
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "count(node_os_info)",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Total Nodes",
-      "description": "Total number of nodes reporting OS info to Prometheus.",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
+      "description": "How many nodes run each commit. After a push, the new commit's band should take over within a few minutes; offline nodes drop out until they report again.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "scheme",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
+            "fillOpacity": 60,
+            "gradientMode": "none",
             "lineInterpolation": "stepAfter",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
             }
           },
+          "decimals": 0,
           "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "count by (commit) (label_replace((tlast_over_time(comin_deployment_info{commit_id!=\"\"}[5m]) == on (instance) group_left () max by (instance) (tlast_over_time(comin_deployment_info{commit_id!=\"\"}[5m]))), \"commit\", \"$1\", \"commit_id\", \"^(.{7}).*\"))",
+          "legendFormat": "{{commit}}",
+          "range": true,
+          "instant": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Rollout: nodes per commit",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
+      },
+      "description": "Comin health per node over time: offline, ok, or the stage of the last failure.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 80,
+            "lineWidth": 0,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "-1": {
+                  "text": "offline",
+                  "color": "#5a5a5a",
+                  "index": 0
+                },
+                "0": {
+                  "text": "ok",
+                  "color": "green",
+                  "index": 1
+                },
+                "1": {
+                  "text": "fetch failed",
+                  "color": "orange",
+                  "index": 2
+                },
+                "2": {
+                  "text": "eval failed",
+                  "color": "red",
+                  "index": 3
+                },
+                "3": {
+                  "text": "build failed",
+                  "color": "red",
+                  "index": 4
+                },
+                "4": {
+                  "text": "deploy failed",
+                  "color": "red",
+                  "index": 5
+                }
+              }
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -553,21 +1064,24 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 10,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 17
       },
-      "id": 4,
+      "id": 9,
       "options": {
+        "alignValue": "left",
         "legend": {
-          "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
+        "mergeValues": true,
+        "rowHeight": 0.85,
+        "showValue": "never",
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
@@ -575,32 +1089,37 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "Prometheus"
+            "uid": "VictoriaMetrics"
           },
           "editorMode": "code",
-          "expr": "count by (version_id) (node_os_info)",
-          "legendFormat": "NixOS {{version_id}}",
+          "expr": "max by (nodename) ((label_replace(max by (instance) (label_replace(max by (instance) (comin_last_fetch_failed) * 1, \"stage\", \"fetch\", \"\", \"\") or label_replace(max by (instance) (comin_last_eval_failed) * 2, \"stage\", \"eval\", \"\", \"\") or label_replace(max by (instance) (comin_last_build_failed) * 3, \"stage\", \"build\", \"\", \"\") or label_replace(max by (instance) (comin_last_deployment_failed) * 4, \"stage\", \"deployment\", \"\", \"\")), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")))) or (max by (nodename) ((label_replace(up{job=\"comin\"} == 0, \"ip\", \"$1\", \"instance\", \"([^:]+):.*\") * on (ip) group_left (nodename) (max by (ip, nodename) (label_replace(last_over_time(node_uname_info[90d]), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")) and on (ip) label_replace(max by (instance) (last_over_time(up{job=\"comin\"}[90d])), \"ip\", \"$1\", \"instance\", \"([^:]+):.*\")))) - 1)",
+          "legendFormat": "{{nodename}}",
           "range": true,
+          "instant": false,
           "refId": "A"
         }
       ],
-      "title": "NixOS Version Distribution Over Time",
-      "description": "Track how many nodes are running each NixOS version over time. Useful to monitor rolling upgrades.",
-      "type": "timeseries"
+      "title": "Comin health",
+      "type": "state-timeline"
     }
   ],
   "schemaVersion": 39,
-  "tags": ["nixos", "fleet"],
+  "tags": [
+    "nixos",
+    "fleet"
+  ],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "NixOS Fleet Versions",
   "uid": "nixos-versions",
-  "version": 1
+  "version": 1,
+  "description": "Rollout of the flake to the NixOS nodes: which commit each node runs (from Comin), whether it is up to date, failing or waiting for a reboot, and the NixOS release, nixpkgs revision and kernel it runs.",
+  "refresh": "1m"
 }
