@@ -162,7 +162,7 @@ identity_providers:
         client_name: Jellyfin
         client_secret: '$pbkdf2-sha512$310000$Han.Vbjz0QSuwpRZUTOSgQ$/1QIOMXWwfBJP/bh8KPtmM41sgoq1y66E9ZoOKoY9YkoMh7of0vH6//EBMjuP4wcSmSGQTFh4EtCs74zPavpfA'
         public: false
-        token_endpoint_auth_method: client_secret_post
+        token_endpoint_auth_method: client_secret_basic  # the SSO plugin sends Basic auth, despite Authelia's Jellyfin guide
         authorization_policy: one_factor
         require_pkce: true
         pkce_challenge_method: S256
