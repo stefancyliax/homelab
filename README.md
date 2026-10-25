@@ -150,7 +150,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
     - [x] First-run wizard.
     - [ ] Add `10.1.23.184` (Caddy) under Networking → Known proxies.
     - [ ] Enable Intel QuickSync under Playback → Transcoding and confirm a transcode shows up in `intel_gpu_top`.
-    - [ ] Authelia via the SSO plugin: OIDC client in `infra-stack/authelia/configuration.yml` and the provider in the plugin settings.
+    - [x] Authelia via the SSO plugin: OIDC client in `infra-stack/authelia/configuration.yml` and the provider in the plugin settings.
     - [ ] Libraries under `/media` in Jellyfin, which is `/mnt/backup/media` on the 2 TB disk.
     - [ ] Later: move the media library to the 6 TB; only the host path in the compose file changes.
 - [x] **NextExplorer move:** NextExplorer runs in the `storage-stack` with a `dockhand-storage.yml` workflow, and its Caddy route points at `storage-node`. No data moved: it only gave access to `/mnt/data` on `services-node`.
