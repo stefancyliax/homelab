@@ -365,7 +365,7 @@ Mark the service as enrolled in the table below.
 | Parakeet | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
 | Artifact hosting | ❌ None | ⏭️ Skip | — | Deliberately open on LAN/Tailscale; static pages served by Garage |
 | Garage S3 API | ❌ None | ⏭️ Skip | — | API-only, authenticated by S3 access keys |
-| Jellyfin | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via the SSO plugin (`9p4/jellyfin-plugin-sso`), provider name `authelia`, `client_secret_basic` (Authelia's guide says `client_secret_post`, but the plugin sends Basic auth), PKCE. Needs Scheme Override `https` behind Caddy. Native apps sign in via Quick Connect |
+| Jellyfin | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via the SSO plugin (`9p4/jellyfin-plugin-sso`), provider name `authelia`, `client_secret_post`, PKCE. Tick "Disable Pushed Authorization" in the plugin: it sends Basic auth to Authelia's PAR endpoint but posts the secret to the token endpoint, and an Authelia client allows only one method. Needs Scheme Override `https` behind Caddy. Native apps sign in via Quick Connect |
 | Frigate | ❌ None | 🔲 Planned | Reverse proxy | Needs auth proxy in front |
 | **Dedicated VMs / Nodes** | | | | |
 | Home Assistant | ✅ Native | 🔲 Planned | OAuth2/OIDC | Via auth provider integration |
