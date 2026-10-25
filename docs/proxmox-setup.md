@@ -72,21 +72,26 @@ sudo nix shell nixpkgs#btrfs-progs -c mkfs.btrfs -L backup /dev/sdX
 
 #### HDD Spin-Down
 
-The guest only sees an emulated QEMU disk, so spin-down commands from inside the VM never reach the drive. Spin-down is set on `vault` itself, per disk in `/etc/hdparm.conf` (applied at boot by the `hdparm` package). `spindown_time = 240` means 20 minutes idle:
+The guest only sees an emulated QEMU disk, so spin-down commands from inside the VM never reach the drive. Spin-down is handled on `vault` itself.
 
-```
-/dev/disk/by-id/ata-<model>_<serial> {
-    spindown_time = 240
-}
+The drives' own standby timers (`hdparm -S`, kept in `/etc/hdparm.conf`) are set but not honoured: the disks stayed active for hours with their read and write counters standing still. Instead, [`hd-idle`](https://github.com/adelolmo/hd-idle) watches each disk's I/O counters on the host (which include all I/O from the VMs) and sends the standby command itself. It is configured in `/etc/default/hd-idle`; `-i 0` first disables it for every disk not listed, so the SSDs are left alone:
+
+```bash
+HD_IDLE_OPTS="-i 0 -a /dev/disk/by-id/ata-<model>_<serial> -i 1200 -c ata ..."
 ```
 
 | Disk | Spin-down |
 |---|---|
-| 6 TB (bulk) | 20 minutes |
-| 2 TB (backup) | 20 minutes |
-| 1 TB (scratch) | 20 minutes |
+| 6 TB (bulk) | 20 minutes idle |
+| 2 TB (backup, media) | 20 minutes idle |
+| 1 TB (scratch) | 20 minutes idle |
 
-`hdparm -C /dev/sdX` shows whether a drive is active or in standby; `hdparm -S 240 /dev/sdX` applies the setting immediately without a reboot. `smartd` on `vault` must run with `-n standby` in `/etc/smartd.conf`, otherwise its periodic checks wake the disks.
+`hdparm -C /dev/sdX` shows whether a drive is active or in standby without waking it. Two things wake the disks or keep them awake without real I/O:
+
+- **Temperature reads:** reading a drive's temperature can reset its standby timer (see the [drivetemp docs](https://docs.kernel.org/hwmon/drivetemp.html)), so node_exporter on `vault` skips the SATA drives (see [monitoring.md](monitoring.md)).
+- **`smartd`:** must run with `-n standby` in `/etc/smartd.conf`, so its checks skip sleeping disks.
+
+Inside `storage-node`, node_exporter opens the mount points every 15 seconds for its filesystem stats. That is answered from memory and causes no disk I/O.
 
 ## iGPU Passthrough
 

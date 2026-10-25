@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, herdr, ... }:
 
 {
   imports = [
@@ -58,6 +58,9 @@
     # GPU diagnostics
     pciutils         # lspci
     nvtopPackages.nvidia
+
+    # Terminal workspace for coding agents (from the herdr flake input, see flake.nix)
+    herdr
   ];
 
   # Allow unfree packages (required for Nvidia drivers)

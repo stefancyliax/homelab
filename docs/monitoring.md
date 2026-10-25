@@ -41,7 +41,7 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 | Comin Status | VictoriaMetrics / Prometheus | Pull-based deployment status and revision history (`comin.json`) |
 | NixOS Versions | VictoriaMetrics / Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
 | Proxmox Cluster | VictoriaMetrics | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
-| Proxmox Host Hardware | VictoriaMetrics | CPU usage next to temperatures and fan speed for `vault` and `phil` (`proxmox_hardware.json`) |
+| Host Hardware | VictoriaMetrics | CPU usage next to temperatures and fan speed for `vault`, `phil` and `nuc` (`proxmox_hardware.json`) |
 | Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |
 
 ### Loki & Alloy
@@ -91,6 +91,8 @@ ARGS="--collector.hwmon.chip-exclude=^target"
 ```
 
 Both hosts are listed in the `node_exporter` job in `scrape.yml` and show up in the Node Exporter dashboard under "Hardware temperature monitor".
+
+The bare-metal `nuc` needs no manual setup: the node_exporter from `common.nix` sees its sensors directly. `nodes/nuc/configuration.nix` loads `drivetemp` for a SATA drive and installs `lm_sensors`. Intel NUCs often expose no fan to Linux; if `sensors` on the node lists none, the fan panel stays empty.
 
 ### 4. Provision Grafana
 

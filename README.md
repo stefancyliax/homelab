@@ -137,7 +137,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **`storage-node` disks and shares:** Pass the 6 TB and 2 TB HDDs (btrfs) and the 1 TB (XFS) through by-id, then set up the Samba/NFS shares. The 2 TB and 6 TB are done: btrfs `backup` at `/mnt/backup` and `data` at `/mnt/data`, each with a monthly scrub.
 - [ ] **Data migration:** Inventory the existing data on the three HDDs and fix the shuffle order before any disk is reformatted.
     - [x] 2 TB (`sdc`, WD20EFRX): one XFS partition, empty apart from an empty `isos` folder (240 KB used). Free to reformat. SMART on 2026-10-18: PASSED, 22,827 power-on hours (~2.6 years), no reallocated, pending or uncorrectable sectors.
-    - [ ] 6 TB: an NTFS partition with data to keep and an encrypted partition (check its contents like the 1 TB). About 1.5 TB of it is still needed, which fits on the 2 TB: copy it there inside `storage-node`, verify with a checksum pass, wipe the 6 TB as one btrfs filesystem and copy the data onto it. The important part stays on the 2 TB as the local backup copy; the rest is deleted there.
+    - [x] 6 TB: the media still needed was copied to the 2 TB and verified, then the disk was wiped and formatted as one btrfs filesystem (`data`, `/mnt/data`). The media library stays on the 2 TB for now (`/mnt/backup/media`).
     - [ ] 1 TB (`sdb`, WD10EACS): holds an old encrypted backup. Check on another machine whether anything on it is still needed before reformatting. SMART on 2026-10-18: PASSED, 34,172 power-on hours (~3.9 years), no reallocated, pending or uncorrectable sectors. Healthy but old; fit for scratch, not for anything important.
 - [ ] **NAS backups:** Local restic copy of the important shares on the 2 TB disk plus offsite via ZeroByte/restic; media stays unprotected by design.
 - [ ] **Backups for services on `vault`:** ZeroByte runs on `services-node` on `phil` and only covers `/mnt/data` there, so the guests on `vault` are not backed up. Go through every guest (`agent-tools-node` with NocoDB, Open-WebUI, Hindsight and Garage; `storage-node`; `agent-node`; `hermes-node`; `runner-node`), decide which data is worth keeping, and set up a backup for it.
@@ -160,6 +160,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **`agent-node` headless check:** Verify Obsidian Sync runs headless (official headless client) and how Antigravity is used without a desktop (remote SSH from the laptop or CLI).
 - [ ] **`agent-node`:** Headless NixOS VM on `vault` with Hermes, Claude Code, Antigravity, herdr, the Obsidian vault (Obsidian Sync) and systemd timers for the maintenance flows.
 - [ ] **Retire `hermes-node`:** After migrating to `agent-node`, remove the node from the flake, its Syncthing route in Caddy and its scrape targets.
+- [ ] **`nuc`:** Bare-metal NixOS node for development (i3-8109U, 16 GB), scaffolded in the flake (`nodes/nuc/`) with Comin. Install NixOS, swap in the generated `hardware-configuration.nix`, add its host key to `secrets.nix` for the Comin PAT, create the Wi-Fi secret `nuc-wifi.age` and bootstrap it. See [deployment.md](docs/deployment.md#provisioning-the-nuc).
 - [ ] **Observability & ingress for new guests:** Scrape targets, Homepage entries and Caddy routes for `vault` and every new node.
 
 ### Completed
@@ -192,6 +193,7 @@ homelab/
 │   │   ├── gpu-worker/
 │   │   ├── hermes-node/        # Hermes AI coding agent
 │   │   ├── runner-node/        # Self-hosted GitHub Actions runner
+│   │   ├── nuc/                # Physical Intel NUC, development (bare metal)
 │   │   └── another-node/       # Auxiliary / test node
 │   ├── modules/            # Reusable NixOS modules (Dockhand, Hawser, Llama-swap)
 │   ├── secrets/            # Agenix-encrypted secret files (.age)

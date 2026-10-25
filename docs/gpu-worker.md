@@ -145,6 +145,7 @@ The following CLI tools are provisioned on the GPU Worker for administration and
 | `nvtop` | `configuration.nix` | GPU monitoring TUI |
 | `ethtool` | `configuration.nix` | Network interface configuration (WOL) |
 | `pciutils` | `configuration.nix` | `lspci` for hardware diagnostics |
+| `herdr` | `configuration.nix` (herdr flake input) | Terminal workspace for coding agents; pinned to a release tag in `flake.nix` |
 
 ## Wake-on-LAN
 

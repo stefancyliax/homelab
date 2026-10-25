@@ -189,6 +189,35 @@ nix flake update nixpkgs-runner
    ```
 6. Add the VM's IP to `infra-stack/victoriametrics/scrape.yml`.
 
+### Provisioning the NUC
+
+`nuc` is a bare-metal node, so its `hardware-configuration.nix` comes from the machine itself. Until then `nodes/nuc/hardware-configuration.nix` is a placeholder that only keeps the flake evaluating. `configuration.nix` turns off the QEMU guest agent from `common.nix`, enables microcode and firmware, and adds a NetworkManager Wi-Fi profile. SSID and passphrase are read from the agenix secret `nuc-wifi.age`, an env file with `WIFI_SSID` and `WIFI_PSK`, so neither is in the repo.
+
+1. Install NixOS on the NUC from the installer ISO (UEFI, systemd-boot) and enable SSH so you can reach it.
+2. Replace the placeholder with the generated hardware config and read the host key:
+   ```bash
+   nixos-generate-config --show-hardware-config
+   cat /etc/ssh/ssh_host_ed25519_key.pub
+   ```
+   Paste the first output over `nodes/nuc/hardware-configuration.nix`.
+3. Set the key as `nuc` in `secrets.nix`, add `nuc` to the `github-pat.age` entry and re-key so the node can decrypt the Comin PAT (see [Creating or Editing Secrets](#creating-or-editing-secrets)):
+   ```bash
+   cd NixOS
+   nix run github:ryantm/agenix -- -r
+   ```
+   Then create the Wi-Fi secret. The flake does not evaluate for `nuc` until this file exists. In the editor, write two lines, `WIFI_SSID=<ssid>` and `WIFI_PSK=<passphrase>`:
+   ```bash
+   nix run github:ryantm/agenix -- -e secrets/nuc-wifi.age
+   ```
+4. Commit and push to `main`, then bootstrap the node. From here on Comin keeps it up to date:
+   ```bash
+   sudo nixos-rebuild switch --flake 'github:stefancyliax/homelab?dir=NixOS#nuc'
+   ```
+5. Verify Comin picked it up. The node is already a scrape target at `10.1.23.5` in `infra-stack/victoriametrics/scrape.yml` (Comin, node exporter, Docker):
+   ```bash
+   journalctl -u comin.service -n 30 --no-pager
+   ```
+
 ## Deployment Commands
 
 ### Automated Deployment (Comin)

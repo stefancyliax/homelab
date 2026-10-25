@@ -56,6 +56,10 @@
         href: https://artifacts.home.stefancyliax.de/reports/nixos-2605-rollout.html
         icon: nixos
         description: Deployment report for the 26.05 upgrade
+    - NUC Setup:
+        href: https://artifacts.home.stefancyliax.de/nuc-setup.html
+        icon: mdi-checkbox-marked-outline
+        description: Checklist for bringing the NUC into the homelab
 
 - Applications:
     - Home Assistant:

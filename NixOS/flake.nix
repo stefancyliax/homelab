@@ -10,15 +10,20 @@
     agenix.inputs.nixpkgs.follows = "nixpkgs";
     comin.url = "github:nlewo/comin";
     comin.inputs.nixpkgs.follows = "nixpkgs";
+    # herdr (terminal workspace for coding agents) is not in nixpkgs; pinned to a release tag,
+    # bump by changing the tag. Keeps its own nixpkgs, its build needs a recent zig.
+    herdr.url = "github:herdrdev/herdr/v0.9.5";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-runner, agenix, comin }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-runner, agenix, comin, herdr }:
   let
     # Import unstable nixpkgs for packages that need bleeding-edge versions
     pkgs-unstable = import nixpkgs-unstable {
       system = "x86_64-linux";
       config.allowUnfree = true;
     };
+    # herdr from its own flake, handed to the nodes that use it via specialArgs
+    herdr-pkg = herdr.packages.x86_64-linux.default;
     # Reusable baseline for all cluster nodes
     baseModules = [
       { system.configurationRevision = self.rev or self.dirtyRev or null; }
@@ -65,9 +70,12 @@
       
       "gpu-worker" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit pkgs-unstable; };
+        specialArgs = {
+          inherit pkgs-unstable;
+          herdr = herdr-pkg;
+        };
         modules = baseModules ++ [
-          ./nodes/gpu-worker/configuration.nix 
+          ./nodes/gpu-worker/configuration.nix
           ./modules/llama-swap.nix
           ./modules/hawser.nix
         ];
@@ -119,6 +127,18 @@
         modules = baseModules ++ [
           ./nodes/frigate-node/configuration.nix
           ./modules/hawser.nix
+        ];
+      };
+
+      # Physical Intel NUC, development machine
+      "nuc" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit pkgs-unstable;
+          herdr = herdr-pkg;
+        };
+        modules = baseModules ++ [
+          ./nodes/nuc/configuration.nix
         ];
       };
 

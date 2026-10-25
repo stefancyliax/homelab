@@ -36,6 +36,18 @@ The NAS box: a standalone Proxmox host that holds the HDDs and runs the storage,
 
 A dedicated physical node for AI inference. Not always online — powers on when needed. See [gpu-worker.md](gpu-worker.md) for the full provisioning guide.
 
+### Intel NUC (`nuc`, Physical Node)
+
+| Component | Spec |
+|---|---|
+| CPU | Intel Core i3-8109U |
+| iGPU | Iris Plus 655 |
+| RAM | 16 GB |
+| OS | NixOS (managed via Comin) |
+| Network | Ethernet (`10.1.23.5`), Wi-Fi via a NetworkManager profile |
+
+Bare-metal NixOS node for development, with Claude Code (from `nixpkgs-unstable`), [herdr](https://github.com/herdrdev/herdr) (from its own flake, pinned to a release tag in `flake.nix`) and git installed. A webcam and an ESP32 hang off it by USB; `stefan` is in the `video` and `dialout` groups to use them without sudo, and their tools come from `nix-shell` when needed. 🔲 Planned: the flake entry (`nodes/nuc/`) is scaffolded and waits for the real hardware configuration. See [deployment.md](deployment.md#provisioning-the-nuc).
+
 ## Networking
 
 | Concern | Solution |
