@@ -99,7 +99,7 @@ The "Power draw" panel of the Host Hardware dashboard shows each host's draw at 
 ### 4. Provision Grafana
 
 Use Grafana's declarative provisioning YAMLs (`infra-stack/grafana/provisioning/datasources/datasources.yml`) to pre-configure:
-- VictoriaMetrics as default Prometheus-compatible data source (`http://victoriametrics:8428`), pinned to uid `VictoriaMetrics` so provisioned dashboards can reference it
+- VictoriaMetrics as default Prometheus-compatible data source (`http://victoriametrics:8428`)
 - Prometheus alias datasource for backward compatibility with community dashboards
 - Loki data source for logs
 
