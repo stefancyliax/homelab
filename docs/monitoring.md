@@ -41,6 +41,7 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 | NixOS Fleet Versions | VictoriaMetrics | Flake rollout across the Comin nodes: commit per node (latest or behind), Comin failures, pending reboots, NixOS release, nixpkgs revision and kernel, plus nodes per commit over time (`nixos_versions.json`) |
 | Proxmox Cluster | VictoriaMetrics | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
 | Host Hardware | VictoriaMetrics | CPU usage, wall power draw, temperatures and fan speed of `vault`, `phil`, `nuc` and `gpu-worker`, one panel per metric (`proxmox_hardware.json`) |
+| Commute Time | VictoriaMetrics | Travel time and route distance to work and home from the Home Assistant travel time sensors, plus a 30-day heatmap per 15-minute slot. Needs the `marcusolsson-hourly-heatmap-panel` plugin, preinstalled through `GF_PLUGINS_PREINSTALL` (`commute_time.json`) |
 | Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |
 
 ### Loki & Alloy
@@ -98,7 +99,7 @@ The "Power draw" panel of the Host Hardware dashboard shows each host's draw at 
 ### 4. Provision Grafana
 
 Use Grafana's declarative provisioning YAMLs (`infra-stack/grafana/provisioning/datasources/datasources.yml`) to pre-configure:
-- VictoriaMetrics as default Prometheus-compatible data source (`http://victoriametrics:8428`)
+- VictoriaMetrics as default Prometheus-compatible data source (`http://victoriametrics:8428`), pinned to uid `VictoriaMetrics` so provisioned dashboards can reference it
 - Prometheus alias datasource for backward compatibility with community dashboards
 - Loki data source for logs
 

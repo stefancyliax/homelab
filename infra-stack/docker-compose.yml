@@ -42,6 +42,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD # Default password, user can change later
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_PLUGINS_PREINSTALL=marcusolsson-hourly-heatmap-panel # used by the Commute Time dashboard
       - GF_AUTH_PROXY_ENABLED=true
       - GF_AUTH_PROXY_HEADER_NAME=Remote-User
       - GF_AUTH_PROXY_HEADER_PROPERTY=username
