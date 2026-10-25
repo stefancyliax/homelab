@@ -41,7 +41,7 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 | Comin Status | VictoriaMetrics / Prometheus | Pull-based deployment status and revision history (`comin.json`) |
 | NixOS Versions | VictoriaMetrics / Prometheus | Running Git commit SHA tracking across all nodes (`nixos_versions.json`) |
 | Proxmox Cluster | VictoriaMetrics | Hypervisor resource allocation and VM metrics (`proxmox.json`) |
-| Host Hardware | VictoriaMetrics | CPU usage next to temperatures and fan speed for `vault`, `phil` and `nuc` (`proxmox_hardware.json`) |
+| Host Hardware | VictoriaMetrics | CPU usage, wall power draw, temperatures and fan speed of `vault`, `phil`, `nuc` and `gpu-worker`, one panel per metric (`proxmox_hardware.json`) |
 | Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |
 
 ### Loki & Alloy
@@ -92,7 +92,9 @@ ARGS="--collector.hwmon.chip-exclude=^target"
 
 Both hosts are listed in the `node_exporter` job in `scrape.yml` and show up in the Node Exporter dashboard under "Hardware temperature monitor".
 
-The bare-metal `nuc` needs no manual setup: the node_exporter from `common.nix` sees its sensors directly. `nodes/nuc/configuration.nix` loads `drivetemp` for a SATA drive and installs `lm_sensors`. Intel NUCs often expose no fan to Linux; if `sensors` on the node lists none, the fan panel stays empty.
+The bare-metal `nuc` needs no manual setup: the node_exporter from `common.nix` sees its sensors directly. `nodes/nuc/configuration.nix` loads `drivetemp` for a SATA drive and installs `lm_sensors`. Intel NUCs often expose no fan to Linux; if `sensors` on the node lists none, the fan panel stays empty. The bare-metal `gpu-worker` also needs no setup: k10temp gives its CPU temperature and the NZXT Kraken X53 its coolant temperature and pump speed.
+
+The "Power draw" panel of the Host Hardware dashboard shows each host's draw at the wall, measured by its smart plug. Home Assistant writes the plug's power sensor to VictoriaMetrics through its InfluxDB integration (`W_value{entity_id="plug_vault_leistung"}`, currently `vault` and `gpu-worker`; see [home-assistant.md](home-assistant.md)). To add a host, put its sensor's entity ID (without the `sensor.` prefix) into the panel's queries.
 
 ### 4. Provision Grafana
 

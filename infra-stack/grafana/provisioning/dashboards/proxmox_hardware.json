@@ -2,7 +2,7 @@
   "annotations": {
     "list": []
   },
-  "description": "CPU usage next to temperatures and fan speed for the Proxmox hosts vault and phil and the bare-metal nuc (node_exporter on the hosts).",
+  "description": "CPU usage, wall power draw, temperatures and fan speed of the Proxmox hosts vault and phil and the bare-metal nuc and gpu-worker, one panel per metric (node_exporter on the hosts). gpu-worker is often powered off, so its lines have gaps.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -53,10 +53,71 @@
           "min": 0,
           "max": 100
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "vault"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "phil"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nuc"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "gpu-worker"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 12,
         "x": 0,
         "y": 0
@@ -85,13 +146,203 @@
           },
           "editorMode": "code",
           "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{instance=\"10.1.23.3:9100\", mode=\"idle\"}[$__rate_interval])))",
-          "legendFormat": "CPU",
+          "legendFormat": "vault",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{instance=\"10.1.23.4:9100\", mode=\"idle\"}[$__rate_interval])))",
+          "legendFormat": "phil",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{instance=\"10.1.23.5:9100\", mode=\"idle\"}[$__rate_interval])))",
+          "legendFormat": "nuc",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{instance=\"10.1.23.247:9100\", mode=\"idle\"}[$__rate_interval])))",
+          "legendFormat": "gpu-worker",
+          "range": true,
+          "refId": "D"
         }
       ],
-      "title": "vault \u00b7 CPU usage",
+      "title": "CPU usage",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "never",
+            "spanNulls": 21600000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "watt",
+          "min": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "vault"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "phil"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nuc"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "gpu-worker"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "last_over_time(W_value{db=\"homeassistant\", entity_id=\"plug_vault_leistung\"}[1h])",
+          "legendFormat": "vault",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "last_over_time(W_value{db=\"homeassistant\", entity_id=\"lumi_lumi_plug_maeu01_leistung_2\"}[1h])",
+          "legendFormat": "gpu-worker",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Power draw",
+      "type": "timeseries",
+      "description": "Wall power of each host from its smart plug, written to VictoriaMetrics by Home Assistant's InfluxDB integration (sensor.<entity_id>, unit W). Home Assistant only writes on change, so a steady reading (like gpu-worker at standby) is held until the next change, across gaps of up to 6 hours."
     },
     {
       "datasource": {
@@ -137,118 +388,74 @@
           },
           "unit": "celsius"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 7
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "VictoriaMetrics"
-          },
-          "editorMode": "code",
-          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.3:9100\", chip=\"platform_coretemp_0\", sensor=\"temp1\"}",
-          "legendFormat": "CPU package",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "VictoriaMetrics"
-          },
-          "editorMode": "code",
-          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.3:9100\", chip=\"nvme_nvme0\", sensor=\"temp1\"}",
-          "legendFormat": "NVMe SSD",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "VictoriaMetrics"
-          },
-          "editorMode": "code",
-          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.3:9100\", chip=~\"platform_nct6775.*\", sensor=\"temp1\"}",
-          "legendFormat": "Mainboard",
-          "range": true,
-          "refId": "C"
-        }
-      ],
-      "title": "vault \u00b7 Temperatures",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "VictoriaMetrics"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "vault"
             },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+            "properties": [
               {
-                "color": "green",
-                "value": null
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
               }
             ]
           },
-          "unit": "rotrpm",
-          "min": 0
-        },
-        "overrides": []
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "phil"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "nuc"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "gpu-worker"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 17
+        "y": 8
       },
       "id": 3,
       "options": {
@@ -273,8 +480,8 @@
             "uid": "VictoriaMetrics"
           },
           "editorMode": "code",
-          "expr": "node_hwmon_fan_rpm{instance=\"10.1.23.3:9100\", chip=~\"platform_nct6775.*\", sensor=\"fan1\"}",
-          "legendFormat": "Fan 1",
+          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.3:9100\", chip=\"platform_coretemp_0\", sensor=\"temp1\"}",
+          "legendFormat": "vault",
           "range": true,
           "refId": "A"
         },
@@ -284,15 +491,37 @@
             "uid": "VictoriaMetrics"
           },
           "editorMode": "code",
-          "expr": "node_hwmon_fan_rpm{instance=\"10.1.23.3:9100\", chip=~\"platform_nct6775.*\", sensor=\"fan2\"}",
-          "legendFormat": "Fan 2",
+          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.4:9100\", chip=\"platform_coretemp_0\", sensor=\"temp1\"}",
+          "legendFormat": "phil",
           "range": true,
           "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.5:9100\", chip=\"platform_coretemp_0\", sensor=\"temp1\"}",
+          "legendFormat": "nuc",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.247:9100\", chip=\"pci0000:00_0000:00:18_3\", sensor=\"temp1\"}",
+          "legendFormat": "gpu-worker",
+          "range": true,
+          "refId": "D"
         }
       ],
-      "title": "vault \u00b7 Fan speed",
+      "title": "CPU temperature",
       "type": "timeseries",
-      "description": "Fan headers 1 and 2 of the nct6798 chip; the other headers are unconnected."
+      "description": "CPU package temperature: coretemp on the Intel hosts, k10temp Tctl on the AMD gpu-worker."
     },
     {
       "datasource": {
@@ -321,7 +550,9 @@
             },
             "thresholdsStyle": {
               "mode": "off"
-            }
+            },
+            "axisSoftMin": 20,
+            "axisSoftMax": 90
           },
           "decimals": 0,
           "mappings": [],
@@ -334,17 +565,15 @@
               }
             ]
           },
-          "unit": "percent",
-          "min": 0,
-          "max": 100
+          "unit": "celsius"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 8
       },
       "id": 4,
       "options": {
@@ -369,92 +598,8 @@
             "uid": "VictoriaMetrics"
           },
           "editorMode": "code",
-          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{instance=\"10.1.23.4:9100\", mode=\"idle\"}[$__rate_interval])))",
-          "legendFormat": "CPU",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "phil \u00b7 CPU usage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "VictoriaMetrics"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            },
-            "axisSoftMin": 20,
-            "axisSoftMax": 90
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 7
-      },
-      "id": 5,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "VictoriaMetrics"
-          },
-          "editorMode": "code",
-          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.4:9100\", chip=\"platform_coretemp_0\", sensor=\"temp1\"}",
-          "legendFormat": "CPU package",
+          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.3:9100\", chip=\"nvme_nvme0\", sensor=\"temp1\"}",
+          "legendFormat": "vault \u00b7 NVMe SSD",
           "range": true,
           "refId": "A"
         },
@@ -465,7 +610,7 @@
           },
           "editorMode": "code",
           "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.4:9100\", chip=\"nvme_nvme0\", sensor=\"temp1\"}",
-          "legendFormat": "NVMe SSD",
+          "legendFormat": "phil \u00b7 NVMe SSD",
           "range": true,
           "refId": "B"
         },
@@ -476,7 +621,7 @@
           },
           "editorMode": "code",
           "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.4:9100\", chip=~\"target0:.*\"}",
-          "legendFormat": "SATA SSD 0",
+          "legendFormat": "phil \u00b7 SATA SSD 0",
           "range": true,
           "refId": "C"
         },
@@ -487,177 +632,9 @@
           },
           "editorMode": "code",
           "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.4:9100\", chip=~\"target1:.*\"}",
-          "legendFormat": "SATA SSD 1",
+          "legendFormat": "phil \u00b7 SATA SSD 1",
           "range": true,
           "refId": "D"
-        }
-      ],
-      "title": "phil \u00b7 Temperatures",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "VictoriaMetrics"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent",
-          "min": 0,
-          "max": 100
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 24
-      },
-      "id": 6,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "VictoriaMetrics"
-          },
-          "editorMode": "code",
-          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{instance=\"10.1.23.5:9100\", mode=\"idle\"}[$__rate_interval])))",
-          "legendFormat": "CPU",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "nuc \u00b7 CPU usage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "VictoriaMetrics"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            },
-            "axisSoftMin": 20,
-            "axisSoftMax": 90
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 24
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "VictoriaMetrics"
-          },
-          "editorMode": "code",
-          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.5:9100\", chip=\"platform_coretemp_0\", sensor=\"temp1\"}",
-          "legendFormat": "CPU package",
-          "range": true,
-          "refId": "A"
         },
         {
           "datasource": {
@@ -666,9 +643,9 @@
           },
           "editorMode": "code",
           "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.5:9100\", chip=~\"nvme_nvme.*\", sensor=\"temp1\"}",
-          "legendFormat": "NVMe SSD",
+          "legendFormat": "nuc \u00b7 NVMe SSD",
           "range": true,
-          "refId": "B"
+          "refId": "E"
         },
         {
           "datasource": {
@@ -677,9 +654,9 @@
           },
           "editorMode": "code",
           "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.5:9100\", chip=~\"target.*\"}",
-          "legendFormat": "SATA drive",
+          "legendFormat": "nuc \u00b7 SATA drive",
           "range": true,
-          "refId": "C"
+          "refId": "F"
         },
         {
           "datasource": {
@@ -687,15 +664,15 @@
             "uid": "VictoriaMetrics"
           },
           "editorMode": "code",
-          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.5:9100\", chip=~\"iwlwifi.*\"}",
-          "legendFormat": "Wi-Fi",
+          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.247:9100\", chip=\"nvme_nvme0\", sensor=\"temp1\"}",
+          "legendFormat": "gpu-worker \u00b7 NVMe SSD",
           "range": true,
-          "refId": "D"
+          "refId": "G"
         }
       ],
-      "title": "nuc \u00b7 Temperatures",
+      "title": "Drive temperatures",
       "type": "timeseries",
-      "description": "Each line only appears when the NUC has that sensor (NVMe or SATA drive fitted, Wi-Fi card loaded)."
+      "description": "vault's SATA drives are excluded so the HDDs can spin down. nuc lines only appear when that drive is fitted."
     },
     {
       "datasource": {
@@ -744,11 +721,11 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 24
+        "w": 12,
+        "x": 0,
+        "y": 16
       },
-      "id": 8,
+      "id": 5,
       "options": {
         "legend": {
           "calcs": [
@@ -771,15 +748,144 @@
             "uid": "VictoriaMetrics"
           },
           "editorMode": "code",
-          "expr": "node_hwmon_fan_rpm{instance=\"10.1.23.5:9100\"}",
-          "legendFormat": "{{chip}} {{sensor}}",
+          "expr": "node_hwmon_fan_rpm{instance=\"10.1.23.3:9100\", chip=~\"platform_nct6775.*\", sensor=\"fan1\"}",
+          "legendFormat": "vault \u00b7 Fan 1",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_fan_rpm{instance=\"10.1.23.3:9100\", chip=~\"platform_nct6775.*\", sensor=\"fan2\"}",
+          "legendFormat": "vault \u00b7 Fan 2",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_fan_rpm{instance=\"10.1.23.5:9100\"}",
+          "legendFormat": "nuc \u00b7 {{chip}} {{sensor}}",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_fan_rpm{instance=\"10.1.23.247:9100\", chip=~\".*:1e71:2007.*\", sensor=\"fan1\"}",
+          "legendFormat": "gpu-worker \u00b7 AIO pump",
+          "range": true,
+          "refId": "D"
         }
       ],
-      "title": "nuc \u00b7 Fan speed",
+      "title": "Fan speed",
       "type": "timeseries",
-      "description": "Every fan the NUC exposes via hwmon. Intel NUCs often report none to Linux; check with `sensors` on the node."
+      "description": "vault: fan headers 1 and 2 of the nct6798 chip; the other headers are unconnected. phil exposes no fans to Linux, and Intel NUCs often report none either; check with `sensors` on the node. gpu-worker: pump of the NZXT Kraken X53."
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "VictoriaMetrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            },
+            "axisSoftMin": 20,
+            "axisSoftMax": 90
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.3:9100\", chip=~\"platform_nct6775.*\", sensor=\"temp1\"}",
+          "legendFormat": "vault \u00b7 Mainboard",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius{instance=\"10.1.23.247:9100\", chip=~\".*:1e71:2007.*\", sensor=\"temp1\"}",
+          "legendFormat": "gpu-worker \u00b7 AIO coolant",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Board and coolant temperatures",
+      "type": "timeseries",
+      "description": "vault's board sensor (nct6798) and the coolant of gpu-worker's NZXT Kraken X53."
     }
   ],
   "refresh": "1m",
