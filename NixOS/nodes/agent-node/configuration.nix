@@ -18,12 +18,13 @@
   documentation.doc.enable = false;
 
   # Hermes Agent as a service (module from the hermes-agent flake input). It runs as its own
-  # `hermes` user with state in /var/lib/hermes; `hermes` on the PATH shares that state, and
-  # stefan is in the hermes group so the CLI can write config.yaml. Settings here are merged
-  # into config.yaml on each activation; runtime edits to other keys survive.
+  # `hermes` user with state in /var/lib/hermes. Settings here are merged into config.yaml
+  # on each activation; runtime edits to other keys survive.
   services.hermes-agent = {
     enable = true;
-    addToSystemPackages = true;
+    # Not addToSystemPackages: the CLI only talks to the gateway when it runs as the same
+    # uid (unsafe_control_path otherwise), so the `hermes` below wraps it in sudo instead.
+    addToSystemPackages = false;
     settings.model = {
       # llama-swap on the gpu-worker (OpenAI-compatible, no API key)
       provider = "custom";
@@ -33,6 +34,7 @@
     # Secrets (messaging gateway tokens, API keys) go into an Agenix env file:
     # environmentFiles = [ config.age.secrets.hermes-env.path ];
   };
+  # The hermes group gives stefan read access to /var/lib/hermes for looking at files.
   users.users.stefan.extraGroups = [ "hermes" ];
 
   # llama-swap on the gpu-worker listens on its Tailscale address only.
@@ -53,6 +55,12 @@
     # Obsidian Sync without the desktop app (`ob` CLI). Only in nixos-unstable so far,
     # so it comes from nixpkgs-claude too. Being tested; no sync service declared yet.
     pkgs-claude.obsidian-headless
+    # `hermes`: runs the CLI as the hermes user against the service's state, as the upstream
+    # NixOS guide does (`sudo -u hermes`). stefan has passwordless sudo via wheel.
+    (pkgs.writeShellScriptBin "hermes" ''
+      exec /run/wrappers/bin/sudo -u hermes HERMES_HOME=/var/lib/hermes/.hermes \
+        ${config.services.hermes-agent.package}/bin/hermes "$@"
+    '')
   ];
 
   # Garage S3 write key for the `artifacts` bucket: an AWS credentials file with a
