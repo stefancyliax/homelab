@@ -448,140 +448,6 @@
         "type": "loki",
         "uid": "Loki"
       },
-      "description": "The 15 units and containers that logged the most matching lines in the time range.",
-      "id": 7,
-      "title": "Noisiest sources",
-      "type": "bargauge",
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 12
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "blue"
-          },
-          "unit": "short",
-          "decimals": 0,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "displayMode": "basic",
-        "orientation": "horizontal",
-        "showUnfilled": true,
-        "valueMode": "color",
-        "namePlacement": "left",
-        "sizing": "auto",
-        "minVizHeight": 16,
-        "maxVizHeight": 24,
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "Loki"
-          },
-          "editorMode": "code",
-          "expr": "topk(15, sum by (host, unit, container) (count_over_time({job=~\"$job\", host=~\"$host\", unit=~\"$unit\", container=~\"$container\"} |~ \"(?i)$search\" | detected_level=~\"(?i)(${level:pipe})\" [$__range])))",
-          "refId": "A",
-          "queryType": "instant",
-          "legendFormat": "{{host}} \u00b7 {{unit}}{{container}}"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "Loki"
-      },
-      "description": "The 15 units and containers with the most error lines in the time range. Ignores the Level filter.",
-      "id": 8,
-      "title": "Top error sources",
-      "type": "bargauge",
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 12
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "red"
-          },
-          "unit": "short",
-          "decimals": 0,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "displayMode": "basic",
-        "orientation": "horizontal",
-        "showUnfilled": true,
-        "valueMode": "color",
-        "namePlacement": "left",
-        "sizing": "auto",
-        "minVizHeight": 16,
-        "maxVizHeight": 24,
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "Loki"
-          },
-          "editorMode": "code",
-          "expr": "topk(15, sum by (host, unit, container) (count_over_time({job=~\"$job\", host=~\"$host\", unit=~\"$unit\", container=~\"$container\"} |~ \"(?i)$search\" | detected_level=~\"(?i)(emerg|alert|crit|critical|err|error|fatal|panic)\" [$__range])))",
-          "refId": "A",
-          "queryType": "instant",
-          "legendFormat": "{{host}} \u00b7 {{unit}}{{container}}"
-        }
-      ]
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "Loki"
-      },
       "id": 9,
       "title": "Logs",
       "type": "logs",
@@ -590,7 +456,7 @@
         "h": 26,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 12
       },
       "options": {
         "showTime": true,
