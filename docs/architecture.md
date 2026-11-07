@@ -254,17 +254,18 @@ Runs [Frigate](https://frigate.video/) as its own Docker Compose stack (`frigate
 
 **Status:** ✅ Running on `vault` as a bare VM. 🔲 Planned: the setup described below.
 
-Home of the AI agents and the knowledge base; supersedes `hermes-node`. Headless: reached over SSH/Mosh, with herdr as the workspace for the agents.
+Home of the AI agents and the knowledge base; supersedes `hermes-node`. Headless: reached over SSH, with herdr as the workspace for the agents.
 
 | Component | Notes |
 |---|---|
-| Hermes, Claude Code, Antigravity | Coding/knowledge agents |
-| herdr | Terminal workspace for running the agents |
-| Obsidian vault | Kept current via Obsidian Sync with a headless client (replaces the Syncthing copy on `hermes-node`) |
+| Hermes | Runs as a systemd service (`services.hermes-agent`) from the upstream `hermes-agent` flake, pinned to a release tag. Own `hermes` user, state in `/var/lib/hermes`; the `hermes` CLI shares that state. Model: `qwen3.6-35b` on the `gpu-worker`'s llama-swap, reached over Tailscale. Secrets for the messaging gateway go into an Agenix env file (not set up yet) |
+| Claude Code, Antigravity | Coding agents, from the `nixpkgs-claude` input (Antigravity as its terminal agent, `agy`), plus the dev tools from `modules/hermes.nix` |
+| herdr | Terminal workspace for running the agents, from the `herdr` flake input |
+| Obsidian vault | Kept current via Obsidian Sync with the official headless client (replaces the Syncthing copy on `hermes-node`). `obsidian-headless` (`ob` CLI) is installed from `nixpkgs-claude` for a manual test; a sync service follows once it works |
 | Automatic maintenance flows | Scheduled agent runs, declared as systemd timers |
 | Artifact publishing | ✅ Garage write key from Agenix, linked as `~/.aws/credentials` (profile `garage`); the agents upload with the `publish-s3` skill. Other AWS profiles on this node have to go into the same secret |
 
-Antigravity and Obsidian Sync are GUI-first; their headless use is not yet verified.
+Antigravity runs on the node as its terminal agent (`antigravity-cli`); the IDE stays on the laptop and can reach the node over remote SSH. Obsidian Sync has an official headless client, still to be tested on the node.
 
 #### Proxmox Datacenter Manager (VM)
 

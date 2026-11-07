@@ -99,6 +99,10 @@ For full hardware specs, networking, and service placement details, see [docs/ar
     - [ ] Grafana & SSO metrics via the Homepage REST parser.
 - [ ] **`vault` DMI ASPM:** The CPU package on `vault` idles at 2.3 W but never gets past package C3 (limit is C10, PCIe L1 is on everywhere, SATA, USB, chipset LTR and the iGPU driver are ruled out). Next time in the BIOS, check the DMI entries under Advanced → Platform Misc Configuration (DMI Link ASPM Control, DMI ASPM, DMI Gen3 ASPM) and set them to enabled / L1. Verify with `powertop` (Idle stats): the Pkg column should show time in C6 or deeper. Worth about 2 W at most.
 - [ ] **Grafana Dashboards:** Set up proper Grafana dashboards for monitoring, covering both Proxmox hosts (`phil`, `vault`) and all nodes. See [monitoring.md](docs/monitoring.md).
+- [ ] **Periodic log review:** A scheduled agent run that queries Loki (`http://10.1.23.184:3100`) for errors and warnings since the last run, groups them by source and pattern, and sends a short summary to ntfy (`homelab-alerts`). It should flag new or growing error sources, skip known noise, and treat `gpu-worker` being offline as expected.
+    - [ ] Decide which agent runs it: Gemini, Claude Code or Hermes, and where it is scheduled (e.g. a systemd timer on `agent-node`).
+    - [ ] Decide the interval (daily summary, or more often with a message only when something is new).
+    - [ ] Write the prompt or skill, with the list of known noise kept in the repo.
 
 ### Expansion: NAS, Media and New Nodes
 
@@ -159,6 +163,11 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **`frigate-node` / `frigate-stack`:** NixOS VM on `phil` with Iris Xe and the 512 GB SanDisk SSD passed through (SMART checked on 2026-10-09: no errors, about 3% wear; detach it from `services-node` first) and a NIC on the IoT VLAN; ballooning disabled; OpenVINO detector; 1–2 cameras with motion/event-based retention sized to the SSD; Home Assistant integration; ntfy `homelab-security`; Authelia forward_auth.
 - [ ] **`agent-node` headless check:** Verify Obsidian Sync runs headless (official headless client) and how Antigravity is used without a desktop (remote SSH from the laptop or CLI).
 - [ ] **`agent-node`:** Headless NixOS VM on `vault` with Hermes, Claude Code, Antigravity, herdr, the Obsidian vault (Obsidian Sync) and systemd timers for the maintenance flows.
+    - [x] In the config: Hermes as a service from the upstream flake, Claude Code and the Antigravity CLI from `nixpkgs-claude`, herdr, `obsidian-headless`, Tailscale.
+    - [ ] Deploy, join Tailscale and check that Hermes reaches llama-swap.
+    - [ ] Test Obsidian Sync with `ob`, then declare a sync service.
+    - [ ] Move Hermes state (sessions, skills, memory) over from `hermes-node`.
+    - [ ] Agenix env file for the Hermes messaging gateway.
 - [ ] **Retire `hermes-node`:** After migrating to `agent-node`, remove the node from the flake, its Syncthing route in Caddy and its scrape targets.
 - [ ] **`nuc`:** Bare-metal NixOS node for development (i3-8109U, 16 GB), scaffolded in the flake (`nodes/nuc/`) with Comin. Install NixOS, swap in the generated `hardware-configuration.nix`, add its host key to `secrets.nix` for the Comin PAT and bootstrap it. Runs on Ethernet only. See [deployment.md](docs/deployment.md#provisioning-the-nuc).
 - [ ] **Observability & ingress for new guests:** Scrape targets, Homepage entries and Caddy routes for `vault` and every new node.
