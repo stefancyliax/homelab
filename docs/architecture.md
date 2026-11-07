@@ -53,6 +53,7 @@ Bare-metal NixOS node for development, with Claude Code (from its own `nixpkgs-c
 | Concern | Solution |
 |---|---|
 | DHCP / DNS | Unifi networking system |
+| DNS filtering | Pi-hole on `infra-node`, opt-in for selected devices, see [services.md](services.md#pi-hole-dns) |
 | IoT Isolation | Dedicated VLAN for IoT devices |
 | Remote Access | Tailscale (MagicDNS for device name resolution) |
 | Public Exposure | **None** — nothing is forwarded from the WAN router |
@@ -66,6 +67,7 @@ All services are accessed via `*.home.stefancyliax.de` subdomains. DNS is config
 |---|---|---|---|
 | **Porkbun (Public DNS)** | `*.home.stefancyliax.de` → A record | `10.1.23.184` | Ensures all clients (LAN, Tailscale, any DNS resolver) resolve to the infra-node |
 | **Unifi (Local DNS)** | `*.home.stefancyliax.de` → A record | `10.1.23.184` | Local override (optional, but provides faster resolution on LAN) |
+| **Pi-hole (Local DNS)** | `*.home.stefancyliax.de` → dnsmasq `address=` | `10.1.23.184` | Same answer for the devices that opted into Pi-hole |
 
 > [!NOTE]
 > The public A record points to a private RFC 1918 IP. This is intentional — the address is only reachable on the LAN or via Tailscale. External users get a valid DNS response but cannot connect.
@@ -141,6 +143,7 @@ Hosts foundational services that must remain operational even if the application
 | [Homepage](https://gethomepage.dev/) | Docker Compose (`infra-stack`) | ✅ Running |
 | Tailscale Subnet Router | Native NixOS Service | ✅ Running |
 | [ntfy](https://ntfy.sh/) | Docker Compose (`infra-stack`) | ✅ Running |
+| [Pi-hole](https://pi-hole.net/) | Docker Compose (`infra-stack`) | 🚧 Configured |
 | VictoriaMetrics / Grafana / Loki | Docker Compose (`infra-stack`) | ✅ Running |
 
 Dockhand is deployed natively via NixOS modules (`virtualisation.oci-containers`) to ensure it stays operational independently of Docker Compose. It orchestrates application deployments across the cluster by receiving webhooks from the CI pipeline.
@@ -171,7 +174,7 @@ Managed NixOS rather than Unraid: with a 6 TB + 2 TB + 1 TB set, any parity sche
 |---|---|
 | Samba / NFS shares | Native NixOS service |
 | [Jellyfin](https://jellyfin.org/) | Docker Compose (`storage-stack`), QuickSync via the passed-through UHD 770. Reads `/mnt/backup/media` on the 2 TB disk for now |
-| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`), ✅ moved. Serves `/mnt/data` on the 6 TB disk |
+| [NextExplorer](https://github.com/nxzai/explorer) | Docker Compose (`storage-stack`), ✅ moved. Serves `/mnt/data` on the 6 TB disk as "Files" and the media library (`/mnt/backup/media`) as "Media" |
 | [BamBuddy](https://bambuddy.cool/index.html) | Docker Compose (`storage-stack`) |
 | Scanner service (HP ScanJet Pro 2600 f1) | Docker Compose (`storage-stack`), built from `storage-stack/scanner`. The scanner stands next to `vault` and is passed through by USB; scans are written to the `paperless-consume` share on `services-node`, mounted at `/mnt/paperless-consume` |
 

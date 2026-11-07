@@ -8,6 +8,7 @@ services:
     restart: unless-stopped
     environment:
       - HOMEPAGE_ALLOWED_HOSTS=10.1.23.184,homepage.home.stefancyliax.de
+      - HOMEPAGE_VAR_PIHOLE_PASSWORD=$PIHOLE_PASSWORD # Pi-hole widget
     # ports:
     #   - 3002:3000
     volumes:
@@ -98,6 +99,25 @@ services:
       retries: 3
       start_period: 5s
 
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    restart: unless-stopped
+    ports:
+      # DNS only; the web UI is reached through Caddy (pihole.home.stefancyliax.de)
+      - "53:53/tcp"
+      - "53:53/udp"
+    environment:
+      - TZ=Europe/Berlin
+      - FTLCONF_webserver_api_password=$PIHOLE_PASSWORD
+      # Bridge networking: queries arrive from LAN/VLAN/Tailscale subnets, not the container's own
+      - FTLCONF_dns_listeningMode=all
+      - FTLCONF_dns_upstreams=1.1.1.1;1.0.0.1
+      # Answer every homelab subdomain locally instead of via the public Porkbun record
+      - FTLCONF_misc_dnsmasq_lines=address=/home.stefancyliax.de/10.1.23.184
+    volumes:
+      - pihole_data:/etc/pihole
+
   loki:
     image: grafana/loki:3.5
     container_name: loki
@@ -114,6 +134,7 @@ volumes:
   grafana_data:
   loki_data:
   ntfy_cache:
+  pihole_data:
   caddy_data:
   caddy_config:
 

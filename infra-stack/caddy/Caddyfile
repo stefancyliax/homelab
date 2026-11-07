@@ -42,6 +42,17 @@
 		reverse_proxy grafana:3000
 	}
 
+	# Pi-hole admin UI (Protected by Authelia)
+	@pihole host pihole.home.stefancyliax.de
+	handle @pihole {
+		forward_auth authelia:9091 {
+			uri /api/verify?rd=https://auth.home.stefancyliax.de/
+			copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+		}
+		redir / /admin/
+		reverse_proxy pihole:80
+	}
+
 	# Ntfy (Direct Proxy, Unprotected)
 	@ntfy host ntfy.home.stefancyliax.de
 	handle @ntfy {

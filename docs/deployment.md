@@ -351,6 +351,7 @@ Mark the service as enrolled in the table below.
 | Grafana | ✅ Native | ✅ Enrolled | Auth Proxy | Configured via Authelia forward_auth / GF_AUTH_PROXY |
 | VictoriaMetrics / Prometheus | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |
 | Dockhand | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Built-in OIDC support |
+| Pi-hole | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth; Pi-hole's own password stays on for the API |
 | **Services** | | | | |
 | Paperless-ngx | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Via `allauth.socialaccount.providers.openid_connect`, `client_secret_basic`, no PKCE |
 | Paperless-GPT | ❌ None | ✅ Enrolled | Auth Proxy | Protected via Authelia forward_auth |

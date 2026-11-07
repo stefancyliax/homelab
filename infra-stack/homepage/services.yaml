@@ -23,6 +23,15 @@
         href: https://ntfy.home.stefancyliax.de
         icon: ntfy
         description: Notification Server
+    - Pi-hole:
+        href: https://pihole.home.stefancyliax.de/admin/
+        icon: pi-hole
+        description: Network-wide DNS & Ad Blocking
+        widget:
+          type: pihole
+          url: http://pihole:80
+          version: 6
+          key: "{{HOMEPAGE_VAR_PIHOLE_PASSWORD}}"
     - ZeroByte:
         href: https://zerobyte.home.stefancyliax.de
         icon: network

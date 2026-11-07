@@ -10,7 +10,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 |---|---|---|
 | [Home Assistant](https://www.home-assistant.io/) | Dedicated HAOS VM | ✅ Running |
 | [ntfy](https://ntfy.sh/) | Docker Compose (`infra-stack`) | ✅ Functional |
-| [Pi-hole](https://pi-hole.net/) | Docker Compose (`infra-stack`) | 🔲 Planned |
+| [Pi-hole](https://pi-hole.net/) | Docker Compose (`infra-stack`) | 🚧 Configured — opt-in per device |
 | [ZeroByte](https://github.com/nicotsx/zerobyte) | Docker Compose (`services-stack`) | ✅ Functional |
 | [Paperless-ngx](https://docs.paperless-ngx.com/) | Docker Compose (`services-stack`) | ✅ Functional |
 | Samba & WSDD | Native NixOS service (`services-node`) | ✅ Functional |
@@ -55,6 +55,27 @@ Several application workloads are supported by dedicated background containers:
 | `gotenberg` (v8.25) | `services-stack` (`paperless.compose.yml`) | Document conversion engine (HTML, Office, EML to PDF) |
 | `tika` | `services-stack` (`paperless.compose.yml`) | Apache Tika text & metadata extraction engine |
 | `grimmory-db` (MariaDB) | `services-stack` (`docker-compose.yml`) | Backend SQL database for Grimmory |
+
+### Pi-hole (DNS)
+
+Pi-hole v6 runs in the `infra-stack` on `infra-node` (`10.1.23.184`) and serves DNS on port 53 (TCP/UDP). The admin UI is not published directly; it is reached through Caddy at `pihole.home.stefancyliax.de` behind Authelia.
+
+- **Configuration:** declared through `FTLCONF_*` environment variables in `infra-stack/docker-compose.yml`. Settings set this way are read-only in the web UI; blocklists, local records and groups are managed in the UI and live in the `pihole_data` volume.
+- **Upstreams:** Cloudflare (`1.1.1.1`, `1.0.0.1`).
+- **Homelab domain:** `*.home.stefancyliax.de` resolves locally to `10.1.23.184` via a dnsmasq `address=` line, so LAN clients don't depend on the public Porkbun record.
+- **Listening mode `all`:** needed in Docker bridge mode, because queries arrive from the LAN, the IoT VLAN and Tailscale (via the subnet router), never from the container's own subnet. Port 53 is not forwarded from the WAN.
+- **Password:** `PIHOLE_PASSWORD` is set as a stack environment variable in Dockhand (like `GRAFANA_ADMIN_PASSWORD`). Homepage gets the same value as `HOMEPAGE_VAR_PIHOLE_PASSWORD` for its Pi-hole widget.
+
+**Opt-in per device:** Unifi DHCP keeps handing out its own DNS, so the network as a whole doesn't depend on Pi-hole. Only selected devices use it:
+
+- **Manual DNS on the device:** set `10.1.23.184` as the only DNS server in the device's network settings (macOS/iOS per Wi-Fi network, Windows per adapter). Don't add a public resolver as second server: the device picks either one and bypasses blocking. Android has no manual DNS for DHCP Wi-Fi; use a static IP there or the Tailscale route below.
+- **Separate Unifi network (optional):** if more devices should use it, create a VLAN/SSID whose DHCP hands out `10.1.23.184` and move those devices onto it.
+- **Remote devices:** Tailscale DNS is tailnet-wide, so it is not a per-device switch. Leave it unchanged unless all tailnet devices should be filtered.
+
+Test after deploying: `dig @10.1.23.184 example.com` and `dig @10.1.23.184 grafana.home.stefancyliax.de`.
+
+> [!NOTE]
+> If `infra-node` is down, only the opted-in devices lose DNS. Switching such a device back to automatic DNS restores it. The servers and the rest of the network keep using Unifi.
 
 ### File Sharing & Ingestion
 
