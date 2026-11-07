@@ -43,6 +43,7 @@ Grafana connects to VictoriaMetrics as its primary Prometheus-compatible data so
 | Host Hardware | VictoriaMetrics | CPU usage, wall power draw, temperatures and fan speed of `vault`, `phil`, `nuc` and `gpu-worker`, one panel per metric (`proxmox_hardware.json`) |
 | Commute Time | VictoriaMetrics | Travel time and route distance to work and home from the Home Assistant travel time sensors, plus a 30-day heatmap per 15-minute slot. Needs the `marcusolsson-hourly-heatmap-panel` plugin, preinstalled through `GF_PLUGINS_PREINSTALL` (`commute_time.json`) |
 | Home Assistant Sensors | VictoriaMetrics | Temperature, energy, and sensor trends over time |
+| Homelab Logs | Loki | All logs from every node (systemd journal and Docker containers): volume per host, error and warning counts, noisiest and most error-prone sources, and a searchable log stream. Filter by source, host, unit, container, level (Loki's `detected_level`) or a regex (`logs.json`) |
 
 ### Loki & Alloy
 
@@ -110,7 +111,7 @@ Use Grafana's declarative provisioning YAMLs (`infra-stack/grafana/provisioning/
 
 ### 6. Enable Logging
 
-Promtail is deployed natively via the NixOS `common.nix` module to automatically ship journald and Docker logs from all nodes. Loki runs alongside the other monitoring services in the `infra-stack` and is pre-provisioned as a Grafana datasource.
+Grafana Alloy is deployed natively via the NixOS `common.nix` module to automatically ship journald and Docker logs from all nodes. Loki runs alongside the other monitoring services in the `infra-stack` and is pre-provisioned as a Grafana datasource.
 
 ## Notifications
 
