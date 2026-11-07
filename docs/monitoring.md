@@ -24,7 +24,7 @@ VictoriaMetrics acts as the unified metrics backbone for the entire homelab, rep
 | VictoriaMetrics self | 8428 | Internal TSDB performance and ingestion telemetry |
 | Comin nodes | 4243 | GitOps deployment status (pull success, current revision) |
 | Docker daemon | 9323 | Container health and resource utilization |
-| Node Exporters | 9100 | Hardware telemetry (CPU, RAM, disk) from all NixOS nodes (including `hermes-node` & `gpu-worker`) |
+| Node Exporters | 9100 | Hardware telemetry (CPU, RAM, disk) from all NixOS nodes (including `gpu-worker`; not `hermes-node` and `another-node`, which are being retired) |
 
 ### Grafana
 
