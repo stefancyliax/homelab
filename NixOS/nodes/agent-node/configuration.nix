@@ -12,6 +12,11 @@
 
   networking.hostName = "agent-node";
 
+  # No doc outputs in the system profile. Headless VM, nobody reads them here, and the
+  # python311 from modules/hermes.nix pulls python3.11-doc, which isn't in the binary cache
+  # and whose Sphinx build fails on 26.05 (docutils 0.22).
+  documentation.doc.enable = false;
+
   # Hermes Agent as a service (module from the hermes-agent flake input). It runs as its own
   # `hermes` user with state in /var/lib/hermes; `hermes` on the PATH shares that state, and
   # stefan is in the hermes group so the CLI can write config.yaml. Settings here are merged
