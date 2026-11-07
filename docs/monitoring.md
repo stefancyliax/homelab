@@ -53,7 +53,9 @@ Loki provides log storage and indexing (similar to Prometheus/VictoriaMetrics bu
 
 **Sources:**
 - **systemd-journal** (`job="systemd-journal"`, labels `host`, `unit`, `level`): Captures all host-level logs from NixOS services (SSH, Comin, Node Exporter, Hermes, etc.).
-- **Docker** (`job="docker"`, labels `host`, `container`): Captures logs from all running containers via the Docker socket.
+- **Docker** (`job="docker"`, labels `host`, `container`): Captures logs from all running containers via the Docker socket. Docker's journald log driver also writes container output to the journal (stderr as priority `err`), so the journal source drops entries with a container name to avoid duplicates and false errors.
+
+Loki runs with `log_level: warn`; at `info` it logs every query, and those lines would be shipped back into Loki.
 
 Logs are retained for 14 days by default. The Hermes agent programmatically queries the Loki HTTP API at `http://10.1.23.184:3100` to access cluster logs without requiring SSH.
 

@@ -43,6 +43,13 @@
     loki.relabel "journal" {
       forward_to = []
 
+      // Container output already comes in through loki.source.docker. Docker's journald
+      // log driver also writes it to the journal, with stderr as priority "err".
+      rule {
+        source_labels = ["__journal_container_name"]
+        regex         = ".+"
+        action        = "drop"
+      }
       rule {
         source_labels = ["__journal__systemd_unit"]
         target_label  = "unit"
