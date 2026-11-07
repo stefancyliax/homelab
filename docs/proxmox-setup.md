@@ -97,7 +97,7 @@ Inside `storage-node`, node_exporter opens the mount points every 15 seconds for
 
 | Host | iGPU | Target VM | Consumer | Status |
 |---|---|---|---|---|
-| `phil` | Iris Xe (80 EU) | `frigate-node` | Frigate (decode + OpenVINO detection) | 🔲 Planned |
+| `phil` | Iris Xe (80 EU) | `frigate-node` | Frigate (decode + OpenVINO detection) | 🚧 Guest side prepared, host side not yet applied |
 | `vault` | UHD 770 (32 EU) | `storage-node` | Jellyfin (QuickSync transcoding) | ✅ Passed through (VM 891), VAAPI validated with `vainfo` |
 
 Full passthrough gives the iGPU to one VM and the host loses its local console. It works on `vault` and is not yet validated on `phil`. Fallback: run the consumer in a CT with `/dev/dri` shared from the host.
@@ -149,7 +149,7 @@ qm shutdown <vmid> && qm start <vmid>   # a reboot from inside the guest does no
 
 ### Guest
 
-`storage-node` carries the firmware, the VAAPI driver and the test tools in its `configuration.nix`. Validate with:
+Both guests import `modules/intel-igpu.nix`, which brings the firmware, the VAAPI driver, the test tools and a Docker unit that waits for the render node. Validate with:
 
 ```bash
 lspci -nnk | grep -A3 VGA                                   # second VGA device, driver i915
