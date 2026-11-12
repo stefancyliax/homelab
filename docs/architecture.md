@@ -254,18 +254,27 @@ Runs [Frigate](https://frigate.video/) as its own Docker Compose stack (`frigate
 
 **Status:** ✅ Running on `vault` as a bare VM. 🔲 Planned: the setup described below.
 
-Home of the AI agents and the knowledge base; supersedes `hermes-node`. Headless: reached over SSH, with herdr as the workspace for the agents.
+Home of the AI agents and the knowledge base; supersedes `hermes-node`. Nobody works on the node in a shell. The three agents run all the time and are reached from the phone or the laptop:
+
+| Agent | Reached through |
+|---|---|
+| Claude Code | Claude Remote Control (Claude app, claude.ai/code) |
+| Antigravity (`agy`) | Antigravity Remote Control |
+| Hermes | Its messaging gateway (Discord/Telegram) |
+| All three | The herdr desktop app, which connects to the node over SSH and brings its own backend (herdr-core) |
+
+All three run as one shared user, `kay`, so they work on the same repo checkouts and the same Obsidian vault. `stefan` stays the admin account; `kay` has neither sudo nor Docker, and holds only the credentials the agents need.
 
 | Component | Notes |
 |---|---|
-| Hermes | Runs as a systemd service (`services.hermes-agent`) from the upstream `hermes-agent` flake, pinned to a release tag. Own `hermes` user, state in `/var/lib/hermes`; the `hermes` CLI shares that state. Model: `qwen3.6-35b` on the `gpu-worker`'s llama-swap, reached over Tailscale. Secrets for the messaging gateway go into an Agenix env file (not set up yet) |
-| Claude Code, Antigravity | Coding agents, from the `nixpkgs-claude` input (Antigravity as its terminal agent, `agy`), plus the dev tools from `modules/hermes.nix` |
-| herdr | Terminal workspace for running the agents, from the `herdr` flake input |
+| `kay` | Normal user with its own private group (no other members), lingering so its processes run without a login. Its own SSH key for the herdr app, separate from `stefan`'s |
+| Hermes | Systemd service (`services.hermes-agent`) from the upstream `hermes-agent` flake, pinned to a release tag. Runs as `kay` with `HERMES_HOME` at `/home/kay/.hermes`, so the `hermes` CLI as `kay` talks to the running gateway. LLM provider: Nous Portal (`hermes auth add nous` once). Discord/Telegram tokens go into an Agenix env file (not set up yet) |
+| Claude Code, Antigravity | From the `nixpkgs-claude` input (Antigravity as its terminal agent, `agy`), plus the dev tools from `modules/hermes.nix`. 🔲 Always-on Remote Control for both, after a one-time login as `kay` |
+| Repos | Checked out under `/home/kay/repos` (e.g. `homelab`); Hermes' working directory. 🔲 GitHub credentials for `kay` |
 | Obsidian vault | Kept current via Obsidian Sync with the official headless client (replaces the Syncthing copy on `hermes-node`). `obsidian-headless` (`ob` CLI) is installed from `nixpkgs-claude` for a manual test; a sync service follows once it works |
-| Automatic maintenance flows | Scheduled agent runs, declared as systemd timers |
-| Artifact publishing | ✅ Garage write key from Agenix, linked as `~/.aws/credentials` (profile `garage`); the agents upload with the `publish-s3` skill. Other AWS profiles on this node have to go into the same secret |
-
-Antigravity runs on the node as its terminal agent (`antigravity-cli`); the IDE stays on the laptop and can reach the node over remote SSH. Obsidian Sync has an official headless client, still to be tested on the node.
+| Memory | 🔲 All three agents connect to Hindsight on [`agent-tools-node`](#agent-tools-node-nixos-vm): Hermes through its Hindsight memory plugin, Claude Code and Antigravity presumably through MCP |
+| Automatic maintenance flows | Scheduled agent runs: systemd timers calling `claude -p` / `agy -p`, plus Hermes' own cron |
+| Artifact publishing | ✅ Garage write key from Agenix, linked as `/home/kay/.aws/credentials` (profile `garage`); the agents upload with the `publish-s3` skill. Other AWS profiles on this node have to go into the same secret |
 
 #### Proxmox Datacenter Manager (VM)
 

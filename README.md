@@ -115,7 +115,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **No cluster:** `phil` and `vault` are standalone and managed through Proxmox Datacenter Manager, which runs as a VM on `phil` (a two-node cluster needs a QDevice for quorum).
 - [x] **HDD layout:** No parity. 6 TB bulk/media, 1 TB scratch, 2 TB local backup copy of important shares.
 - [x] **No PBS:** No Proxmox Backup Server and no VM image backups.
-- [x] **`agent-node`:** Supersedes `hermes-node`; headless with herdr. Planned as `chiefofstaff-node` before the rename.
+- [x] **`agent-node`:** Supersedes `hermes-node`; headless, the agents run as the shared user `kay` and are reached through Remote Control, messaging and the herdr desktop app. Planned as `chiefofstaff-node` before the rename.
 - [x] **Artifact hosting:** Garage website bucket with one path per artifact. No Authelia in front; sharing the `home.stefancyliax.de` parent domain with the other services is accepted.
 - [x] **`services-node` data disk:** Replace the virtual disk on `ZFS-Store` with an SSD passed through whole (ext4) and retire the ZFS pool on `phil`. Leaner (no ZFS cache on a 32 GB host) and consistent with the Frigate SSD and the `vault` HDDs; costs Proxmox-side snapshots of that disk.
 - [x] **`vault` disks:** Proxmox on the NVMe SSD only for now (`local` 100 GB, `local-lvm` ~400 GB); the SATA SSD goes to `agent-tools-node` for Garage. HDD filesystems: btrfs on the 6 TB and 2 TB, XFS on the 1 TB (Garage's recommended filesystem for its data directory).
@@ -161,13 +161,18 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **Remove dropped services:** Delete the commented-out Stirling PDF, Tududi and Paperless-AI blocks and their volumes from the `services-stack` compose files.
 - [x] **Scanner service:** The HP ScanJet Pro 2600 f1 container runs in the `storage-stack` on `storage-node` on `vault`, where the scanner physically stands. The scanner is passed through by USB (see [proxmox-setup.md](docs/proxmox-setup.md#usb-passthrough)); the container gets the whole `/dev/bus/usb` tree and writes to the `paperless-consume` share of `services-node`, which `storage-node` automounts at `/mnt/paperless-consume`. See [scanner/README.md](storage-stack/scanner/README.md).
 - [ ] **`frigate-node` / `frigate-stack`:** NixOS VM on `phil` with Iris Xe and the 512 GB SanDisk SSD passed through (SMART checked on 2026-10-09: no errors, about 3% wear; detach it from `services-node` first) and a NIC on the IoT VLAN; ballooning disabled; OpenVINO detector; 1–2 cameras with motion/event-based retention sized to the SSD; Home Assistant integration; ntfy `homelab-security`; Authelia forward_auth.
-- [ ] **`agent-node` headless check:** Verify Obsidian Sync runs headless (official headless client) and how Antigravity is used without a desktop (remote SSH from the laptop or CLI).
-- [ ] **`agent-node`:** Headless NixOS VM on `vault` with Hermes, Claude Code, Antigravity, herdr, the Obsidian vault (Obsidian Sync) and systemd timers for the maintenance flows.
-    - [x] In the config: Hermes as a service from the upstream flake, Claude Code and the Antigravity CLI from `nixpkgs-claude`, herdr, `obsidian-headless`, Tailscale.
-    - [ ] Deploy, join Tailscale and check that Hermes reaches llama-swap.
+- [x] **`agent-node` headless check:** Obsidian Sync has an official headless client (`obsidian-headless`); Antigravity runs as its terminal agent (`agy`) and is reached through Antigravity Remote Control.
+- [ ] **`agent-node`:** Headless NixOS VM on `vault` where Hermes, Claude Code and Antigravity run all the time as the shared user `kay`, reached through Claude/Antigravity Remote Control, Discord/Telegram (Hermes) and the herdr desktop app. With the repos, the Obsidian vault (Obsidian Sync), Hindsight as memory and systemd timers for the maintenance flows. See [architecture.md](docs/architecture.md#agent-node-nixos-vm).
+    - [x] In the config: the `kay` user, Hermes as a service from the upstream flake running as `kay` with Nous Portal, Claude Code and the Antigravity CLI from `nixpkgs-claude`, `obsidian-headless`.
+    - [ ] One-time logins as `kay`: `hermes auth add nous` (then `hermes model`), `claude`, `agy`, `ob`.
+    - [ ] Always-on Claude Remote Control (`claude remote-control`) and Antigravity Remote Control (`agy remote-control`), declared as services for `kay`.
+    - [ ] Agenix env file with the Discord/Telegram tokens for the Hermes messaging gateway.
     - [ ] Test Obsidian Sync with `ob`, then declare a sync service.
+    - [ ] Repos under `/home/kay/repos`, with GitHub credentials for `kay`.
+    - [ ] Connect all three agents to Hindsight on `agent-tools-node`.
+    - [ ] Connect the herdr desktop app to the node as `kay`.
     - [ ] Move Hermes state (sessions, skills, memory) over from `hermes-node`.
-    - [ ] Agenix env file for the Hermes messaging gateway.
+    - [ ] Clean up after the move to `kay`: the old `hermes` user and `/var/lib/hermes`, and `stefan`'s `~/.aws`.
 - [ ] **Retire `hermes-node`:** After migrating to `agent-node`, remove the node from the flake, its Syncthing route in Caddy and its scrape targets.
 - [ ] **`nuc`:** Bare-metal NixOS node for development (i3-8109U, 16 GB), scaffolded in the flake (`nodes/nuc/`) with Comin. Install NixOS, swap in the generated `hardware-configuration.nix`, add its host key to `secrets.nix` for the Comin PAT and bootstrap it. Runs on Ethernet only. See [deployment.md](docs/deployment.md#provisioning-the-nuc).
 - [ ] **Observability & ingress for new guests:** Scrape targets, Homepage entries and Caddy routes for `vault` and every new node.

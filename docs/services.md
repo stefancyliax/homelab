@@ -41,7 +41,7 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | pilot | To be defined (`agent-tools-node`) | 🔲 Planned |
 | Embedding Service (`google/embeddinggemma-2`) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | Extraction SLM (Gemma 4 E2B) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
-| Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed — 🔲 move to `agent-node` in progress (`services.hermes-agent` is in its config) |
+| Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed — 🔲 move to `agent-node` in progress (`services.hermes-agent` as user `kay`, Nous Portal) |
 | [nvtop](https://github.com/Syllo/nvtop) | Native NixOS package (`gpu-worker`) | ✅ Deployed |
 
 ### Supporting Infrastructure & Databases

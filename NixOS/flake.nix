@@ -115,7 +115,6 @@
         system = "x86_64-linux";
         specialArgs = {
           inherit pkgs-claude;
-          herdr = herdr-pkg;
         };
         modules = baseModules ++ [
           ./nodes/agent-node/configuration.nix
