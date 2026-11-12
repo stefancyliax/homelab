@@ -167,7 +167,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
     - [ ] One-time logins as `kay`: `hermes auth add nous` (then `hermes model`), `claude`, `agy`, `ob`.
     - [ ] Always-on Claude Remote Control (`claude remote-control`) and Antigravity Remote Control (`agy remote-control`), declared as services for `kay`.
     - [ ] Agenix env file with the Discord/Telegram tokens for the Hermes messaging gateway.
-    - [ ] Test Obsidian Sync with `ob`, then declare a sync service.
+    - [x] Obsidian Sync: vault "Knowledgebase" at `/home/kay/knowledgebase`, kept current by the `obsidian-sync` service.
     - [ ] Repos under `/home/kay/repos`, with GitHub credentials for `kay`.
     - [ ] Connect all three agents to Hindsight on `agent-tools-node`.
     - [ ] Connect the herdr desktop app to the node as `kay`.

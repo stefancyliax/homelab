@@ -77,9 +77,29 @@
     # Antigravity's terminal agent (`agy`), reached through Antigravity Remote Control
     pkgs-claude.antigravity-cli
     # Obsidian Sync without the desktop app (`ob` CLI). Only in nixos-unstable so far,
-    # so it comes from nixpkgs-claude too. Being tested; no sync service declared yet.
+    # so it comes from nixpkgs-claude too.
     pkgs-claude.obsidian-headless
   ];
+
+  # ── Obsidian vault ──────────────────────────────────────────────────────────────────
+  # Keeps /home/kay/knowledgebase in sync with the "Knowledgebase" vault, both ways, so
+  # notes the agents write go back to the other devices. Set up once as kay with
+  # `ob login` and `ob sync-setup --vault Knowledgebase --path ~/knowledgebase
+  # --device-name agent-node`; ob keeps the login and the vault link in kay's home.
+  systemd.services.obsidian-sync = {
+    description = "Obsidian Sync for kay's knowledgebase vault";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    serviceConfig = {
+      User = "kay";
+      Group = "kay";
+      WorkingDirectory = "/home/kay/knowledgebase";
+      ExecStart = "${pkgs-claude.obsidian-headless}/bin/ob sync --path /home/kay/knowledgebase --continuous";
+      Restart = "on-failure";
+      RestartSec = 30;
+    };
+  };
 
   # Garage S3 write key for the `artifacts` bucket: an AWS credentials file with a
   # [garage] profile, which is where the publish-s3 skill looks for it
