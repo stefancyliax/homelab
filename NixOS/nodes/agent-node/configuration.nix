@@ -55,8 +55,13 @@
     workingDirectory = "/home/kay/repos";
     addToSystemPackages = true;
     # Nous Portal; log in once as kay with `hermes auth add nous` (stored in auth.json).
-    # The model is picked with `hermes model` and stays in config.yaml.
-    settings.model.provider = "nous";
+    # Managed mode: the CLI can't save config (`hermes model`, `hermes config set`), so the
+    # model is set here. `hermes model` still lists the models to pick from. Without a model,
+    # every new session fails with storage_unavailable.
+    settings.model = {
+      provider = "nous";
+      default = "z-ai/glm-5.3-flash";
+    };
     # Secrets (Discord/Telegram tokens for the messaging gateway) go into an Agenix env file:
     # environmentFiles = [ config.age.secrets.hermes-env.path ];
   };
