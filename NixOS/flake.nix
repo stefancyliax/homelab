@@ -17,13 +17,9 @@
     # herdr (terminal workspace for coding agents) is not in nixpkgs; pinned to a release tag,
     # bump by changing the tag. Keeps its own nixpkgs, its build needs a recent zig.
     herdr.url = "github:herdrdev/herdr/v0.9.5";
-    # Hermes Agent (package + NixOS module, services.hermes-agent) for agent-node. Pinned to
-    # a release tag, bump by changing the tag. Keeps its own nixpkgs like herdr: its uv2nix
-    # Python build is tested against upstream's lock, not ours.
-    hermes-agent.url = "github:NousResearch/hermes-agent/v0.23.0";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-runner, nixpkgs-claude, agenix, comin, herdr, hermes-agent }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-runner, nixpkgs-claude, agenix, comin, herdr }:
   let
     # Import unstable nixpkgs for packages that need bleeding-edge versions
     pkgs-unstable = import nixpkgs-unstable {
@@ -119,7 +115,6 @@
         modules = baseModules ++ [
           ./nodes/agent-node/configuration.nix
           ./modules/hermes.nix
-          hermes-agent.nixosModules.default
         ];
       };
 

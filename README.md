@@ -163,10 +163,11 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [ ] **`frigate-node` / `frigate-stack`:** NixOS VM on `phil` with Iris Xe and the 512 GB SanDisk SSD passed through (SMART checked on 2026-10-09: no errors, about 3% wear; detach it from `services-node` first) and a NIC on the IoT VLAN; ballooning disabled; OpenVINO detector; 1–2 cameras with motion/event-based retention sized to the SSD; Home Assistant integration; ntfy `homelab-security`; Authelia forward_auth.
 - [x] **`agent-node` headless check:** Obsidian Sync has an official headless client (`obsidian-headless`); Antigravity runs as its terminal agent (`agy`) and is reached through Antigravity Remote Control.
 - [ ] **`agent-node`:** Headless NixOS VM on `vault` where Hermes, Claude Code and Antigravity run all the time as the shared user `kay`, reached through Claude/Antigravity Remote Control, Discord/Telegram (Hermes) and the herdr desktop app. With the repos, the Obsidian vault (Obsidian Sync), Hindsight as memory and systemd timers for the maintenance flows. See [architecture.md](docs/architecture.md#agent-node-nixos-vm).
-    - [x] In the config: the `kay` user, Hermes as a service from the upstream flake running as `kay` with Nous Portal, Claude Code and the Antigravity CLI from `nixpkgs-claude`, `obsidian-headless`.
+    - [x] In the config: the `kay` user, Claude Code and the Antigravity CLI from `nixpkgs-claude`, `obsidian-headless`.
+    - [ ] Hermes installed upstream as `kay` (`scripts/install.sh` into `~/.hermes`, not from Nix, so `hermes plugins install` and `hermes update` work), with its gateway as `kay`'s systemd user service (`hermes gateway install`). Nous Portal as provider.
     - [ ] One-time logins as `kay`: `hermes auth add nous` (then `hermes model`), `claude`, `agy`, `ob`.
     - [ ] Always-on Claude Remote Control (`claude remote-control`) and Antigravity Remote Control (`agy remote-control`), declared as services for `kay`.
-    - [ ] Agenix env file with the Discord/Telegram tokens for the Hermes messaging gateway.
+    - [ ] Discord/Telegram tokens for the Hermes messaging gateway in `~/.hermes/.env`.
     - [x] Obsidian Sync: vault "Knowledgebase" at `/home/kay/knowledgebase`, kept current by the `obsidian-sync` service.
     - [ ] Repos under `/home/kay/repos`, with GitHub credentials for `kay`.
     - [ ] Connect all three agents to Hindsight on `agent-tools-node`.

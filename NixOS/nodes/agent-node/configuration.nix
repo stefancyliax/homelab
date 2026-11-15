@@ -21,9 +21,7 @@
   # Hermes, Claude Code and Antigravity all run as kay, so they share the repo checkouts
   # (~/repos), the Obsidian vault and the credentials in kay's home. stefan stays the admin
   # account; kay gets neither sudo nor docker, only what the agents need.
-  # kay's primary group is its own private group `kay`, with no other members. Hermes needs
-  # that: the module sets HERMES_HOME to 2770, and the CLI only accepts a group-writable
-  # home when the group is the owner's private one.
+  # kay's primary group is its own private group `kay`, with no other members.
   users.groups.kay = { };
   users.users.kay = {
     isNormalUser = true;
@@ -36,38 +34,20 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEv48jeL9NhGVJcl+39fzcX4yfbjX3j192n/JDPFDddB herdr → kay@agent-node"
     ];
-    # User manager without a login: Hermes' cron and the agents' long-running processes
+    # User manager without a login: Hermes' gateway (a systemd user service) and cron, and
+    # the agents' long-running processes
     linger = true;
   };
 
   # ── Hermes ──────────────────────────────────────────────────────────────────────────
-  # Service from the hermes-agent flake input. Runs as kay with its state in kay's home:
-  # HOME is /home/kay and HERMES_HOME /home/kay/.hermes, the CLI's default, so `hermes`
-  # as kay talks to the running gateway. The module also creates /home/kay/home (unused
-  # here) and sets /home/kay to 2770 kay:kay. Settings here are merged into config.yaml on
-  # each activation; runtime edits to other keys survive.
-  services.hermes-agent = {
-    enable = true;
-    user = "kay";
-    group = "kay";
-    createUser = false;
-    stateDir = "/home/kay";
-    workingDirectory = "/home/kay/repos";
-    addToSystemPackages = true;
-    # Nous Portal; log in once as kay with `hermes auth add nous` (stored in auth.json).
-    # Managed mode: the CLI can't save config (`hermes model`, `hermes config set`), so the
-    # model is set here. `hermes model` still lists the models to pick from. Without a model,
-    # every new session fails with storage_unavailable.
-    settings.model = {
-      provider = "nous";
-      default = "z-ai/glm-5.3-flash";
-    };
-    # Secrets (Discord/Telegram tokens for the messaging gateway) go into an Agenix env file:
-    # environmentFiles = [ config.age.secrets.hermes-env.path ];
-  };
+  # Not in this config: Hermes is installed upstream as kay (scripts/install.sh, into
+  # ~/.hermes) and manages itself, so `hermes plugins install` can add plugins with their
+  # own Python dependencies and `hermes update` works. Its gateway runs as kay's systemd
+  # user service (`hermes gateway install`), kept alive by linger. Its uv-managed Python
+  # needs nix-ld, which modules/hermes.nix enables.
 
   # ── Agent tooling ───────────────────────────────────────────────────────────────────
-  # The Hermes dev tools (nix-ld, node, python, ...) come from modules/hermes.nix. Claude
+  # The dev tools for the agents (nix-ld, node, python, ...) come from modules/hermes.nix. Claude
   # Code and Antigravity from their own nixos-unstable input (nixpkgs-claude): both ship
   # new versions far more often than the stable channel picks them up, and can't
   # self-update from the Nix store. Bump with `nix flake update nixpkgs-claude`.
