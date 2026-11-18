@@ -126,6 +126,12 @@
 		reverse_proxy 10.1.23.12:8888
 	}
 
+	# Matrix homeserver (Synapse, Direct Proxy; Matrix does its own login)
+	@matrix host matrix.home.stefancyliax.de
+	handle @matrix {
+		reverse_proxy 10.1.23.12:8008
+	}
+
 	# Garage S3 API (Direct Proxy, authenticated by S3 access keys)
 	@s3 host s3.home.stefancyliax.de
 	handle @s3 {

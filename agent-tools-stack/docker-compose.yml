@@ -154,8 +154,46 @@ services:
       retries: 6
       start_period: 10m
 
+  # Matrix homeserver for chatting with the agents (Hermes). Private: registration and
+  # federation off, reached over LAN/Tailscale only. The public config comes from the repo
+  # (./synapse); /data/secrets.yaml (database block, registration secret) and the signing
+  # key live only in the synapse_data volume. See docs/architecture.md#agent-tools-node-nixos-vm.
+  synapse:
+    image: ghcr.io/element-hq/synapse:latest
+    container_name: synapse
+    restart: unless-stopped
+    command: ["run", "--config-path", "/config/homeserver.yaml", "--config-path", "/data/secrets.yaml"]
+    ports:
+      - "8008:8008"
+    volumes:
+      - ./synapse:/config:ro
+      - synapse_data:/data
+    depends_on:
+      synapse-db:
+        condition: service_healthy
+
+  synapse-db:
+    image: postgres:17-alpine
+    container_name: synapse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: ${SYNAPSE_DB_PASSWORD}
+      POSTGRES_DB: synapse
+      # Synapse refuses a database with another collation
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - synapse_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synapse -d synapse"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
 volumes:
   nocodb_data:
   open-webui_data:
   hindsight_data:
   llama_models:
+  synapse_data:
+  synapse_db:

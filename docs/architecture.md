@@ -189,7 +189,7 @@ Storage and Jellyfin share one VM because Jellyfin needs both the disks and the 
 
 #### Agent Tools Node (`agent-tools-node`, NixOS VM)
 
-**Status:** ✅ Running on `vault`, with the Compose services below, Garage and artifact hosting. 🔲 Planned: pilot.
+**Status:** ✅ Running on `vault`, with the Compose services below, Garage and artifact hosting. 🔲 Planned: pilot, [Executor](https://executor.sh/) (MCP gateway for the agents).
 
 The services the AI agents and workflows rely on, kept apart from the general apps on `services-node` and from the agents themselves on `agent-node`.
 
@@ -201,6 +201,7 @@ The services the AI agents and workflows rely on, kept apart from the general ap
 | [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`, `modules/garage.nix`). Data on the SATA SSD passed through from `vault` (XFS, `/mnt/garage`), metadata on the VM disk |
 | Artifact hosting (Claude/Gemini HTML artifacts) | One Garage website bucket behind one Caddy route on `infra-node`; each artifact is a path, published by an S3 upload. No authentication |
+| [Synapse](https://github.com/element-hq/synapse) (Matrix homeserver) | 🔲 Docker Compose (`agent-tools-stack`), `synapse` + `synapse-db` (Postgres). Chat with Hermes from Element on the phone and laptop. See [Matrix homeserver](#matrix-homeserver) |
 | pilot | To be defined |
 | Embedding Service (`google/embeddinggemma-2`) | Docker Compose (`agent-tools-stack`), `hindsight-embeddings`: llama.cpp sidecar at `10.1.23.12:8082`, used by both Hindsight instances |
 | Extraction SLM (Gemma 4 E2B) | Docker Compose (`agent-tools-stack`), `hindsight-llm`: llama.cpp sidecar on CPU at `10.1.23.12:8081`. Serves retain and consolidation for the private Hindsight and all LLM calls of the work instance |
@@ -224,6 +225,48 @@ sudo garage key info <machine> --show-secret                  # show a key's sec
 ```
 
 The `garage` package follows nixpkgs, so minor updates arrive with a `flake.lock` bump. A new major version is a deliberate change of `pkgs.garage_2` in the module and needs the upstream migration notes.
+
+##### Matrix homeserver
+
+A private Synapse for talking to Hermes in threads, with voice messages. `server_name` is `matrix.home.stefancyliax.de` (permanent; IDs look like `@stefan:matrix.home.stefancyliax.de`).
+
+| Part | Notes |
+|---|---|
+| Access | Clients (Element, Element X) over LAN/Tailscale through the Caddy route `matrix.home.stefancyliax.de` → `10.1.23.12:8008`. Hermes on `agent-node` connects directly to `http://10.1.23.12:8008`, so it keeps running while `phil` is down |
+| Lockdown | No federation (`federation_domain_whitelist: []`, client listener only), no registration; accounts are created with `register_new_matrix_user`. Rooms with Hermes stay unencrypted |
+| Config | Public part in `agent-tools-stack/synapse/homeserver.yaml`. `/data/secrets.yaml` in the `synapse_data` volume holds the `database:` block and `registration_shared_secret`, loaded as a second config file. Postgres password: `SYNAPSE_DB_PASSWORD` in the Dockhand stack env |
+| Push | ntfy on `infra-node` is the Matrix push gateway (UnifiedPush): the ntfy app on Android registers `https://ntfy.home.stefancyliax.de/_matrix/push/v1/notify`, and Element hands it to Synapse. `ip_range_whitelist` allows `10.1.23.184`, since Synapse blocks private addresses by default |
+| Voice | Hermes transcribes Element voice messages; STT through Parakeet (`STT_OPENAI_BASE_URL=http://10.1.23.12:8000/v1`) |
+
+One-time setup on `agent-tools-node`, before the first start (the image runs as UID 991):
+
+```bash
+# 1. secrets.yaml into the volume. The password must equal SYNAPSE_DB_PASSWORD in Dockhand
+#    (no " or \ in it); read -s keeps it out of the history.
+read -rsp "SYNAPSE_DB_PASSWORD: " DBPW; echo
+REGSECRET=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 64)
+cat <<EOF | docker run --rm -i -v agent-tools-stack_synapse_data:/data alpine sh -c 'cat > /data/secrets.yaml && chmod 600 /data/secrets.yaml'
+database:
+  name: psycopg2
+  args:
+    user: synapse
+    password: "$DBPW"
+    dbname: synapse
+    host: synapse-db
+    cp_min: 5
+    cp_max: 10
+registration_shared_secret: "$REGSECRET"
+EOF
+# 2. signing key, then (re)start the stack in Dockhand
+docker run --rm -v agent-tools-stack_synapse_data:/data --entrypoint generate_signing_key \
+  ghcr.io/element-hq/synapse:latest -o /data/matrix.home.stefancyliax.de.signing.key
+docker run --rm -v agent-tools-stack_synapse_data:/data alpine chown -R 991:991 /data
+# 3. accounts
+docker exec -it synapse register_new_matrix_user -c /data/secrets.yaml -u stefan --admin http://localhost:8008
+docker exec -it synapse register_new_matrix_user -c /data/secrets.yaml -u hermes --no-admin http://localhost:8008
+```
+
+The volume name depends on the Compose project name Dockhand uses; check it with `docker volume ls`. Check push with `https://ntfy.home.stefancyliax.de/_matrix/push/v1/notify`, which should answer `{"unifiedpush":{"gateway":"matrix"}}`.
 
 #### Work Tools Node (`work-tools-node`, NixOS VM)
 
@@ -260,7 +303,7 @@ Home of the AI agents and the knowledge base; supersedes `hermes-node`. Nobody w
 |---|---|
 | Claude Code | Claude Remote Control (Claude app, claude.ai/code) |
 | Antigravity (`agy`) | Antigravity Remote Control |
-| Hermes | Its messaging gateway (Discord/Telegram) |
+| Hermes | Its messaging gateway: Matrix, on the private [Synapse](#matrix-homeserver) on `agent-tools-node` (threads, voice messages) |
 | All three | The herdr desktop app, which connects to the node over SSH and brings its own backend (herdr-core) |
 
 All three run as one shared user, `kay`, so they work on the same repo checkouts and the same Obsidian vault. `stefan` stays the admin account; `kay` has neither sudo nor Docker, and holds only the credentials the agents need.
@@ -268,7 +311,7 @@ All three run as one shared user, `kay`, so they work on the same repo checkouts
 | Component | Notes |
 |---|---|
 | `kay` | Normal user with its own private group (no other members), lingering so its processes run without a login. Its own SSH key for the herdr app, separate from `stefan`'s |
-| Hermes | 🔲 Not in the NixOS config: installed upstream as `kay` (`scripts/install.sh`, into `/home/kay/.hermes`) and self-managing. The Nix package seals its Python venv, so plugins with their own Python dependencies (e.g. the Hindsight memory provider) could not be installed with `hermes plugins install`; the upstream install keeps that and `hermes update` working. Its uv-managed Python runs through nix-ld (`modules/hermes.nix`). The gateway runs as `kay`'s systemd user service (`hermes gateway install`), kept alive by linger. LLM provider: Nous Portal (`hermes auth add nous` once). Discord/Telegram tokens go into `~/.hermes/.env` |
+| Hermes | 🔲 Not in the NixOS config: installed upstream as `kay` (`scripts/install.sh`, into `/home/kay/.hermes`) and self-managing. The Nix package seals its Python venv, so plugins with their own Python dependencies (e.g. the Hindsight memory provider) could not be installed with `hermes plugins install`; the upstream install keeps that and `hermes update` working. Its uv-managed Python runs through nix-ld (`modules/hermes.nix`). The gateway runs as `kay`'s systemd user service (`hermes gateway install`), kept alive by linger. LLM provider: Nous Portal (`hermes auth add nous` once). Matrix login (`MATRIX_HOMESERVER=http://10.1.23.12:8008`, the `hermes` bot's access token, `MATRIX_ALLOWED_USERS`) goes into `~/.hermes/.env` |
 | Claude Code, Antigravity | From the `nixpkgs-claude` input (Antigravity as its terminal agent, `agy`), plus the dev tools from `modules/hermes.nix`. 🔲 Always-on Remote Control for both, after a one-time login as `kay` |
 | Repos | Checked out under `/home/kay/repos` (e.g. `homelab`); Hermes' working directory. 🔲 GitHub credentials for `kay` |
 | Obsidian vault | Kept current via Obsidian Sync with the official headless client (replaces the Syncthing copy on `hermes-node`). `obsidian-headless` (`ob` CLI) from `nixpkgs-claude`; the `obsidian-sync` service runs `ob sync --continuous` as `kay` on `/home/kay/knowledgebase` (vault "Knowledgebase", both ways, no app settings) |

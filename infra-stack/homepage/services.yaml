@@ -102,6 +102,10 @@
         href: https://hindsight-work.home.stefancyliax.de
         icon: network
         description: Biomimetic Memory for AI Agents (work instance)
+    - Matrix:
+        href: https://matrix.home.stefancyliax.de/_matrix/client/versions
+        icon: matrix
+        description: Synapse homeserver (chat with Hermes via Element)
     - Hermes Chat:
         href: http://100.98.194.7:9119/chat
         icon: robot

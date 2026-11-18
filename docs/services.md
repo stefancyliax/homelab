@@ -38,7 +38,9 @@ Some services run on dedicated VMs or specialized hardware — these are noted b
 | ~~[Kestra](https://kestra.io/)~~ | Docker Compose (`services-stack`) | ❌ Removed |
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | [Hindsight](https://github.com/vectorize-io/hindsight) (work instance) | Docker Compose (`work-tools-stack`, `work-tools-node` on `phil`) | 🚧 Deployed |
+| [Synapse](https://github.com/element-hq/synapse) (Matrix) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🔲 Planned |
 | pilot | To be defined (`agent-tools-node`) | 🔲 Planned |
+| [Executor](https://executor.sh/) (MCP gateway) | To be defined (`agent-tools-node`) | 🔲 Planned |
 | Embedding Service (`google/embeddinggemma-2`) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | Extraction SLM (Gemma 4 E2B) | Docker Compose (`agent-tools-stack`, `agent-tools-node` on `vault`) | 🚧 Deployed |
 | Hermes Chat | Native service (`hermes-node`) | 🚧 Deployed — 🔲 move to `agent-node` in progress (upstream install as user `kay`, Nous Portal) |

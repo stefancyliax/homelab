@@ -1,7 +1,9 @@
 # ntfy server configuration
 # See https://docs.ntfy.sh/config/ for all options
 
-base-url: "http://10.1.23.184:2586"
+# The HTTPS name, not the IP: ntfy's Matrix push gateway (UnifiedPush) is found through it.
+# Publishers can still post to http://10.1.23.184:2586 directly.
+base-url: "https://ntfy.home.stefancyliax.de"
 listen-http: ":80"
 
 # Message cache — persist across restarts, retain for 72 hours
