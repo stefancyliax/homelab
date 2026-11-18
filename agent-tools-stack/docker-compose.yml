@@ -155,9 +155,10 @@ services:
       start_period: 10m
 
   # Matrix homeserver for chatting with the agents (Hermes). Private: registration and
-  # federation off, reached over LAN/Tailscale only. The public config comes from the repo
-  # (./synapse); /data/secrets.yaml (database block, registration secret) and the signing
-  # key live only in the synapse_data volume. See docs/architecture.md#agent-tools-node-nixos-vm.
+  # federation off, reached over LAN/Tailscale only. The public config is the inline
+  # `synapse_homeserver` config at the end of this file (Hawser can't bind-mount repo files);
+  # /data/secrets.yaml (database block, registration secret) and the signing key live only in
+  # the synapse_data volume. See docs/architecture.md#matrix-homeserver.
   synapse:
     image: ghcr.io/element-hq/synapse:latest
     container_name: synapse
@@ -165,8 +166,10 @@ services:
     command: ["run", "--config-path", "/config/homeserver.yaml", "--config-path", "/data/secrets.yaml"]
     ports:
       - "8008:8008"
+    configs:
+      - source: synapse_homeserver
+        target: /config/homeserver.yaml
     volumes:
-      - ./synapse:/config:ro
       - synapse_data:/data
     depends_on:
       synapse-db:
@@ -197,3 +200,46 @@ volumes:
   llama_models:
   synapse_data:
   synapse_db:
+
+configs:
+  # Synapse's public config. Inline because Hawser deploys only this file: relative bind mounts
+  # resolve on the host, where the repo isn't. Secrets merge in from /data/secrets.yaml, which
+  # holds the complete `database:` block, so `database:` must not appear here. No `$` in here
+  # (Compose would interpolate it). After a change, check the container was recreated, else restart it.
+  synapse_homeserver:
+    content: |
+      server_name: "matrix.home.stefancyliax.de" # permanent, changing it means wiping the server
+      public_baseurl: "https://matrix.home.stefancyliax.de/"
+      report_stats: false
+
+      listeners:
+        - port: 8008
+          type: http
+          tls: false
+          bind_addresses: ["0.0.0.0"]
+          x_forwarded: true # Caddy on infra-node; Hermes connects directly to 10.1.23.12:8008
+          resources:
+            - names: [client]
+              compress: false
+
+      # ── Private server ────────────────────────────────────────────────────────────────────
+      enable_registration: false
+      federation_domain_whitelist: [] # federate with nobody
+      trusted_key_servers: []
+      suppress_key_server_warning: true
+      allow_public_rooms_over_federation: false
+      allow_public_rooms_without_auth: false
+
+      # ── Push (ntfy as UnifiedPush / Matrix push gateway) ──────────────────────────────────
+      # Synapse refuses outgoing requests to private addresses by default. The ntfy app registers
+      # https://ntfy.home.stefancyliax.de/_matrix/push/v1/notify, which resolves to Caddy on
+      # infra-node (10.1.23.184).
+      ip_range_whitelist:
+        - "10.1.23.184"
+
+      # ── Storage ───────────────────────────────────────────────────────────────────────────
+      media_store_path: /data/media_store
+      max_upload_size: 100M
+      signing_key_path: "/data/matrix.home.stefancyliax.de.signing.key"
+      # macaroon_secret_key unset: Synapse falls back to registration_shared_secret (secrets.yaml).
+      # No log_config: Synapse logs to stderr at INFO, which ends up in the container log.

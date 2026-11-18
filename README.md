@@ -176,7 +176,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
     - [ ] Move Hermes state (sessions, skills, memory) over from `hermes-node`.
     - [ ] Clean up after the move to `kay`: the old `hermes` user and `/var/lib/hermes`, and `stefan`'s `~/.aws`.
 - [ ] **Matrix homeserver:** Private Synapse (`server_name` `matrix.home.stefancyliax.de`) in the `agent-tools-stack` for chatting with Hermes in threads, push through ntfy (UnifiedPush). See [architecture.md](docs/architecture.md#matrix-homeserver).
-    - [x] In the repo: `synapse` + `synapse-db` in the stack, `homeserver.yaml`, Caddy route, ntfy `base-url` on HTTPS, Homepage tile.
+    - [x] In the repo: `synapse` + `synapse-db` in the stack with `homeserver.yaml` as an inline Compose config, Caddy route, ntfy `base-url` on HTTPS, Homepage tile.
     - [ ] `SYNAPSE_DB_PASSWORD` in the Dockhand stack env; `secrets.yaml` and signing key in the volume; accounts `stefan` and `hermes`.
     - [ ] Restart ntfy for the new `base-url`; check the Matrix gateway endpoint.
     - [ ] Phone: ntfy app on `ntfy.home.stefancyliax.de`, Element X (or Element) with ntfy as UnifiedPush distributor; check threads, push with the app closed, and a voice message.

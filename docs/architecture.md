@@ -234,7 +234,7 @@ A private Synapse for talking to Hermes in threads, with voice messages. `server
 |---|---|
 | Access | Clients (Element, Element X) over LAN/Tailscale through the Caddy route `matrix.home.stefancyliax.de` → `10.1.23.12:8008`. Hermes on `agent-node` connects directly to `http://10.1.23.12:8008`, so it keeps running while `phil` is down |
 | Lockdown | No federation (`federation_domain_whitelist: []`, client listener only), no registration; accounts are created with `register_new_matrix_user`. Rooms with Hermes stay unencrypted |
-| Config | Public part in `agent-tools-stack/synapse/homeserver.yaml`. `/data/secrets.yaml` in the `synapse_data` volume holds the `database:` block and `registration_shared_secret`, loaded as a second config file. Postgres password: `SYNAPSE_DB_PASSWORD` in the Dockhand stack env |
+| Config | Public part inline in `agent-tools-stack/docker-compose.yml` (the `synapse_homeserver` config, mounted as `/config/homeserver.yaml`); Hawser deploys only the compose file, so stacks on remote nodes can't bind-mount files from the repo. `/data/secrets.yaml` in the `synapse_data` volume holds the `database:` block and `registration_shared_secret`, loaded as a second config file. Postgres password: `SYNAPSE_DB_PASSWORD` in the Dockhand stack env |
 | Push | ntfy on `infra-node` is the Matrix push gateway (UnifiedPush): the ntfy app on Android registers `https://ntfy.home.stefancyliax.de/_matrix/push/v1/notify`, and Element hands it to Synapse. `ip_range_whitelist` allows `10.1.23.184`, since Synapse blocks private addresses by default |
 | Voice | Hermes transcribes Element voice messages; STT through Parakeet (`STT_OPENAI_BASE_URL=http://10.1.23.12:8000/v1`) |
 
