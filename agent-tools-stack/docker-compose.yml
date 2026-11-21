@@ -5,7 +5,10 @@ services:
 
   # Speech-to-text (OpenAI-compatible /v1/audio/transcriptions) for the agents, German and
   # English. Whisper large-v3-turbo: Parakeet (int8) returned empty text for short German
-  # voice messages. The model is downloaded on first start (~1.6 GB) and stays loaded.
+  # voice messages. ~9 s per short message on vault, ~2 GB RAM once loaded (stays loaded).
+  # The model (~1.6 GB) lives in speaches_hf_cache. `latest-cpu` (0.1.0) has no PRELOAD_MODELS,
+  # so on a fresh volume download it once:
+  #   curl -X POST http://10.1.23.12:8000/v1/models/deepdml/faster-whisper-large-v3-turbo-ct2
   speaches:
     image: ghcr.io/speaches-ai/speaches:latest-cpu
     container_name: speaches
@@ -13,7 +16,6 @@ services:
     ports:
       - "8000:8000"
     environment:
-      PRELOAD_MODELS: '["deepdml/faster-whisper-large-v3-turbo-ct2"]'
       STT_MODEL_TTL: "-1"
       WHISPER__COMPUTE_TYPE: int8
       ENABLE_UI: "false"

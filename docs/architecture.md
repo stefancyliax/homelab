@@ -196,7 +196,7 @@ The services the AI agents and workflows rely on, kept apart from the general ap
 | Service | Type |
 |---|---|
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`), ✅ moved |
-| [Speaches (STT)](https://github.com/speaches-ai/speaches) | Docker Compose (`agent-tools-stack`). OpenAI-compatible STT API at `10.1.23.12:8000` for the agents, Whisper `deepdml/faster-whisper-large-v3-turbo-ct2` (int8, German and English, kept loaded). Replaced Parakeet, whose int8 model returned empty text for short German voice messages |
+| [Speaches (STT)](https://github.com/speaches-ai/speaches) | Docker Compose (`agent-tools-stack`). OpenAI-compatible STT API at `10.1.23.12:8000` for the agents, Whisper `deepdml/faster-whisper-large-v3-turbo-ct2` (int8, German and English, kept loaded; ~9 s per short message, ~2 GB RAM). The model sits in the `speaches_hf_cache` volume; on a fresh volume download it once with `curl -X POST http://10.1.23.12:8000/v1/models/deepdml/faster-whisper-large-v3-turbo-ct2` (the `latest-cpu` image has no preload option). Replaced Parakeet, whose int8 model returned empty text for short German voice messages |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`, `modules/garage.nix`). Data on the SATA SSD passed through from `vault` (XFS, `/mnt/garage`), metadata on the VM disk |

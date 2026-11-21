@@ -199,7 +199,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **VM Firmware Decision:** Existing VMs stay on SeaBIOS; new VMs use OVMF/UEFI.
 - [x] **Offline Node Strategy:** Solved via Comin for pull-based deployments on intermittent nodes.
 - [x] **Homepage Dashboard:** Fully declarative layout via YAML in the `infra-stack`.
-- [ ] **STT back to Speaches with Whisper:** Parakeet (`achetronic/parakeet`, int8 only) returned empty text for short German voice messages that Whisper transcribes correctly. Speaches in the `agent-tools-stack` with `deepdml/faster-whisper-large-v3-turbo-ct2` (int8, ~5 s per short message) replaces it on the same port 8000; check the first-start model download and the timing on `vault`.
+- [x] **STT back to Speaches with Whisper:** Parakeet (`achetronic/parakeet`, int8 only) returned empty text for short German voice messages that Whisper transcribes correctly. Speaches in the `agent-tools-stack` with `deepdml/faster-whisper-large-v3-turbo-ct2` (int8, ~9 s per short message on `vault`, ~2 GB RAM) replaces it on the same port 8000. The model is downloaded once through Speaches' API (see [architecture.md](docs/architecture.md#agent-tools-node-nixos-vm)). whisper.cpp was tested too: same accuracy, under 1 GB RAM, but ~17 s per message with automatic language detection, since it runs the encoder twice.
 - [x] **Speaches STT Migration:** Replaced Whisper model with NVIDIA Parakeet v3 ONNX model for improved transcription speed.
 
 ## Repository Structure
