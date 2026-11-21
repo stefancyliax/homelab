@@ -112,7 +112,7 @@ Guests are spread over two standalone Proxmox hosts. Each VM is isolated to sepa
 **Which host:**
 
 - **`phil`** — control plane and light apps: ingress, SSO, monitoring, Home Assistant, the `services-stack`. Also Frigate, because its iGPU is the stronger one for OpenVINO detection and it sits next to HAOS, and `work-tools-node`, which keeps the work tooling apart from the private one on `vault`.
-- **`vault`** — anything that needs the HDDs, CPU for builds, or a device physically attached to it: NAS, Jellyfin, the scanner service, the GitHub runner, `agent-node`, and `agent-tools-node` with the services the agents rely on (Hindsight, Parakeet, Garage and others).
+- **`vault`** — anything that needs the HDDs, CPU for builds, or a device physically attached to it: NAS, Jellyfin, the scanner service, the GitHub runner, `agent-node`, and `agent-tools-node` with the services the agents rely on (Hindsight, Speaches, Garage and others).
 
 `phil` has 32 GB of RAM. `vault` has 48 GB; at least 16 GB of that stay unallocated, because `vault` is also the box for trying things out.
 
@@ -149,7 +149,7 @@ Dockhand is deployed natively via NixOS modules (`virtualisation.oci-containers`
 
 Hosts user-facing application workloads via Docker Compose, orchestrated by Dockhand through the [Hawser](https://github.com/nicotsx/hawser) agent. See [services.md](services.md) for the full list. Also hosts local Samba network shares (`paperless-consume` and `grimmory-bookdrop`) discoverable via WSDD.
 
-NextExplorer has moved to [`storage-node`](#storage-node-nixos-vm). The AI-supporting services (Open-WebUI, NocoDB, Parakeet, Hindsight) already run on [`agent-tools-node`](#agent-tools-node-nixos-vm). Paperless, ZeroByte and Grimmory stay.
+NextExplorer has moved to [`storage-node`](#storage-node-nixos-vm). The AI-supporting services (Open-WebUI, NocoDB, Speaches, Hindsight) already run on [`agent-tools-node`](#agent-tools-node-nixos-vm). Paperless, ZeroByte and Grimmory stay.
 
 #### GitHub Runner (NixOS VM)
 
@@ -196,7 +196,7 @@ The services the AI agents and workflows rely on, kept apart from the general ap
 | Service | Type |
 |---|---|
 | [Hindsight](https://github.com/vectorize-io/hindsight) | Docker Compose (`agent-tools-stack`), ✅ moved |
-| [Parakeet (STT)](https://github.com/achetronic/parakeet) | Docker Compose (`agent-tools-stack`), ✅ moved. Whisper-compatible STT API at `10.1.23.12:8000` for the agents |
+| [Speaches (STT)](https://github.com/speaches-ai/speaches) | Docker Compose (`agent-tools-stack`). OpenAI-compatible STT API at `10.1.23.12:8000` for the agents, Whisper `deepdml/faster-whisper-large-v3-turbo-ct2` (int8, German and English, kept loaded). Replaced Parakeet, whose int8 model returned empty text for short German voice messages |
 | [Open-WebUI](https://github.com/open-webui/open-webui) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [NocoDB](https://nocodb.com/) | Docker Compose (`agent-tools-stack`), ✅ moved |
 | [Garage](https://garagehq.deuxfleurs.fr/) S3 (~100 GB, dev use) | Native NixOS service (`services.garage`, `modules/garage.nix`). Data on the SATA SSD passed through from `vault` (XFS, `/mnt/garage`), metadata on the VM disk |
@@ -236,7 +236,7 @@ A private Synapse for talking to Hermes in threads, with voice messages. `server
 | Lockdown | No federation (`federation_domain_whitelist: []`, client listener only), no registration; accounts are created with `register_new_matrix_user`. Rooms with Hermes stay unencrypted |
 | Config | Public part inline in `agent-tools-stack/docker-compose.yml` (the `synapse_homeserver` config, mounted as `/config/homeserver.yaml`); Hawser deploys only the compose file, so stacks on remote nodes can't bind-mount files from the repo. `/data/secrets.yaml` in the `synapse_data` volume holds the `database:` block and `registration_shared_secret`, loaded as a second config file. Postgres password: `SYNAPSE_DB_PASSWORD` in the Dockhand stack env |
 | Push | ntfy on `infra-node` is the Matrix push gateway (UnifiedPush): the ntfy app on Android registers `https://ntfy.home.stefancyliax.de/_matrix/push/v1/notify`, and Element hands it to Synapse. `ip_range_whitelist` allows `10.1.23.184`, since Synapse blocks private addresses by default |
-| Voice | Hermes transcribes Element voice messages; STT through Parakeet (`STT_OPENAI_BASE_URL=http://10.1.23.12:8000/v1`) |
+| Voice | Hermes transcribes Element voice messages; STT through Speaches: `stt.provider: openai`, `stt.openai.base_url: http://10.1.23.12:8000/v1` and `stt.openai.model: deepdml/faster-whisper-large-v3-turbo-ct2` in `~/.hermes/config.yaml` (no key needed for a private IP; Speaches picks the model by name) |
 
 One-time setup on `agent-tools-node`, before the first start (the image runs as UID 991):
 

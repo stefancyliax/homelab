@@ -168,7 +168,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
     - [ ] Hermes installed upstream as `kay` (`scripts/install.sh` into `~/.hermes`, not from Nix, so `hermes plugins install` and `hermes update` work), with its gateway as `kay`'s systemd user service (`hermes gateway install`). Nous Portal as provider.
     - [ ] One-time logins as `kay`: `hermes auth add nous` (then `hermes model`), `claude`, `agy`, `ob`.
     - [ ] Always-on Claude Remote Control (`claude remote-control`) and Antigravity Remote Control (`agy remote-control`), declared as services for `kay`.
-    - [ ] Hermes on Matrix: `MATRIX_HOMESERVER=http://10.1.23.12:8008`, the `hermes` bot's access token and `MATRIX_ALLOWED_USERS` in `~/.hermes/.env`; STT through Parakeet (`STT_OPENAI_BASE_URL`).
+    - [ ] Hermes on Matrix: `MATRIX_HOMESERVER=http://10.1.23.12:8008`, the `hermes` bot's access token and `MATRIX_ALLOWED_USERS` in `~/.hermes/.env`; STT through Speaches (`stt.provider: openai`, `stt.openai.base_url: http://10.1.23.12:8000/v1`, `stt.openai.model: deepdml/faster-whisper-large-v3-turbo-ct2` in `config.yaml`).
     - [x] Obsidian Sync: vault "Knowledgebase" at `/home/kay/knowledgebase`, kept current by the `obsidian-sync` service.
     - [ ] Repos under `/home/kay/repos`, with GitHub credentials for `kay`.
     - [ ] Connect all three agents to Hindsight on `agent-tools-node`.
@@ -199,6 +199,7 @@ Plan and rationale: [architecture.md](docs/architecture.md#workload-placement), 
 - [x] **VM Firmware Decision:** Existing VMs stay on SeaBIOS; new VMs use OVMF/UEFI.
 - [x] **Offline Node Strategy:** Solved via Comin for pull-based deployments on intermittent nodes.
 - [x] **Homepage Dashboard:** Fully declarative layout via YAML in the `infra-stack`.
+- [ ] **STT back to Speaches with Whisper:** Parakeet (`achetronic/parakeet`, int8 only) returned empty text for short German voice messages that Whisper transcribes correctly. Speaches in the `agent-tools-stack` with `deepdml/faster-whisper-large-v3-turbo-ct2` (int8, ~5 s per short message) replaces it on the same port 8000; check the first-start model download and the timing on `vault`.
 - [x] **Speaches STT Migration:** Replaced Whisper model with NVIDIA Parakeet v3 ONNX model for improved transcription speed.
 
 ## Repository Structure

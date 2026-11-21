@@ -115,7 +115,7 @@ The application stacks are split across VMs to prevent monolithic failures:
 - **`infra-stack/`** → Infrastructure Node — foundational services (ZeroByte, Homepage, monitoring).
 - **`services-stack/`** → Services Node — user-facing applications (Paperless, Grimmory, etc.).
 - **`storage-stack/`** → Storage Node on `vault` — NextExplorer, Jellyfin, scanner service. 🔲 Planned: BamBuddy.
-- **`agent-tools-stack/`** → Agent Tools Node on `vault` — Hindsight with its embedding service (EmbeddingGemma 2) and extraction SLM (Gemma 4 E2B), Parakeet, Open-WebUI, NocoDB. 🔲 Planned: pilot.
+- **`agent-tools-stack/`** → Agent Tools Node on `vault` — Hindsight with its embedding service (EmbeddingGemma 2) and extraction SLM (Gemma 4 E2B), Speaches (STT), Open-WebUI, NocoDB. 🔲 Planned: pilot.
 - **`work-tools-stack/`** → Work Tools Node on `phil` — Hindsight (work instance).
 - **`frigate-stack/`** → Frigate Node on `phil` — empty so far. 🔲 Planned: Frigate.
 
@@ -363,7 +363,7 @@ Mark the service as enrolled in the table below.
 | Hindsight API | ❌ None | ⏭️ Skip | — | API-only, unprotected on private network |
 | Hindsight UI (work) | ❌ None | ✅ Enrolled | Reverse proxy | Protected via Authelia forward_auth |
 | Hindsight API (work) | ❌ None | ⏭️ Skip | — | API-only, unprotected on private network |
-| Parakeet | ❌ None | ⏭️ Skip | — | API-only, no user-facing UI |
+| Speaches | ❌ None | ⏭️ Skip | — | API-only, UI disabled |
 | Artifact hosting | ❌ None | ⏭️ Skip | — | Deliberately open on LAN/Tailscale; static pages served by Garage |
 | Garage S3 API | ❌ None | ⏭️ Skip | — | API-only, authenticated by S3 access keys |
 | Jellyfin | ✅ Native | ✅ Enrolled | OAuth2/OIDC | Via the SSO plugin (`9p4/jellyfin-plugin-sso`), provider name `authelia`, `client_secret_post`, PKCE. Tick "Disable Pushed Authorization" in the plugin: it sends Basic auth to Authelia's PAR endpoint but posts the secret to the token endpoint, and an Authelia client allows only one method. Needs Scheme Override `https` behind Caddy. Native apps sign in via Quick Connect |

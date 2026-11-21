@@ -3,19 +3,29 @@
 
 services:
 
-  parakeet:
-    image: ghcr.io/achetronic/parakeet:latest
-    container_name: parakeet
+  # Speech-to-text (OpenAI-compatible /v1/audio/transcriptions) for the agents, German and
+  # English. Whisper large-v3-turbo: Parakeet (int8) returned empty text for short German
+  # voice messages. The model is downloaded on first start (~1.6 GB) and stays loaded.
+  speaches:
+    image: ghcr.io/speaches-ai/speaches:latest-cpu
+    container_name: speaches
     restart: unless-stopped
     ports:
-      - 8000:5092
+      - "8000:8000"
+    environment:
+      PRELOAD_MODELS: '["deepdml/faster-whisper-large-v3-turbo-ct2"]'
+      STT_MODEL_TTL: "-1"
+      WHISPER__COMPUTE_TYPE: int8
+      ENABLE_UI: "false"
+      LOG_LEVEL: info
+    volumes:
+      - speaches_hf_cache:/home/ubuntu/.cache/huggingface/hub
     healthcheck:
-      # The image ships without curl or wget
-      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/5092 && printf 'GET /health HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q '200 OK' <&3"]
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 1m
+      start_period: 10m
 
   nocodb:
     image: nocodb/nocodb:latest
@@ -194,6 +204,7 @@ services:
       retries: 6
 
 volumes:
+  speaches_hf_cache:
   nocodb_data:
   open-webui_data:
   hindsight_data:
